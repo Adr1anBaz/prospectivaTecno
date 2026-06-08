@@ -1,0 +1,14 @@
+[project]
+name = "practica-1-ollama"
+version = "0.1.0"
+description = "Práctica 1: Panorama de IA Generativa y LLM"
+requires-python = ">=3.9"
+dependencies = [
+    "ollama>=0.4.0",
+    "huggingface-hub>=0.20.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+]

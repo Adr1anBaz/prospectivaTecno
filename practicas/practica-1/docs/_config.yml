@@ -1,0 +1,87 @@
+# Configuración del sitio Jekyll con Just the Docs
+
+# Información del sitio
+title: Práctica 1 - IA Generativa y LLM
+description: Reporte de la Práctica 1 del curso de IA Generativa y LLMs
+author: Adrian Bazaldua
+
+# URL del sitio (ajustar cuando se publique en GitHub Pages)
+url: "https://adr1anbaz.github.io"
+baseurl: "/prospectivaTecno"
+
+# Tema (solo remote_theme para GitHub Pages)
+remote_theme: just-the-docs/just-the-docs
+
+# Color scheme
+color_scheme: light
+
+# Logo y Favicon (descomentar cuando agregues las imágenes)
+# logo: "/assets/img/logo.png"
+# favicon_ico: "/assets/img/favicon.ico"
+
+# Search
+search_enabled: true
+search:
+  heading_level: 2
+  previews: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: false
+
+# Heading anchor links
+heading_anchors: true
+
+# Footer
+footer_content: "Copyright &copy; 2026 Adrian Bazaldua. Curso de IA Generativa y LLMs - Verano 2026"
+
+# Footer links
+gh_edit_link: true
+gh_edit_link_text: "Editar en GitHub"
+gh_edit_repository: "https://github.com/Adr1anBaz/prospectivaTecno"
+gh_edit_branch: "main"
+gh_edit_view_mode: "tree"
+
+# Back to top link
+back_to_top: true
+back_to_top_text: "Volver arriba"
+
+# Collections (no usado por ahora)
+# collections_dir: docs
+
+# Exclude de la construcción
+exclude:
+  - node_modules/
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - .venv/
+  - __pycache__/
+  - "*.py"
+  - scripts/
+
+# Plugins
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+
+# kramdown options
+kramdown:
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
+
+# Enable copy button on code
+enable_copy_code_button: true
+
+# Aux links (links adicionales en el header)
+aux_links:
+  "Ver en GitHub":
+    - "https://github.com/Adr1anBaz/prospectivaTecno"
+  "Repositorio Completo":
+    - "https://github.com/Adr1anBaz/prospectivaTecno/tree/main/practicas/practica-1"
+
+# Navigation
+nav_sort: order
+nav_enabled: true
