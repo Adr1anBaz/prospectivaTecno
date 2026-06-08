@@ -43,23 +43,38 @@ npm run preview
 7. **Demo** - Ejemplos de uso y casos de prueba
 8. **Próximos Pasos** - Roadmap y visión futura
 
-## 🌐 Deploy
+## 🌐 Deploy en GitHub Pages
 
-Esta aplicación está lista para deployarse en:
+Esta aplicación está configurada para deployarse automáticamente en GitHub Pages.
 
-- **Vercel** (recomendado)
-- **Netlify**
-- **GitHub Pages**
-- Cualquier hosting estático
+### Pasos para Deploy
 
-### Deploy en Vercel
+1. **Crear repositorio en GitHub**
+   ```bash
+   # Cambiar 'username' por tu usuario de GitHub
+   git remote add origin https://github.com/username/presentacion-unitree-go2.git
+   ```
+
+2. **Subir código**
+   ```bash
+   git add .
+   git commit -m "Deploy: Presentación Unitree Go2"
+   git push -u origin main
+   ```
+
+3. **Configurar GitHub Pages**
+   - Ve a: `Settings` → `Pages`
+   - Source: `GitHub Actions`
+   - El workflow se ejecutará automáticamente
+
+4. **Acceder a la presentación**
+   - URL: `https://username.github.io/presentacion-unitree-go2/`
+
+### Deploy Manual
 
 ```bash
-# Instalar Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
+npm run build
+# Los archivos generados están en /dist
 ```
 
 ## 🛠️ Stack Tecnológico
