@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🤖 Presentación del Proyecto Unitree Go2
 
 Presentación interactiva y dinámica sobre el sistema de control inteligente para el robot Unitree Go2 Air.
@@ -87,3 +88,51 @@ npm run build
 ## 📄 Licencia
 
 Proyecto de investigación y desarrollo
+=======
+# Repositorio de IA y Robótica - Verano 2026
+
+Este repositorio contiene el proyecto final y las prácticas del curso de IA Generativa y LLMs.
+
+## Estructura del Repositorio
+
+```
+.
+├── proyecto-final/     # Proyecto final: Control por voz de robot Unitree
+│   ├── .venv/          # Entorno virtual del proyecto
+│   └── ...             # Código fuente del proyecto
+│
+└── practicas/          # Prácticas del curso
+    ├── practica-1/     # Panorama de IA generativa y LLM (Ollama)
+    └── ...             # Otras prácticas
+```
+
+## Proyecto Final
+
+Sistema de control por voz para robot Unitree con precisión del 100% en llamadas de herramientas usando Whisper y Ollama.
+
+📁 [Ver Proyecto Final](./proyecto-final/)
+
+## Prácticas
+
+### Práctica 1: Panorama de IA Generativa y LLM
+
+Exploración de modelos de lenguaje usando Ollama y Hugging Face.
+
+📁 [Ver Práctica 1](./practicas/practica-1/)
+
+## Instalación
+
+Cada carpeta (proyecto-final y cada práctica) tiene su propio entorno virtual independiente. 
+
+Ver los README específicos en cada carpeta para instrucciones de instalación.
+
+## Requisitos Generales
+
+- Python 3.9+
+- uv (gestor de paquetes)
+- Ollama (para LLMs locales)
+
+## Autor
+
+Adrian Bazaldua
+>>>>>>> e21da9bcef627ef9c8a55b2ca790f6c5f0153345

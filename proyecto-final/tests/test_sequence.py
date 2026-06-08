@@ -4,12 +4,6 @@ Script de prueba de secuencia de comandos (sin robot real)
 Simula el flujo completo para verificar que todo funciona
 """
 
-import sys
-from pathlib import Path
-
-# Agregar el directorio padre al path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 import asyncio
 from robot_voice_controller import UnitreeVoiceController
 

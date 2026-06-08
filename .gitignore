@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -22,3 +23,68 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+=======
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environment - todos los niveles
+**/.venv/
+**/venv/
+**/ENV/
+.venv/
+venv/
+ENV/
+
+# Audio files
+*.wav
+*.mp3
+*.m4a
+*.flac
+
+# Transcription files
+transcription_*.txt
+recording_*.wav
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# uv
+.uv/
+
+# ========== ROS2 / Simulacion MuJoCo ==========
+
+# MuJoCo binary distribution (100MB+)
+**/mujoco/
+mujoco/
+
+# ROS 2 colcon build artifacts
+build/
+install/
+log/
+
+# Large binary downloads
+*.tar.gz
+*.zip
+
+# Python
+*.pyc
+__pycache__/
+
+# Simulation recordings / bags
+*.mcap
+*.db3
+>>>>>>> e21da9bcef627ef9c8a55b2ca790f6c5f0153345

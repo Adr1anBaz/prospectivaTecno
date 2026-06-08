@@ -4,12 +4,6 @@ Script de testing automatizado para validar comandos del robot
 Prueba todos los casos sin necesidad de voz
 """
 
-import sys
-from pathlib import Path
-
-# Agregar el directorio padre al path para importar robot_tools
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 import ollama
 import json
 from robot_tools import (
