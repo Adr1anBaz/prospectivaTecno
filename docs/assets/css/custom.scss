@@ -1,0 +1,128 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+// Mejoras de diseño para evitar desbordamiento de texto
+.main-content {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+// Mejorar tablas para que sean responsive
+table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1.5rem;
+}
+
+// Código con mejor wrapping
+pre, code {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+pre {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+// Mejorar headings
+h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+// Mejorar el contenedor principal
+.main {
+  max-width: 100%;
+}
+
+// Botones más bonitos
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+}
+
+// Mejorar las tarjetas de información
+.note, .warning, .important {
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-left: 4px solid;
+}
+
+.note {
+  background-color: rgba(102, 126, 234, 0.1);
+  border-left-color: #667eea;
+}
+
+// Toggle de tema (dark/light mode)
+.theme-toggle {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--body-background-color);
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+  z-index: 1000;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--body-text-color);
+  }
+}
+
+// Mejorar el sidebar
+.side-bar {
+  border-right: 1px solid var(--border-color);
+}
+
+// Animaciones suaves
+* {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+// Responsive mejoras
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+
+  table {
+    font-size: 0.875rem;
+  }
+
+  .theme-toggle {
+    bottom: 1rem;
+    right: 1rem;
+    width: 45px;
+    height: 45px;
+  }
+}

@@ -1,0 +1,57 @@
+<!-- Theme Toggle Button -->
+<button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Cambiar entre modo claro y oscuro">
+  <svg id="theme-icon-sun" style="display: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-2a7 7 0 1 1 0 14 7 7 0 0 1 0-14zM12 0v3M12 21v3M3 12H0M24 12h-3M4.22 4.22l-2.12-2.12M21.9 21.9l-2.12-2.12M4.22 19.78l-2.12 2.12M21.9 2.1l-2.12 2.12"/>
+  </svg>
+  <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+</button>
+
+<script>
+  (function() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const sunIcon = document.getElementById('theme-icon-sun');
+    const moonIcon = document.getElementById('theme-icon-moon');
+
+    // Función para actualizar iconos
+    function updateIcons(theme) {
+      if (theme === 'dark') {
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+      } else {
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+      }
+    }
+
+    // Inicializar iconos
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    updateIcons(currentTheme);
+
+    // Toggle theme
+    themeToggle.addEventListener('click', function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+      // Actualizar tema
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+
+      // Actualizar iconos
+      updateIcons(newTheme);
+
+      // Cambiar el color scheme de Just the Docs
+      const body = document.body;
+      if (newTheme === 'dark') {
+        body.classList.remove('light-theme');
+        body.classList.add('dark-theme');
+        document.querySelector('html').setAttribute('data-color-mode', 'dark');
+      } else {
+        body.classList.remove('dark-theme');
+        body.classList.add('light-theme');
+        document.querySelector('html').setAttribute('data-color-mode', 'light');
+      }
+    });
+  })();
+</script>

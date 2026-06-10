@@ -1,0 +1,18 @@
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{{ '/assets/css/custom.scss' | relative_url }}">
+
+<!-- Theme Toggle Script -->
+<script>
+  // Inicializar tema desde localStorage o preferencia del sistema
+  (function() {
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  })();
+</script>
+
+<style>
+  /* Asegurar que el cambio de tema sea suave */
+  :root {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+</style>

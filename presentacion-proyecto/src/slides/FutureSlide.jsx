@@ -3,39 +3,36 @@ import { motion } from 'framer-motion'
 const FutureSlide = () => {
   const roadmap = [
     {
-      phase: 'Corto Plazo',
-      icon: '🎯',
+      phase: 'CORTO PLAZO',
+      icon: '▸',
       color: 'var(--primary)',
       items: [
-        'Solucionar problema de deriva en navegación',
-        'Optimizar corrección de posición en tiempo real',
+        'Solucionar deriva en navegación',
+        'Optimizar corrección de posición RT',
         'Mejorar calidad de mapeo SLAM',
-        'Reducir latencia del pipeline de voz',
-        'Calibración fina de parámetros Nav2',
+        'Reducir latencia pipeline de voz'
       ],
     },
     {
-      phase: 'Mediano Plazo',
-      icon: '🚀',
+      phase: 'MEDIANO PLAZO',
+      icon: '▸▸',
       color: 'var(--accent)',
       items: [
         'Fusión sensorial (IMU + LiDAR + Visual)',
-        'Dashboard web para telemetría (React + WebSockets)',
-        'Sistema de logging y análisis de datos',
-        'Integración de cámara para detección visual',
-        'Control por gestos usando cámara',
+        'Dashboard web para telemetría',
+        'Sistema de logging y análisis',
+        'Integración de cámara para detección'
       ],
     },
     {
-      phase: 'Largo Plazo',
-      icon: '🌟',
+      phase: 'LARGO PLAZO',
+      icon: '▸▸▸',
       color: 'var(--secondary)',
       items: [
         'Navegación colaborativa multi-robot',
-        'Aprendizaje por refuerzo para optimizar trayectorias',
+        'Aprendizaje por refuerzo',
         'Reconocimiento de objetos con IA',
-        'Interacción natural conversacional (diálogo)',
-        'Autonomía completa en entornos complejos',
+        'Autonomía completa en entornos complejos'
       ],
     },
   ]
@@ -43,117 +40,179 @@ const FutureSlide = () => {
   return (
     <div className="slide">
       <motion.h2
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
         transition={{ duration: 0.5 }}
-        style={{ textAlign: 'center', marginBottom: '40px' }}
+        style={{ textAlign: 'center', marginBottom: '25px' }}
       >
-        🔮 Próximos Pasos y Visión Futura
+        PRÓXIMOS PASOS
       </motion.h2>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
-        {roadmap.map((phase, index) => (
-          <motion.div
-            key={phase.phase}
-            className="card"
-            style={{
-              background: `linear-gradient(135deg, ${phase.color}15, rgba(0, 0, 0, 0.3))`,
-              border: `2px solid ${phase.color}`,
-            }}
-            initial={{ x: index % 2 === 0 ? -100 : 100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.2 + index * 0.2, duration: 0.6 }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
-              <span style={{ fontSize: '2.5rem' }}>{phase.icon}</span>
-              <h3 style={{ margin: 0, color: phase.color }}>{phase.phase}</h3>
-            </div>
-            <ul style={{ fontSize: '1rem', lineHeight: '1.9' }}>
-              {phase.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </motion.div>
-        ))}
-      </div>
+      <div className="grid-2" style={{ gap: '15px' }}>
+        {/* Left column - Roadmap */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {roadmap.map((phase, index) => (
+            <motion.div
+              key={phase.phase}
+              className="card"
+              style={{
+                background: 'var(--steel)',
+                border: `2px solid ${phase.color}`,
+                borderLeftWidth: '4px',
+                padding: '15px'
+              }}
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.2 + index * 0.15, duration: 0.5 }}
+            >
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                marginBottom: '10px'
+              }}>
+                <span style={{
+                  fontSize: '1.2rem',
+                  color: phase.color,
+                  fontFamily: 'IBM Plex Mono',
+                  fontWeight: '700'
+                }}>
+                  {phase.icon}
+                </span>
+                <h3 style={{
+                  margin: 0,
+                  color: phase.color,
+                  fontSize: '1.1rem',
+                  fontFamily: 'IBM Plex Mono',
+                  letterSpacing: '1px'
+                }}>
+                  {phase.phase}
+                </h3>
+              </div>
+              <ul style={{ fontSize: '0.85rem', lineHeight: '1.5', margin: 0 }}>
+                {phase.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </div>
 
-      <motion.div
-        style={{ marginTop: '40px' }}
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-      >
-        <div className="card" style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
-          <h3 style={{ textAlign: 'center', marginBottom: '25px', color: 'var(--primary)' }}>
-            🎓 Áreas de Investigación Activa
-          </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
-            <div style={{ padding: '20px', background: 'rgba(0, 212, 255, 0.1)', borderRadius: '12px' }}>
-              <h4 style={{ color: 'var(--primary)', marginBottom: '12px' }}>🧭 Navegación</h4>
-              <p style={{ fontSize: '0.9rem', lineHeight: '1.7', opacity: 0.9 }}>
-                Algoritmos avanzados de corrección de deriva, control predictivo de trayectorias,
-                y fusión sensorial para mejorar precisión.
-              </p>
-            </div>
-            <div style={{ padding: '20px', background: 'rgba(0, 255, 136, 0.1)', borderRadius: '12px' }}>
-              <h4 style={{ color: 'var(--accent)', marginBottom: '12px' }}>🤖 IA Local</h4>
-              <p style={{ fontSize: '0.9rem', lineHeight: '1.7', opacity: 0.9 }}>
-                Optimización de modelos para reducir latencia, fine-tuning para comandos específicos,
-                y razonamiento contextual.
-              </p>
-            </div>
-            <div style={{ padding: '20px', background: 'rgba(255, 0, 234, 0.1)', borderRadius: '12px' }}>
-              <h4 style={{ color: 'var(--secondary)', marginBottom: '12px' }}>👁️ Visión</h4>
-              <p style={{ fontSize: '0.9rem', lineHeight: '1.7', opacity: 0.9 }}>
-                Detección de objetos, reconocimiento facial, seguimiento de personas,
-                y control por gestos usando cámaras.
-              </p>
-            </div>
-            <div style={{ padding: '20px', background: 'rgba(255, 200, 0, 0.1)', borderRadius: '12px' }}>
-              <h4 style={{ color: '#ffc107', marginBottom: '12px' }}>🌐 Colaboración</h4>
-              <p style={{ fontSize: '0.9rem', lineHeight: '1.7', opacity: 0.9 }}>
-                Comunicación multi-robot, coordinación de tareas,
-                y mapeo colaborativo en tiempo real.
-              </p>
+        {/* Right column - Research areas */}
+        <motion.div
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <div className="card" style={{ marginBottom: '12px' }}>
+            <h3 style={{
+              textAlign: 'center',
+              marginBottom: '15px',
+              color: 'var(--primary)',
+              fontSize: '1.1rem',
+              fontFamily: 'IBM Plex Mono',
+              letterSpacing: '1px'
+            }}>
+              ÁREAS DE INVESTIGACIÓN
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {[
+                { title: 'NAVEGACIÓN', icon: '🧭', color: 'var(--primary)', desc: 'Corrección de deriva, fusión sensorial' },
+                { title: 'IA LOCAL', icon: '🤖', color: 'var(--accent)', desc: 'Optimización, fine-tuning, razonamiento' },
+                { title: 'VISIÓN', icon: '👁️', color: 'var(--secondary)', desc: 'Detección objetos, control por gestos' },
+                { title: 'COLABORACIÓN', icon: '🌐', color: 'var(--accent)', desc: 'Multi-robot, mapeo colaborativo' }
+              ].map((area, i) => (
+                <div
+                  key={i}
+                  style={{
+                    padding: '12px',
+                    background: 'rgba(0, 0, 0, 0.4)',
+                    border: `2px solid ${area.color}`,
+                    clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)'
+                  }}
+                >
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '6px'
+                  }}>
+                    <span style={{ fontSize: '1rem' }}>{area.icon}</span>
+                    <h4 style={{
+                      color: area.color,
+                      margin: 0,
+                      fontSize: '0.9rem',
+                      fontFamily: 'IBM Plex Mono',
+                      letterSpacing: '1px'
+                    }}>
+                      {area.title}
+                    </h4>
+                  </div>
+                  <p style={{
+                    fontSize: '0.8rem',
+                    lineHeight: '1.4',
+                    opacity: 0.8,
+                    margin: 0
+                  }}>
+                    {area.desc}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </motion.div>
 
-      <motion.div
-        style={{
-          marginTop: '35px',
-          textAlign: 'center',
-          padding: '30px',
-          background: 'linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(255, 0, 234, 0.2))',
-          borderRadius: '20px',
-          border: '2px solid rgba(255, 255, 255, 0.2)',
-        }}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1.2 }}
-      >
-        <motion.h2
-          style={{ marginBottom: '15px', fontSize: '2.5rem' }}
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          🤖 Unitree Go2 + IA Local
-        </motion.h2>
-        <p style={{ fontSize: '1.3rem', lineHeight: '1.8' }}>
-          <strong>Control Inteligente</strong> | <strong>Navegación Autónoma</strong> | <strong>100% Local</strong>
-        </p>
-        <div style={{ marginTop: '25px', display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <span className="badge" style={{ fontSize: '1rem' }}>🎤 Control por Voz</span>
-          <span className="badge" style={{ fontSize: '1rem' }}>📡 Telemetría Completa</span>
-          <span className="badge" style={{ fontSize: '1rem' }}>🗺️ SLAM + Nav2</span>
-          <span className="badge" style={{ fontSize: '1rem' }}>🛡️ Seguro & Validado</span>
-        </div>
-        <p style={{ marginTop: '30px', fontSize: '1.1rem', opacity: 0.8, fontStyle: 'italic' }}>
-          Un sistema robótico completo con procesamiento local de IA<br />
-          y capacidades de navegación autónoma
-        </p>
-      </motion.div>
+          {/* Final summary card */}
+          <motion.div
+            className="card"
+            style={{
+              background: 'rgba(255, 85, 0, 0.05)',
+              border: '2px solid var(--primary)',
+              textAlign: 'center',
+              padding: '15px'
+            }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.8 }}
+          >
+            <motion.h3
+              style={{
+                marginBottom: '10px',
+                fontSize: '1.3rem',
+                color: 'var(--primary)',
+                fontFamily: 'IBM Plex Mono',
+                letterSpacing: '1px'
+              }}
+              animate={{ opacity: [1, 0.7, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              UNITREE GO2 + IA LOCAL
+            </motion.h3>
+            <p style={{
+              fontSize: '0.85rem',
+              lineHeight: '1.5',
+              marginBottom: '12px'
+            }}>
+              <strong>Control Inteligente</strong> • <strong>Navegación Autónoma</strong> • <strong>100% Local</strong>
+            </p>
+            <div style={{
+              display: 'flex',
+              gap: '8px',
+              justifyContent: 'center',
+              flexWrap: 'wrap'
+            }}>
+              {['Control Voz', 'Telemetría', 'SLAM+Nav2', 'Validado'].map((item, i) => (
+                <span
+                  key={i}
+                  className="badge"
+                  style={{ fontSize: '0.75rem', padding: '6px 12px' }}
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
     </div>
   )
 }
