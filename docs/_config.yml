@@ -96,10 +96,3 @@ aux_links:
 # Navigation
 nav_sort: order
 nav_enabled: true
-
-# Custom CSS
-sass:
-  style: compressed
-
-# Habilitar color scheme selector
-color_scheme_selector: true
