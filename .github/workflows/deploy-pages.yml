@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "docs/**"
+      - "proyecto-final/slides/**"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -43,6 +44,21 @@ jobs:
           bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build slides
+        working-directory: proyecto-final/slides
+        run: |
+          npm install
+          npm run build
+
+      - name: Copy slides to site
+        run: |
+          cp -r proyecto-final/slides/dist docs/_site/slides
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

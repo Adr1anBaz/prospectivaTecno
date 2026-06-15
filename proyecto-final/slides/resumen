@@ -1,0 +1,29 @@
+Este proyecto tiene como objetivo crear un agente capaz de guiar a un usuario a través de los diferentes lugares de la ibero, esto a partir de responder 
+peticiones directas del mismo, ejemplo: Llévame a la cafetería con el desayuno más barato. Llévame a la cafetería que tenga buena señal de internet. Llévame a la
+cafetería que no tenga tantas personas ahorita.
+
+Esto se logra a través de dos elementos principales: Periférico robot y agente orquestador (cerebro).
+
+Perfiférico robot: Es un elemento de la marca unitree, modelo go2 air. 
+En un principio se deseó usar este dispositivo por su atractividad para el público, según nuestras observaciones éste llama la atención de las personas
+cuando lo ven, lo graban y nos hacen preguntas sobre su uso.
+
+El primer obstáculo que determinaba si usabamos este dispositivo o no: la capacidad de controlarlo mediante python, como si tuviera un SDK.
+Por un lado, la versión que tenemos en la escuela no es "open source", pero es posible controlarlo a través de una biblioteca que usa herramientas del WebRTC del
+robot para controlarlo. Entonces, desde esta perspectiva ya no es necesario usar el control mando nativo del robot para usarlo.
+
+El segundo obstáculo que encontramos con éste elemento fue su capacidad de ubicarse en el espacio y de hacer navegación autónoma; la idea inicial del proyecto.
+No obstante, a pesar de las herramientas encontradas para Ros2, con el tiempo asignado para este elemento, no se logró obtener un resultado satisfactorio para el robot, por lo que se optó por otra aproximación, manteniendo la idea original de que el robot sirva como un elemento de guía para una persona: rutas pregrabadas. Cosa que se ampliará más adelante.
+
+Agente: El segundo elemento y el más importante de todos.
+El robot por sí mismo no ejecuta nada más que su programación habitual, lo hacemos "más inteligente" a través de un agente de inteligencia artificial capaz de determinar los siguientes movimientos del robot y ejecutarlos. 
+Este agente, por ahora llamado "Blu" funciona mediante un conjunto de modelos y tecnologías combinadas:
+1. Modelo whisper: Para poder darle instrucciones mediante comandos de voz
+2. LLM's: En plural porque realmente son varios los modelos que usaremos. El principal se encarga de recibir las transcripciones de las instrucciones y determinar qué tipo de acción debería hacer el robot: seguir comandos básicos, guiar a un usuario por la universidad o modo de charla.
+3. MCP: Queremos conocer y experimentar más con esta tecnología, y no queremos que el sistema guarde más que los modelos, por lo tanto, la información completa de la universidad se guarda en bases de datos vectorizadas para poder realizarle consultas semánticas al agente (ej. llévame a donde tengan internet). La base de datos se estará alojando en un servidor privado.
+4. Grafo: Para que el sistema sea óptimo en sus trayectorias, se requiere de un grafo donde cada nodo representa una localización alcanzable por el robot. Para mapear esta estructura, es necesario que cada movimiento grabado de ruta del robot sea hecha por tramos, es decir, no hacer una ruta directa desde el laboratorio hasta giornale, si no más bien dividir esta ruta en tramos pequeños, modulares, para que se pueda ir construyendo y optimizando. El algoritmo usado para calcular la trayectoría será Djkstra, lo mismo, el robot no debe alojar nada de esa información, la base de datos soporta también la información del grafo.
+5. Modelo text-to-speech: Para que sea capaz de responder las peticiones en tiempo real.
+
+Algunos cuellos de botella que hemos tenido: 
+1. Local o Nube: No hemos podido usar las raspberri Pi 5 por aparentes errores en la carga del sistema operativo. No hemos podido hacer que lea la SD card con el SO. Esto nos detiene de probar los modelos localmente en un dispositivo portable, lo que podría ocasionarnos problemas al futuro.
+2. Conexión por wifi. Hasta ahora es necesario que el sistema que controla al robot se conecte a su access point para darle instrucciones; ya que no fue posible conectarlo al internet de la escuela o a una red generada; por lo que esto puede presentar problemas para hacer peticiones a internet, principalmente si los servidores no están en la red del robot.
