@@ -67,7 +67,7 @@ export default function ObjetivoSlide() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         style={{
-          marginTop: 120,
+          marginTop: 30,
           borderRadius: 16,
           overflow: 'hidden',
           border: '1px solid var(--border)',
