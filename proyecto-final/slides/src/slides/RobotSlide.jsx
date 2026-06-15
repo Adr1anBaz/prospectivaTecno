@@ -54,7 +54,7 @@ export default function RobotSlide() {
           marginBottom: 36,
           fontWeight: 500,
         }}>
-          Unitree Go2 Air
+          Unitree Go2 Pro
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
