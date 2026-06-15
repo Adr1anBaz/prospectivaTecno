@@ -8,7 +8,7 @@ const queries = [
 
 export default function ObjetivoSlide() {
   return (
-    <div style={{ padding: '0 80px', maxWidth: 1000 }}>
+    <div style={{ padding: '0 80px', maxWidth: 1100 }}>
       <motion.h2
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -70,6 +70,7 @@ export default function ObjetivoSlide() {
           overflow: 'hidden',
           border: '1px solid var(--border)',
           background: 'var(--surface)',
+          minHeight: 400,
         }}
       >
         <img
