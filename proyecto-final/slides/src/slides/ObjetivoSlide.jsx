@@ -61,10 +61,16 @@ export default function ObjetivoSlide() {
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.85 }}
-        style={{ marginTop: 48 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.85, duration: 0.5 }}
+        style={{
+          marginTop: 48,
+          borderRadius: 16,
+          overflow: 'hidden',
+          border: '1px solid var(--border)',
+          background: 'var(--surface)',
+        }}
       >
         <img
           src={`${import.meta.env.BASE_URL}images/muestra.png`}
@@ -73,7 +79,7 @@ export default function ObjetivoSlide() {
             width: '100%',
             height: 'auto',
             display: 'block',
-            borderRadius: 12,
+            objectFit: 'cover',
           }}
         />
       </motion.div>
