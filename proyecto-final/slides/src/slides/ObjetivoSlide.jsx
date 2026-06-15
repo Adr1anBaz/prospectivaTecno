@@ -60,7 +60,7 @@ export default function ObjetivoSlide() {
         ))}
       </div>
 
-      <div style={{ height: 80 }}></div>
+      <div style={{ height: 40 }}></div>
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
