@@ -23,7 +23,7 @@ export default function RobotSlide() {
         }}
       >
         <img
-          src="/images/22.webp"
+          src={`${import.meta.env.BASE_URL}images/22.webp`}
           alt="Unitree Go2 Air"
           style={{
             width: '100%',
