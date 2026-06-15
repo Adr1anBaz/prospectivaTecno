@@ -69,6 +69,7 @@ export default function ObjetivoSlide() {
           overflow: 'hidden',
           border: '1px solid var(--border)',
           background: 'var(--surface)',
+          height: 'auto',
         }}
       >
         <img
