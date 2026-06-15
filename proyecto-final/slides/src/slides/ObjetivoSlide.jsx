@@ -37,7 +37,7 @@ export default function ObjetivoSlide() {
         respondiendo peticiones en lenguaje natural
       </motion.p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 80 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {queries.map((q, i) => (
           <motion.div
             key={i}
@@ -59,6 +59,8 @@ export default function ObjetivoSlide() {
           </motion.div>
         ))}
       </div>
+
+      <div style={{ height: 80 }}></div>
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
