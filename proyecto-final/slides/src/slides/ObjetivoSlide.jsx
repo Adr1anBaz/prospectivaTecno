@@ -79,7 +79,7 @@ export default function ObjetivoSlide() {
             width: '100%',
             height: 'auto',
             display: 'block',
-            objectFit: 'cover',
+            objectFit: 'contain',
           }}
         />
       </motion.div>
