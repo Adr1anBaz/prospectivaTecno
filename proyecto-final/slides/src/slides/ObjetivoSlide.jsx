@@ -70,7 +70,7 @@ export default function ObjetivoSlide() {
           overflow: 'hidden',
           border: '1px solid var(--border)',
           background: 'var(--surface)',
-          minHeight: 400,
+          height: 500,
         }}
       >
         <img
