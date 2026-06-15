@@ -59,6 +59,23 @@ export default function ObjetivoSlide() {
           </motion.div>
         ))}
       </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.85 }}
+        style={{ marginTop: 48 }}
+      >
+        <img
+          src="/images/muestra.png"
+          alt="Muestra del agente"
+          style={{
+            maxWidth: '100%',
+            height: 'auto',
+            borderRadius: 12,
+          }}
+        />
+      </motion.div>
     </div>
   )
 }
