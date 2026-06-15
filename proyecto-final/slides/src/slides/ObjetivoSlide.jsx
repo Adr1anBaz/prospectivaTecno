@@ -63,14 +63,12 @@ export default function ObjetivoSlide() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.85, duration: 0.5 }}
+        transition={{ duration: 0.5 }}
         style={{
-          marginTop: 48,
           borderRadius: 16,
           overflow: 'hidden',
           border: '1px solid var(--border)',
           background: 'var(--surface)',
-          minHeight: 400,
         }}
       >
         <img
