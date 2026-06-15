@@ -67,11 +67,12 @@ export default function ObjetivoSlide() {
         style={{ marginTop: 48 }}
       >
         <img
-          src="/images/muestra.png"
+          src={`${import.meta.env.BASE_URL}images/muestra.png`}
           alt="Muestra del agente"
           style={{
-            maxWidth: '100%',
+            width: '100%',
             height: 'auto',
+            display: 'block',
             borderRadius: 12,
           }}
         />
