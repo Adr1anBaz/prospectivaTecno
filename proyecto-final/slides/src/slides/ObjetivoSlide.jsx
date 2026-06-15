@@ -74,7 +74,7 @@ export default function ObjetivoSlide() {
         }}
       >
         <img
-          src={`${import.meta.env.BASE_URL}images/muestra.png`}
+          src={`${import.meta.env.BASE_URL}images/muestra.webp`}
           alt="Muestra del agente"
           style={{
             width: '100%',
