@@ -19,7 +19,7 @@ Sistema de chatbot web con gestión de contexto conversacional usando Ollama, Fa
 
 | Campo | Detalle |
 |:------|:--------|
-| **Alumno** | Adrian Bazaldua |
+| **Alumnos** | Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo |
 | **Fecha** | Junio 2026 |
 | **Práctica** | #3 - Chatbot con Contexto y Base de Datos |
 
@@ -553,7 +553,7 @@ El trabajo con Ollama demuestra:
 ---
 
 **Fecha de elaboración:** Junio 2026  
-**Autor:** Adrian Bazaldua  
+**Autores:** Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo  
 **Curso:** IA Generativa y Prospectiva Tecnológica
 
 {: .note }

@@ -178,7 +178,7 @@ La configuración óptima depende del caso de uso específico.
 ---
 
 **Fecha de elaboración:** 4 de junio de 2026  
-**Autores:** Sebastián Enguilo, Fernando Pérez
+**Autores:** Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo
 
 {: .note }
 > 📊 Este reporte incluye benchmarks de 100 ciclos por modelo.

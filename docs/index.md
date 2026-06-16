@@ -20,7 +20,7 @@ Colección de prácticas del curso de IA Generativa y Prospectiva Tecnológica
 
 | Campo | Detalle |
 |:------|:--------|
-| **Alumno** | Adrian Bazaldua |
+| **Alumnos** | Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo |
 | **Curso** | IA Generativa y Prospectiva Tecnológica |
 | **Periodo** | Verano 2026 |
 

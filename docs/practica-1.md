@@ -19,7 +19,7 @@ Exploración práctica de modelos de lenguaje grande (LLMs) usando Ollama y Hugg
 
 | Campo | Detalle |
 |:------|:--------|
-| **Alumno** | Adrian Bazaldua |
+| **Alumnos** | Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo |
 | **Materia** | IA Generativa y LLMs |
 | **Fecha** | Junio 2026 |
 | **Práctica** | #1 - Panorama de IA Generativa y LLM |
@@ -283,7 +283,7 @@ En última instancia, el panorama de la IA generativa local abre un horizonte al
 ---
 
 **Fecha de elaboración:** 1 de junio de 2026  
-**Autor:** Adrian Bazaldua  
+**Autores:** Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo  
 **Curso:** IA Generativa y LLMs - Verano 2026
 
 {: .note }

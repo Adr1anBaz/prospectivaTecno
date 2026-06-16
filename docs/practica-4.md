@@ -19,7 +19,7 @@ Comparación de modelos LLM: Ollama local, Google Gemini API y Groq API usando u
 
 | Campo | Detalle |
 |:------|:--------|
-| **Alumno** | Adrian Bazaldua |
+| **Alumnos** | Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo |
 | **Fecha** | Junio 2026 |
 | **Práctica** | #4 - Chatbot Híbrido con APIs Externas |
 
@@ -282,7 +282,7 @@ Abrir: `http://localhost:5500`
 ---
 
 **Fecha de elaboración:** Junio 2026  
-**Autor:** Adrian Bazaldua  
+**Autores:** Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo  
 **Curso:** IA Generativa y Prospectiva Tecnológica
 
 {: .note }
