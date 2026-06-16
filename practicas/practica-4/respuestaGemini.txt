@@ -1,0 +1,23 @@
+MODELO: 2.5-FLASH
+
+La odometría diferencial es una técnica para estimar la posición y orientación de un robot móvil con dos ruedas motrices e independientes, utilizando datos de sus encoders.
+
+1.  **Explicación Conceptual:** Mide el número de rotaciones de cada rueda. Con el radio de las ruedas y la distancia entre ellas (ancho del robot), se calcula la distancia lineal recorrida por cada rueda. Mediante principios geométricos, se infiere el cambio de posición (dx, dy) y orientación (dθ) del centro del robot en un pequeño intervalo de tiempo. Estos cambios se integran continuamente para estimar la pose global del robot.
+
+2.  **Ecuaciones Básicas:**
+    *   Distancia rueda izquierda: `dL_dist = encoder_L * radio_rueda`
+    *   Distancia rueda derecha: `dR_dist = encoder_R * radio_rueda`
+    *   Cambio de orientación: `dθ = (dR_dist - dL_dist) / ancho_robot`
+    *   Distancia del centro: `d_centro = (dR_dist + dL_dist) / 2`
+    *   Cambio de posición (marco local): `dx_local = d_centro * cos(dθ / 2)`
+    *   `dy_local = d_centro * sin(dθ / 2)`
+    (Estos `dx_local`, `dy_local`, `dθ` se transforman al sistema global y se acumulan).
+
+3.  **Ejemplo:** Un robot (ancho=0.5m, radio=0.1m) gira la rueda izquierda 1 rad y la derecha 2 rad.
+    *   `dL_dist = 0.1m`, `dR_dist = 0.2m`.
+    *   `dθ = (0.2 - 0.1) / 0.5 = 0.2 rad`.
+    *   `d_centro = (0.2 + 0.1) / 2 = 0.15m`.
+    *   `dx_local ≈ 0.15 * cos(0.1) ≈ 0.149m`, `dy_local ≈ 0.15 * sin(0.1) ≈ 0.014m`.
+    El robot avanzó aproximadamente 0.149m, se desplazó lateralmente 0.014m y giró 0.2 rad.
+
+4.  **Limitación Práctica:** La principal es la **acumulación de errores**. Pequeños deslizamientos de las ruedas, imprecisiones en los encoders, variaciones en el diámetro de las ruedas o superficies irregulares causan un "drift" (desvío) en la posición estimada que se magnifica con el tiempo y la distancia recorrida, haciendo que la estimación se aleje de la posición real.

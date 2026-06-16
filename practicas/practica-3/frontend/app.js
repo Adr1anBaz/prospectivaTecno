@@ -1,6 +1,7 @@
 const API_URL = "http://localhost:8000/chat";
 const CONVERSATIONS_URL = "http://localhost:8000/conversations";
 const PROFILES_URL = "http://localhost:8000/profiles";
+const PROVIDERS_URL = "http://localhost:8000/providers";
 
 const form = document.getElementById("chatForm");
 const chat = document.getElementById("chat");
@@ -21,14 +22,28 @@ const profileSelect = document.getElementById("copilot_profile");
 const systemPromptInput = document.getElementById("system_prompt");
 const loadProfileBtn = document.getElementById("loadProfileBtn");
 const activeProfileName = document.getElementById("activeProfileName");
-const statusProfileName = document.getElementById("statusProfileName");
-const profileStatusBar = document.getElementById("profileStatusBar");
+
+// Provider elements
+const providerSelect = document.getElementById("provider");
+const modelSelect = document.getElementById("model");
+
+// Status bar elements
+const statusModelText = document.getElementById("statusModelText");
+const statusProfileText = document.getElementById("statusProfileText");
 
 // Current conversation ID
 let currentConversationId = null;
 
 // Profiles cache
 let profiles = {};
+
+// Fallback provider models (used if backend is not running)
+let providerModels = {
+  "ollama": ["llama3.2:3b", "gemma3:4b", "qwen2.5:7b", "mistral:7b"],
+  "gemini": ["gemini-2.5-flash", "gemini-2.5-flash-lite"],
+  "groq": ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
+  "openrouter": ["google/gemma-2-9b-it:free", "mistralai/mistral-7b-instruct:free", "meta-llama/llama-3.2-3b-instruct:free"],
+};
 
 // Profile icons
 const profileIcons = {
@@ -37,6 +52,14 @@ const profileIcons = {
   "robotica": "🤖",
   "programacion": "💻",
   "investigacion": "📚"
+};
+
+// Provider icons
+const providerIcons = {
+  "ollama": "🦙",
+  "gemini": "✨",
+  "groq": "⚡",
+  "openrouter": "🌐"
 };
 
 // Load profiles from backend
@@ -58,6 +81,60 @@ async function loadProfiles() {
   }
 }
 
+// Load providers from backend
+async function loadProviders() {
+  try {
+    const response = await fetch(PROVIDERS_URL);
+
+    if (!response.ok) {
+      throw new Error("No se pudo consultar el endpoint /providers.");
+    }
+
+    providerModels = await response.json();
+
+  } catch (error) {
+    console.error("Usando modelos por defecto (backend no disponible):", error);
+  }
+
+  renderModelOptions();
+}
+
+function renderModelOptions() {
+  const provider = providerSelect.value;
+  const models = providerModels[provider] || [];
+
+  modelSelect.innerHTML = "";
+  models.forEach((model) => {
+    const opt = document.createElement("option");
+    opt.value = model;
+    opt.textContent = model;
+    modelSelect.appendChild(opt);
+  });
+
+  updateStatusBar();
+}
+
+function updateStatusBar() {
+  const provider = providerSelect.value;
+  const model = modelSelect.value || "sin modelo";
+  const icon = providerIcons[provider] || "⚡";
+
+  if (statusModelText) {
+    statusModelText.textContent = `${provider} / ${model}`;
+  }
+
+  const statusIcon = document.querySelector('.model-status-bar .status-icon');
+  if (statusIcon) {
+    statusIcon.textContent = icon;
+  }
+
+  if (statusProfileText) {
+    const profileId = profileSelect.value;
+    const profileLabel = profiles[profileId] ? profiles[profileId].label : profileSelect.options[profileSelect.selectedIndex].text;
+    statusProfileText.textContent = profileLabel;
+  }
+}
+
 function loadSelectedProfile() {
   const profileId = profileSelect.value;
 
@@ -65,36 +142,24 @@ function loadSelectedProfile() {
     systemPromptInput.value = profiles[profileId].system_prompt;
     updateProfileIndicators(profiles[profileId].label, profileId);
   }
+
+  updateStatusBar();
 }
 
 function updateProfileIndicators(profileLabel, profileId = null) {
-  // Get profile ID if not provided
   if (!profileId) {
     profileId = profileSelect.value;
   }
 
   const icon = profileIcons[profileId] || "🤖";
 
-  // Update badge in controls panel
   if (activeProfileName) {
     activeProfileName.textContent = profileLabel;
   }
 
-  // Update badge icon
   const badgeIcon = document.querySelector('.badge-icon');
   if (badgeIcon) {
     badgeIcon.textContent = icon;
-  }
-
-  // Update status bar
-  if (statusProfileName) {
-    statusProfileName.textContent = profileLabel;
-  }
-
-  // Update status icon
-  const statusIcon = document.querySelector('.status-icon');
-  if (statusIcon) {
-    statusIcon.textContent = icon;
   }
 }
 
@@ -124,12 +189,13 @@ newConversationBtn.addEventListener('click', () => {
 
 function getConfig() {
   return {
-    model: document.getElementById("model").value,
+    provider: providerSelect.value,
+    model: modelSelect.value,
     copilot_profile: profileSelect.value,
     system_prompt: systemPromptInput.value,
     temperature: Number(document.getElementById("temperature").value),
     top_p: Number(document.getElementById("top_p").value),
-    num_predict: Number(document.getElementById("num_predict").value),
+    max_tokens: Number(document.getElementById("max_tokens").value),
     num_ctx: Number(document.getElementById("num_ctx").value),
     repeat_penalty: Number(document.getElementById("repeat_penalty").value)
   };
@@ -138,7 +204,7 @@ function getConfig() {
 function addMessage(role, content, type = "assistant") {
   const div = document.createElement("div");
   div.className = `message ${type}`;
-  div.innerHTML = `<strong>${role}</strong>${escapeHtml(content)}`;
+  div.innerHTML = `<strong>${escapeHtml(role)}</strong>${escapeHtml(content)}`;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
   return div;
@@ -161,7 +227,7 @@ function removeThinkingIndicator() {
   }
 }
 
-async function typeMessage(element, text, speed = 20) {
+async function typeMessage(element, text, speed = 15) {
   const contentContainer = document.createElement("span");
   element.appendChild(contentContainer);
 
@@ -187,16 +253,15 @@ function renderMetrics(data) {
   const metrics = data.metrics;
 
   const items = [
-    ["Perfil usado", data.copilot_label],
+    ["Proveedor", data.provider],
     ["Modelo", data.model],
+    ["Perfil usado", data.copilot_label],
     ["Tiempo backend", `${metrics.wall_time_s.toFixed(3)} s`],
-    ["Tiempo Ollama", `${metrics.total_duration_s.toFixed(3)} s`],
-    ["Carga modelo", `${metrics.load_duration_s.toFixed(3)} s`],
-    ["Tokens entrada", metrics.prompt_eval_count],
-    ["Tokens salida", metrics.eval_count],
+    ["Tiempo proveedor", `${metrics.provider_duration_s.toFixed(3)} s`],
+    ["Tokens entrada", metrics.prompt_tokens],
+    ["Tokens salida", metrics.completion_tokens],
     ["Tokens totales", metrics.total_tokens],
-    ["Generación", `${metrics.eval_duration_s.toFixed(3)} s`],
-    ["Tokens/s", metrics.tokens_per_second.toFixed(2)]
+    ["Tokens/s aprox.", metrics.tokens_per_second.toFixed(2)]
   ];
 
   metricsGrid.innerHTML = items
@@ -208,7 +273,6 @@ function renderMetrics(data) {
     `)
     .join("");
 
-  // Show the floating button
   if (metricsToggleBtn) {
     metricsToggleBtn.style.display = "flex";
   }
@@ -228,20 +292,14 @@ function closeMetricsModal() {
 
 function hideWelcomeHeader() {
   welcomeHeader.classList.add('hidden');
-  if (profileStatusBar) {
-    profileStatusBar.style.display = 'block';
-  }
 }
 
 function showWelcomeHeader() {
   welcomeHeader.classList.remove('hidden');
-  if (profileStatusBar) {
-    profileStatusBar.style.display = 'none';
-  }
 }
 
 function escapeHtml(text) {
-  return text
+  return String(text)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
@@ -271,12 +329,11 @@ async function loadConversation(conversationId) {
     chat.innerHTML = "";
     hideWelcomeHeader();
 
-    // Display all messages
     data.messages.forEach(msg => {
       if (msg.role === "user") {
         addMessage("Usuario", msg.content, "user");
       } else if (msg.role === "assistant") {
-        addMessage(`Modelo`, msg.content, "assistant");
+        addMessage("Modelo", msg.content, "assistant");
       }
     });
 
@@ -308,13 +365,9 @@ form.addEventListener("submit", async (event) => {
   sendBtn.disabled = true;
   sendBtn.textContent = "Generando...";
 
-  // Show thinking indicator
   addThinkingIndicator();
 
   try {
-    console.log("Sending request to:", API_URL);
-    console.log("Payload:", payload);
-
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
@@ -323,35 +376,35 @@ form.addEventListener("submit", async (event) => {
       body: JSON.stringify(payload)
     });
 
-    console.log("Response status:", response.status);
-
     const data = await response.json();
-    console.log("Response data:", data);
 
     if (!response.ok) {
       throw new Error(data.detail || "Error desconocido");
     }
 
-    // Remove thinking indicator
     removeThinkingIndicator();
 
-    // Update current conversation ID
     currentConversationId = data.conversation_id;
 
-    // Add message with typing effect
-    const messageObj = addMessageWithTyping(`${data.copilot_label}`, data.reply, "assistant");
+    const roleLabel = `${data.copilot_label} (${data.provider} / ${data.model})`;
+    const messageObj = addMessageWithTyping(roleLabel, data.reply, "assistant");
     await messageObj.typeText();
 
-    // Update profile indicators with the actual profile used
     updateProfileIndicators(data.copilot_label, data.copilot_profile);
+
+    // Update status bar
+    if (statusModelText) {
+      statusModelText.textContent = `${data.provider} / ${data.model}`;
+    }
+    if (statusProfileText) {
+      statusProfileText.textContent = data.copilot_label;
+    }
 
     renderMetrics(data);
 
-    // Save to localStorage
     localStorage.setItem("currentConversationId", currentConversationId);
 
   } catch (error) {
-    console.error("Fetch error details:", error);
     removeThinkingIndicator();
 
     let errorMessage = error.message;
@@ -375,6 +428,12 @@ clearBtn.addEventListener("click", () => {
 loadProfileBtn.addEventListener("click", loadSelectedProfile);
 profileSelect.addEventListener("change", loadSelectedProfile);
 
+// Provider change updates model list
+providerSelect.addEventListener("change", renderModelOptions);
+
+// Model change updates status bar
+modelSelect.addEventListener("change", updateStatusBar);
+
 // Metrics modal
 if (metricsToggleBtn) {
   metricsToggleBtn.addEventListener("click", openMetricsModal);
@@ -384,7 +443,6 @@ if (metricsCloseBtn) {
   metricsCloseBtn.addEventListener("click", closeMetricsModal);
 }
 
-// Close modal when clicking outside
 if (metricsModal) {
   metricsModal.addEventListener("click", (e) => {
     if (e.target === metricsModal) {
@@ -393,19 +451,21 @@ if (metricsModal) {
   });
 }
 
-// Close modal with Escape key
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && metricsModal && metricsModal.classList.contains('open')) {
     closeMetricsModal();
   }
 });
 
-// On page load, try to restore the last conversation and load profiles
+// On page load
 window.addEventListener("DOMContentLoaded", () => {
-  // Load profiles first
-  loadProfiles();
+  // Render model options immediately from fallback data
+  renderModelOptions();
 
-  // Then restore conversation if exists
+  // Then load from backend (will update if available)
+  loadProfiles();
+  loadProviders();
+
   const savedConversationId = localStorage.getItem("currentConversationId");
   if (savedConversationId) {
     loadConversation(parseInt(savedConversationId));

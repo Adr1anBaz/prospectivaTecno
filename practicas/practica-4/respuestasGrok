@@ -1,0 +1,20 @@
+MODELO USADO: llama-3.3-70b-versatile
+
+**Odometría Diferencial en Robots Móviles**
+
+La odometría diferencial es un método para calcular la posición y orientación de un robot móvil de dos ruedas. Se basa en la medición de la distancia recorrida por cada rueda y la diferencia entre ellas.
+
+**Ecuaciones Básicas**
+
+* Desplazamiento lineal: `x = (d_r + d_l) / 2`
+* Desplazamiento angular: `θ = (d_r - d_l) / b`
+
+donde `d_r` y `d_l` son las distancias recorridas por la rueda derecha e izquierda, respectivamente, y `b` es la distancia entre las ruedas.
+
+**Ejemplo**
+
+Un robot móvil con ruedas de 10 cm de diámetro y 20 cm de distancia entre ellas. Si la rueda derecha recorre 50 cm y la rueda izquierda recorre 40 cm, el desplazamiento lineal es `x = (50 + 40) / 2 = 45 cm` y el desplazamiento angular es `θ = (50 - 40) / 20 = 0,5 rad`.
+
+**Limitación Práctica**
+
+La odometría diferencial puede ser afectada por la fricción y el deslizamiento de las ruedas, lo que puede provocar errores en la estimación de la posición y orientación del robot. Es importante considerar estas limitaciones al implementar este método en un robot móvil.

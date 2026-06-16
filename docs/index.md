@@ -51,6 +51,13 @@ Sistema de Retrieval-Augmented Generation (RAG) utilizando ChromaDB para gestió
 
 ---
 
+### 🌐 [Práctica 4: Chatbot Híbrido con APIs Externas](./practica-4)
+Comparación de modelos LLM usando Ollama local, Google Gemini API y Groq API. Análisis de velocidad, calidad, tokens y privacidad entre proveedores.
+
+**Temas**: APIs Externas, Gemini, Groq, Ollama, Comparativa de LLMs
+
+---
+
 ## Navegación
 
 Utiliza el **menú lateral** para acceder a cada práctica. Cada página contiene la documentación completa de la práctica correspondiente.

@@ -214,6 +214,10 @@ textarea {
   color: var(--text-primary);
 }
 
+.input-model-selector select {
+  width: auto;
+}
+
 input:focus,
 select:focus,
 textarea:focus {
@@ -322,6 +326,41 @@ button:disabled {
   font-weight: 700;
   color: white;
   line-height: 1.2;
+}
+
+/* Model Status Bar (top) */
+.model-status-bar {
+  background: var(--bg-input);
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+}
+
+.model-status-bar .status-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.model-status-bar .status-icon {
+  font-size: 1rem;
+}
+
+.model-status-bar .status-text {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.model-status-bar .status-profile {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-left: auto;
 }
 
 /* Profile Status Bar */
@@ -498,6 +537,36 @@ button:disabled {
     left: 0;
     max-width: 100%;
   }
+}
+
+/* Provider/Model selector above input */
+.input-model-selector {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 800px;
+  margin: 0 auto 0.5rem;
+}
+
+.input-model-selector select {
+  width: auto;
+  margin: 0;
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  cursor: pointer;
+  appearance: menulist;
+}
+
+.input-model-selector #provider {
+  flex: 0 0 130px;
+}
+
+.input-model-selector #model {
+  flex: 1 1 auto;
+  min-width: 180px;
 }
 
 .chat-form {

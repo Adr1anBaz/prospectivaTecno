@@ -1,9 +1,13 @@
+import os
 import time
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Tuple
 
 import requests
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from google import genai
+from openai import OpenAI
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -19,10 +23,11 @@ from database import (
 )
 
 
+load_dotenv()
+
 OLLAMA_CHAT_URL = "http://localhost:11434/api/chat"
 
 
-# Copilot profiles with predefined system prompts
 COPILOT_PROFILES: Dict[str, Dict[str, str]] = {
     "generico": {
         "label": "Asistente genérico",
@@ -69,61 +74,77 @@ COPILOT_PROFILES: Dict[str, Dict[str, str]] = {
 }
 
 
+PROVIDER_MODELS = {
+    "ollama": [
+        "llama3.2:3b",
+        "gemma3:4b",
+        "qwen2.5:7b",
+        "mistral:7b",
+    ],
+    "gemini": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+    ],
+    "groq": [
+        "llama-3.3-70b-versatile",
+        "llama-3.1-8b-instant",
+    ],
+    "openrouter": [
+        "google/gemma-2-9b-it:free",
+        "mistralai/mistral-7b-instruct:free",
+        "meta-llama/llama-3.2-3b-instruct:free",
+    ],
+}
+
+
 app = FastAPI(
-    title="Chatbot LLM local con Ollama",
-    description="API intermedia para conversar con modelos locales mediante Ollama con historial persistente.",
-    version="2.0.0",
+    title="Chatbot híbrido con Ollama y APIs externas",
+    description="API intermedia para comparar LLM local con modelos remotos de Gemini, Groq y OpenRouter.",
+    version="3.0.0",
 )
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5500",
-        "http://127.0.0.1:5500",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
 )
 
 
-# Pydantic models for API
 class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=4000)
     conversation_id: Optional[int] = Field(default=None, description="ID de la conversación (None para nueva)")
-    model: str = Field(default="llama3.2:3b", min_length=1, max_length=100)
+
+    provider: str = Field(default="ollama", min_length=1, max_length=50)
+    model: str = Field(default="llama3.2:3b", min_length=1, max_length=150)
 
     copilot_profile: str = Field(default="generico", min_length=1, max_length=50)
     system_prompt: str = Field(default="", max_length=6000)
 
     temperature: float = Field(default=0.7, ge=0.0, le=1.2)
     top_p: float = Field(default=0.9, ge=0.1, le=1.0)
-    num_predict: int = Field(default=800, ge=20, le=4000)
+    max_tokens: int = Field(default=4000, ge=20, le=4000)
+
     num_ctx: int = Field(default=4096, ge=512, le=8192)
     repeat_penalty: float = Field(default=1.1, ge=1.0, le=2.0)
-
     keep_alive: str = Field(default="5m", max_length=20)
 
 
 class ChatMetrics(BaseModel):
     wall_time_s: float
-    total_duration_s: float
-    load_duration_s: float
-    prompt_eval_count: int
-    eval_count: int
+    provider_duration_s: float
+    prompt_tokens: int
+    completion_tokens: int
     total_tokens: int
-    eval_duration_s: float
     tokens_per_second: float
+    raw_provider_metrics: Optional[dict] = None
 
 
 class ChatResponse(BaseModel):
     conversation_id: int
+    provider: str
     model: str
     copilot_profile: str
     copilot_label: str
@@ -160,10 +181,11 @@ class ConversationDetailResponse(BaseModel):
 @app.get("/")
 def root():
     return {
-        "message": "API de chatbot local con Ollama con historial persistente",
+        "message": "API de chatbot híbrido con Ollama y APIs externas",
         "docs": "/docs",
         "health": "/health",
-        "version": "2.0.0",
+        "profiles": "/profiles",
+        "providers": "/providers",
     }
 
 
@@ -174,12 +196,15 @@ def health():
 
 @app.get("/profiles")
 def get_profiles():
-    """Get all available copilot profiles"""
     return COPILOT_PROFILES
 
 
+@app.get("/providers")
+def providers():
+    return PROVIDER_MODELS
+
+
 def get_profile(profile_id: str) -> Dict[str, str]:
-    """Get a profile by ID, raise exception if not found"""
     if profile_id not in COPILOT_PROFILES:
         raise HTTPException(
             status_code=400,
@@ -188,15 +213,181 @@ def get_profile(profile_id: str) -> Dict[str, str]:
     return COPILOT_PROFILES[profile_id]
 
 
+def validate_provider(provider: str) -> str:
+    provider = provider.strip().lower()
+    if provider not in PROVIDER_MODELS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Proveedor no válido: {provider}. Usa GET /providers para ver proveedores disponibles.",
+        )
+    return provider
+
+
+def build_messages(system_prompt: str, user_message: str) -> List[Dict[str, str]]:
+    return [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_message},
+    ]
+
+
+def build_messages_with_history(system_prompt: str, history: list, user_message: str) -> List[Dict[str, str]]:
+    messages = [{"role": "system", "content": system_prompt}]
+    for msg in history:
+        if msg.role != "system":
+            messages.append({"role": msg.role, "content": msg.content})
+    messages.append({"role": "user", "content": user_message})
+    return messages
+
+
+def call_ollama(
+    request: ChatRequest,
+    messages: List[Dict[str, str]],
+) -> Tuple[str, ChatMetrics]:
+    payload = {
+        "model": request.model.strip(),
+        "messages": messages,
+        "stream": False,
+        "keep_alive": request.keep_alive,
+        "options": {
+            "temperature": request.temperature,
+            "top_p": request.top_p,
+            "num_predict": request.max_tokens,
+            "num_ctx": request.num_ctx,
+            "repeat_penalty": request.repeat_penalty,
+        },
+    }
+
+    start_time = time.perf_counter()
+    response = requests.post(OLLAMA_CHAT_URL, json=payload, timeout=300)
+    end_time = time.perf_counter()
+
+    response.raise_for_status()
+    data = response.json()
+
+    message = data.get("message", {})
+    reply = message.get("content", "")
+
+    total_duration_s = data.get("total_duration", 0) / 1e9
+    prompt_tokens = data.get("prompt_eval_count", 0)
+    completion_tokens = data.get("eval_count", 0)
+    eval_duration_s = data.get("eval_duration", 0) / 1e9
+    total_tokens = prompt_tokens + completion_tokens
+    tokens_per_second = completion_tokens / eval_duration_s if eval_duration_s > 0 else 0
+
+    return reply, ChatMetrics(
+        wall_time_s=end_time - start_time,
+        provider_duration_s=total_duration_s,
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
+        total_tokens=total_tokens,
+        tokens_per_second=tokens_per_second,
+        raw_provider_metrics={
+            "load_duration_s": data.get("load_duration", 0) / 1e9,
+            "eval_duration_s": eval_duration_s,
+        },
+    )
+
+
+def call_gemini(
+    request: ChatRequest,
+    messages: List[Dict[str, str]],
+) -> Tuple[str, ChatMetrics]:
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise HTTPException(
+            status_code=500,
+            detail="Falta GEMINI_API_KEY en el archivo .env del backend.",
+        )
+
+    client = genai.Client(api_key=api_key)
+
+    system_prompt = messages[0]["content"]
+    user_parts = []
+    for msg in messages[1:]:
+        role_label = "Usuario" if msg["role"] == "user" else "Asistente"
+        user_parts.append(f"{role_label}:\n{msg['content']}")
+    contents = f"{system_prompt}\n\n" + "\n\n".join(user_parts)
+
+    start_time = time.perf_counter()
+    response = client.models.generate_content(
+        model=request.model,
+        contents=contents,
+        config={
+            "temperature": request.temperature,
+            "top_p": request.top_p,
+            "max_output_tokens": request.max_tokens,
+        },
+    )
+    end_time = time.perf_counter()
+
+    reply = response.text or ""
+    usage = getattr(response, "usage_metadata", None)
+
+    prompt_tokens = int(getattr(usage, "prompt_token_count", 0) or 0)
+    completion_tokens = int(getattr(usage, "candidates_token_count", 0) or 0)
+    total_tokens = int(getattr(usage, "total_token_count", 0) or (prompt_tokens + completion_tokens))
+    wall_time_s = end_time - start_time
+    tokens_per_second = completion_tokens / wall_time_s if wall_time_s > 0 else 0
+
+    return reply, ChatMetrics(
+        wall_time_s=wall_time_s,
+        provider_duration_s=wall_time_s,
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
+        total_tokens=total_tokens,
+        tokens_per_second=tokens_per_second,
+        raw_provider_metrics={},
+    )
+
+
+def call_openai_compatible(
+    request: ChatRequest,
+    messages: List[Dict[str, str]],
+    api_key_env: str,
+    base_url: str,
+) -> Tuple[str, ChatMetrics]:
+    api_key = os.getenv(api_key_env)
+    if not api_key:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Falta {api_key_env} en el archivo .env del backend.",
+        )
+
+    client = OpenAI(api_key=api_key, base_url=base_url)
+
+    start_time = time.perf_counter()
+    response = client.chat.completions.create(
+        model=request.model,
+        messages=messages,
+        temperature=request.temperature,
+        top_p=request.top_p,
+        max_tokens=request.max_tokens,
+    )
+    end_time = time.perf_counter()
+
+    reply = response.choices[0].message.content or ""
+    usage = response.usage
+
+    prompt_tokens = usage.prompt_tokens if usage else 0
+    completion_tokens = usage.completion_tokens if usage else 0
+    total_tokens = usage.total_tokens if usage else prompt_tokens + completion_tokens
+    wall_time_s = end_time - start_time
+    tokens_per_second = completion_tokens / wall_time_s if wall_time_s > 0 else 0
+
+    return reply, ChatMetrics(
+        wall_time_s=wall_time_s,
+        provider_duration_s=wall_time_s,
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
+        total_tokens=total_tokens,
+        tokens_per_second=tokens_per_second,
+        raw_provider_metrics={},
+    )
+
+
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest, db: Session = Depends(get_db)):
-    """
-    Send a message to the chatbot.
-    If conversation_id is None, creates a new conversation.
-    Otherwise, continues the existing conversation.
-    """
-
-    # Get profile and determine system prompt to use
+    provider = validate_provider(request.provider)
     profile = get_profile(request.copilot_profile)
 
     system_prompt_used = request.system_prompt.strip()
@@ -205,72 +396,53 @@ def chat(request: ChatRequest, db: Session = Depends(get_db)):
 
     # Get or create conversation
     if request.conversation_id is None:
-        # Create new conversation with profile information
         conversation = create_conversation(
             db,
             title="Nueva conversación",
             copilot_profile=request.copilot_profile,
-            model=request.model
+            model=request.model,
         )
         conversation_id = conversation.id
     else:
-        # Use existing conversation
         conversation = get_conversation(db, request.conversation_id)
         if not conversation:
             raise HTTPException(status_code=404, detail="Conversación no encontrada")
         conversation_id = conversation.id
 
     # Get conversation history
-    messages = get_conversation_messages(db, conversation_id)
+    history = get_conversation_messages(db, conversation_id)
 
-    # Build message history for Ollama
-    message_history = []
-
-    # Add system prompt
-    message_history.append({
-        "role": "system",
-        "content": system_prompt_used,
-    })
-
-    # Add previous messages from database
-    for msg in messages:
-        if msg.role != "system":  # Don't duplicate system messages
-            message_history.append({
-                "role": msg.role,
-                "content": msg.content,
-            })
-
-    # Add current user message
-    message_history.append({
-        "role": "user",
-        "content": request.message,
-    })
+    # Build messages with history
+    messages = build_messages_with_history(system_prompt_used, history, request.message)
 
     # Save user message to database
     add_message(db, conversation_id, "user", request.message)
 
-    # Prepare payload for Ollama
-    payload = {
-        "model": request.model,
-        "messages": message_history,
-        "stream": False,
-        "keep_alive": request.keep_alive,
-        "options": {
-            "temperature": request.temperature,
-            "top_p": request.top_p,
-            "num_predict": request.num_predict,
-            "num_ctx": request.num_ctx,
-            "repeat_penalty": request.repeat_penalty,
-        },
-    }
-
     try:
-        start_time = time.perf_counter()
-        response = requests.post(OLLAMA_CHAT_URL, json=payload, timeout=300)
-        end_time = time.perf_counter()
+        if provider == "ollama":
+            reply, metrics = call_ollama(request, messages)
 
-        response.raise_for_status()
-        data = response.json()
+        elif provider == "gemini":
+            reply, metrics = call_gemini(request, messages)
+
+        elif provider == "groq":
+            reply, metrics = call_openai_compatible(
+                request=request,
+                messages=messages,
+                api_key_env="GROQ_API_KEY",
+                base_url="https://api.groq.com/openai/v1",
+            )
+
+        elif provider == "openrouter":
+            reply, metrics = call_openai_compatible(
+                request=request,
+                messages=messages,
+                api_key_env="OPENROUTER_API_KEY",
+                base_url="https://openrouter.ai/api/v1",
+            )
+
+        else:
+            raise HTTPException(status_code=400, detail="Proveedor no implementado.")
 
     except requests.exceptions.ConnectionError as exc:
         raise HTTPException(
@@ -281,66 +453,46 @@ def chat(request: ChatRequest, db: Session = Depends(get_db)):
     except requests.exceptions.Timeout as exc:
         raise HTTPException(
             status_code=504,
-            detail="La solicitud a Ollama tardó demasiado tiempo.",
+            detail="La solicitud tardó demasiado tiempo.",
         ) from exc
 
     except requests.exceptions.HTTPError as exc:
         raise HTTPException(
-            status_code=response.status_code,
-            detail=f"Error devuelto por Ollama: {response.text}",
+            status_code=500,
+            detail=f"Error HTTP del proveedor: {str(exc)}",
         ) from exc
+
+    except HTTPException:
+        raise
 
     except Exception as exc:
         raise HTTPException(
             status_code=500,
-            detail=f"Error inesperado: {str(exc)}",
+            detail=f"Error inesperado al consultar el proveedor {provider}: {str(exc)}",
         ) from exc
-
-    message = data.get("message", {})
-    reply = message.get("content", "")
 
     # Save assistant reply to database
     add_message(db, conversation_id, "assistant", reply)
 
-    # Update conversation title if it's the first exchange
-    if len(messages) == 0:
-        # Generate a short title from the first user message
+    # Update conversation title if first exchange
+    if len(history) == 0:
         title = request.message[:50] + ("..." if len(request.message) > 50 else "")
         update_conversation_title(db, conversation_id, title)
 
-    # Extract metrics
-    total_duration_s = data.get("total_duration", 0) / 1e9
-    load_duration_s = data.get("load_duration", 0) / 1e9
-    prompt_eval_count = data.get("prompt_eval_count", 0)
-    eval_count = data.get("eval_count", 0)
-    eval_duration_s = data.get("eval_duration", 0) / 1e9
-
-    total_tokens = prompt_eval_count + eval_count
-    tokens_per_second = eval_count / eval_duration_s if eval_duration_s > 0 else 0
-
     return ChatResponse(
         conversation_id=conversation_id,
+        provider=provider,
         model=request.model,
         copilot_profile=request.copilot_profile,
         copilot_label=profile["label"],
         system_prompt_used=system_prompt_used,
         reply=reply,
-        metrics=ChatMetrics(
-            wall_time_s=end_time - start_time,
-            total_duration_s=total_duration_s,
-            load_duration_s=load_duration_s,
-            prompt_eval_count=prompt_eval_count,
-            eval_count=eval_count,
-            total_tokens=total_tokens,
-            eval_duration_s=eval_duration_s,
-            tokens_per_second=tokens_per_second,
-        ),
+        metrics=metrics,
     )
 
 
 @app.get("/conversations", response_model=List[ConversationResponse])
 def list_conversations(db: Session = Depends(get_db)):
-    """Get all conversations"""
     conversations = get_all_conversations(db)
     return [
         ConversationResponse(
@@ -358,7 +510,6 @@ def list_conversations(db: Session = Depends(get_db)):
 
 @app.get("/conversations/{conversation_id}", response_model=ConversationDetailResponse)
 def get_conversation_detail(conversation_id: int, db: Session = Depends(get_db)):
-    """Get a specific conversation with all its messages"""
     conversation = get_conversation(db, conversation_id)
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversación no encontrada")
@@ -382,7 +533,6 @@ def get_conversation_detail(conversation_id: int, db: Session = Depends(get_db))
 
 @app.delete("/conversations/{conversation_id}")
 def remove_conversation(conversation_id: int, db: Session = Depends(get_db)):
-    """Delete a conversation and all its messages"""
     success = delete_conversation(db, conversation_id)
     if not success:
         raise HTTPException(status_code=404, detail="Conversación no encontrada")
@@ -397,12 +547,11 @@ class CreateConversationRequest(BaseModel):
 
 @app.post("/conversations", response_model=ConversationResponse)
 def create_new_conversation(request: CreateConversationRequest, db: Session = Depends(get_db)):
-    """Create a new empty conversation"""
     conversation = create_conversation(
         db,
         title=request.title,
         copilot_profile=request.copilot_profile,
-        model=request.model
+        model=request.model,
     )
     return ConversationResponse(
         id=conversation.id,

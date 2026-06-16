@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Chatbot</title>
+  <title>Chatbot híbrido</title>
 
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -13,7 +13,7 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h1>Chatbot</h1>
+        <h1>Chatbot híbrido</h1>
       </div>
 
       <nav class="sidebar-nav">
@@ -48,11 +48,12 @@
 
     <!-- Main Content -->
     <section class="main-content">
-      <!-- Profile Status Bar -->
-      <div class="profile-status-bar" id="profileStatusBar" style="display: none;">
+      <!-- Model Status Bar (always visible at top) -->
+      <div class="model-status-bar" id="modelStatusBar">
         <div class="status-content">
-          <span class="status-icon">🤖</span>
-          <span class="status-text">Conversando con: <strong id="statusProfileName">Asistente genérico</strong></span>
+          <span class="status-icon">⚡</span>
+          <span class="status-text" id="statusModelText">Ollama / llama3.2:3b</span>
+          <span class="status-profile" id="statusProfileText">Asistente genérico</span>
         </div>
       </div>
 
@@ -60,8 +61,8 @@
         <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
-        <h1>Bienvenido</h1>
-        <p>¿En qué puedo ayudarte?</p>
+        <h1>Chatbot híbrido</h1>
+        <p>Compara Ollama local con APIs externas (Gemini, Groq, OpenRouter)</p>
       </section>
 
       <div class="layout">
@@ -69,6 +70,17 @@
           <div id="chat" class="chat"></div>
 
           <div class="chat-form-container">
+            <!-- Provider/Model selector row -->
+            <div class="input-model-selector">
+              <select id="provider" title="Proveedor">
+                <option value="ollama">Ollama</option>
+                <option value="gemini">Gemini</option>
+                <option value="groq">Groq</option>
+                <option value="openrouter">OpenRouter</option>
+              </select>
+              <select id="model" title="Modelo"></select>
+            </div>
+
             <form id="chatForm" class="chat-form">
               <textarea
                 id="message"
@@ -134,17 +146,6 @@
       </label>
 
       <label>
-        Modelo
-        <select id="model">
-          <option value="llama3.2:3b">llama3.2:3b</option>
-          <option value="qwen2.5:3b">qwen2.5:3b</option>
-          <option value="qwen2.5:1.5b">qwen2.5:1.5b</option>
-          <option value="llama3.2:1b">llama3.2:1b</option>
-          <option value="qwen2.5:0.5b">qwen2.5:0.5b</option>
-        </select>
-      </label>
-
-      <label>
         Temperatura
         <input id="temperature" type="number" min="0" max="1.2" step="0.1" value="0.7" />
       </label>
@@ -156,11 +157,11 @@
 
       <label>
         Tokens máximos de salida
-        <input id="num_predict" type="number" min="20" max="4000" step="50" value="800" />
+        <input id="max_tokens" type="number" min="20" max="4000" step="50" value="4000" />
       </label>
 
       <label>
-        Contexto
+        Contexto local Ollama
         <select id="num_ctx">
           <option value="2048">2048</option>
           <option value="4096" selected>4096</option>
@@ -169,7 +170,7 @@
       </label>
 
       <label>
-        Repeat penalty
+        Repeat penalty local Ollama
         <input id="repeat_penalty" type="number" min="1" max="2" step="0.1" value="1.1" />
       </label>
 

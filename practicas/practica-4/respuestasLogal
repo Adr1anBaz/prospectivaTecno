@@ -1,0 +1,20 @@
+MODELO: llama3.2:3b
+
+La odometría diferencial es un algoritmo utilizado en robots móviles para calcular la posición y el movimiento del vehículo a partir de los sensores de velocidad y dirección.
+
+**Explicación conceptual:**
+En un robot de dos ruedas, cada rueda tiene un sensor de velocidad que mide la cantidad de rotaciones realizadas por la rueda en un segundo. La odometría diferencial utiliza estos sensores para calcular la posición y el movimiento del vehículo. Se asume que el robot gira a la misma velocidad en ambas direcciones, lo que permite calcular la posición y el movimiento en función de las rotaciones de cada rueda.
+
+**Ecuaciones básicas:**
+
+1. Velocidad en dirección x = (rotación derecha - rotación izquierda) / 2
+2. Velocidad en dirección y = (rotación derecha + rotación izquierda) / 2
+
+3. Posición en x = posición anterior en x + velocidad en x \* tiempo
+4. Posición en y = posición anterior en y + velocidad en y \* tiempo
+
+**Ejemplo:**
+Un robot de dos ruedas con una velocidad de rotación de 1 rev/s en cada dirección, se mueve a una velocidad de 0,5 m/s en la dirección x y 0,5 m/s en la dirección y. Después de 10 segundos, el robot tiene una posición de (x, y) = (-50, -50). Si el tiempo es t=2s, ¿cuál será la posición del robot?
+
+**Limitación práctica:**
+La odometría diferencial supone que el robot gira a la misma velocidad en ambas direcciones, lo que no siempre es posible. Cuando un robot se detiene o cambia de dirección, la odometría diferencial puede dar lugar a errores significativos.
