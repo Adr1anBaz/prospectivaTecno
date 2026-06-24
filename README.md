@@ -1,138 +1,190 @@
-<<<<<<< HEAD
-# 🤖 Presentación del Proyecto Unitree Go2
+# Asistente de Voz Universitario — Blu
 
-Presentación interactiva y dinámica sobre el sistema de control inteligente para el robot Unitree Go2 Air.
+Asistente de navegación e información para campus universitario. Wake word offline, STT/LLM/TTS online, integración con servidor MCP y Route API.
 
-## 🚀 Características
+> Rama activa de desarrollo: `fer`
 
-- ✅ **Control por Voz** - Sistema local con Whisper y Ollama
-- ✅ **Telemetría en Tiempo Real** - Dashboard completo de sensores
-- ✅ **Navegación Autónoma** - ROS2 + SLAM Toolbox + Nav2
-- ✅ **Animaciones Fluidas** - Transiciones con Framer Motion
-- ✅ **Diseño Moderno** - UI glassmorphism con degradados
+---
 
-## 📦 Instalación Local
+## Requisitos
 
-```bash
-# Instalar dependencias
-npm install
+- Python 3.11+
+- [uv](https://docs.astral.sh/uv/) para manejo de dependencias
+- API keys:
+  - **Groq** (`GROQ_API_KEY`): https://console.groq.com
+  - **Deepgram** (`DEEPGRAM_API_KEY`): https://developers.deepgram.com
+- (Opcional) Cuenta de Google Cloud con **Cloud Speech-to-Text API** habilitada
 
-# Ejecutar en modo desarrollo
-npm run dev
-
-# Build para producción
-npm run build
-
-# Preview del build
-npm run preview
-```
-
-## 🎯 Navegación
-
-- **Flechas del teclado** o **clic en botones** para navegar
-- **Espacio** para avanzar
-- **Indicadores** en la parte inferior para saltar a slides específicas
-
-## 📑 Contenido
-
-1. **Introducción** - Overview del proyecto
-2. **Control por Voz** - Pipeline de procesamiento y comandos
-3. **Arquitectura** - Stack tecnológico y flujo de datos
-4. **Telemetría** - Datos monitoreados en tiempo real
-5. **ROS2 & SLAM** - Sistema de navegación autónoma
-6. **Desafíos** - Problemas y soluciones propuestas
-7. **Demo** - Ejemplos de uso y casos de prueba
-8. **Próximos Pasos** - Roadmap y visión futura
-
-## 🌐 Deploy en GitHub Pages
-
-Esta aplicación está configurada para deployarse automáticamente en GitHub Pages.
-
-### Pasos para Deploy
-
-1. **Crear repositorio en GitHub**
-   ```bash
-   # Cambiar 'username' por tu usuario de GitHub
-   git remote add origin https://github.com/username/presentacion-unitree-go2.git
-   ```
-
-2. **Subir código**
-   ```bash
-   git add .
-   git commit -m "Deploy: Presentación Unitree Go2"
-   git push -u origin main
-   ```
-
-3. **Configurar GitHub Pages**
-   - Ve a: `Settings` → `Pages`
-   - Source: `GitHub Actions`
-   - El workflow se ejecutará automáticamente
-
-4. **Acceder a la presentación**
-   - URL: `https://username.github.io/presentacion-unitree-go2/`
-
-### Deploy Manual
-
-```bash
-npm run build
-# Los archivos generados están en /dist
-```
-
-## 🛠️ Stack Tecnológico
-
-- **React 18** - Framework UI
-- **Vite 4** - Build tool
-- **Framer Motion 10** - Animaciones
-- **CSS3** - Estilos modernos
-
-## 📄 Licencia
-
-Proyecto de investigación y desarrollo
-=======
-# Repositorio de IA y Robótica - Verano 2026
-
-Este repositorio contiene el proyecto final y las prácticas del curso de IA Generativa y LLMs.
-
-## Estructura del Repositorio
-
-```
-.
-├── proyecto-final/     # Proyecto final: Control por voz de robot Unitree
-│   ├── .venv/          # Entorno virtual del proyecto
-│   └── ...             # Código fuente del proyecto
-│
-└── practicas/          # Prácticas del curso
-    ├── practica-1/     # Panorama de IA generativa y LLM (Ollama)
-    └── ...             # Otras prácticas
-```
-
-## Proyecto Final
-
-Sistema de control por voz para robot Unitree con precisión del 100% en llamadas de herramientas usando Whisper y Ollama.
-
-📁 [Ver Proyecto Final](./proyecto-final/)
-
-## Prácticas
-
-### Práctica 1: Panorama de IA Generativa y LLM
-
-Exploración de modelos de lenguaje usando Ollama y Hugging Face.
-
-📁 [Ver Práctica 1](./practicas/practica-1/)
+---
 
 ## Instalación
 
-Cada carpeta (proyecto-final y cada práctica) tiene su propio entorno virtual independiente. 
+```bash
+# 1. Clonar la rama fer
+git clone -b fer https://github.com/Adr1anBaz/prospectivaTecno.git
+cd prospectivaTecno
 
-Ver los README específicos en cada carpeta para instrucciones de instalación.
+# 2. Crear .env a partir del ejemplo
+cp .env.example .env
 
-## Requisitos Generales
+# 3. Editar .env con tus API keys
+#    GROQ_API_KEY=...
+#    DEEPGRAM_API_KEY=...
 
-- Python 3.9+
-- uv (gestor de paquetes)
-- Ollama (para LLMs locales)
+# 4. Instalar dependencias
+uv sync
+```
 
-## Autor
+### Modelo de wake word (solo modo audio)
 
-Adrian Bazaldua
->>>>>>> e21da9bcef627ef9c8a55b2ca790f6c5f0153345
+El modo audio usa Vosk para detectar la palabra clave `"ronaldo"`. Descarga el modelo:
+
+```bash
+uv run python scripts/download_vosk_model.py
+```
+
+> Si solo usarás el **modo texto** (`--text`), no necesitas el modelo Vosk.
+
+---
+
+## Modo de ejecución
+
+### Modo audio (normal)
+
+Usa el micrófono. Di `"ronaldo"` seguido del comando.
+
+```bash
+uv run python src/prospectiva/main.py --test
+```
+
+### Modo texto (para pruebas sin micrófono)
+
+Escribe los comandos en lugar de hablarlos. Útil para probar todas las funcionalidades sin depender del micrófono ni de STT.
+
+```bash
+uv run python src/prospectiva/main.py --text --test
+```
+
+#### Cómo usar el modo texto
+
+| Entrada | Qué hace |
+|---------|----------|
+| `ronaldo llévame a biomédica` | Simula wake word + comando de navegación |
+| `ronaldo qué hay en la cafetería` | Pregunta conversacional (usa LLM + tools MCP) |
+| `gracias` | Respuesta directa cuando estás en modo conversación |
+| `/wake` | Fuerza manualmente el estado de escucha |
+| `/end` | Termina el modo conversación |
+| `/exit` o `exit` | Cierra el asistente |
+
+#### Ejemplo de sesión en modo texto
+
+```
+🎤 [ronaldo] > ronaldo llévame a biomédica
+🤖 ACCIÓN EJECUTADA
+  • Comando: 'llévame a biomédica'
+  • Intent detectado: NAVEGAR_BIOMEDICA
+  ...
+
+🎤 [ronaldo] > ronaldo qué comida hay en la cafetería
+🧠 RESPUESTA CONVERSACIONAL
+  ...
+🗣️ Entrando a modo conversación...
+
+🗣️  > gracias
+🧠 RESPUESTA CONVERSACIONAL
+  ...
+
+🗣️  > /end
+🔇 Modo conversación terminado.
+
+🎤 [ronaldo] > /exit
+👋 Saliendo...
+```
+
+---
+
+## Configuración de STT
+
+El motor de Speech-to-Text se elige con `STT_PROVIDER` en `.env`:
+
+```bash
+# Opciones: groq | deepgram | googlecloud
+STT_PROVIDER=groq
+```
+
+### Google Cloud Speech-to-Text (recomendado para mejor precisión)
+
+1. Ve a [Google Cloud Console → Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
+2. Crea un service account con rol **Cloud Speech-to-Text API User**
+3. Genera una clave JSON y guárdala en tu proyecto, por ejemplo:
+   ```
+   ./credentials/gcp-speech.json
+   ```
+4. En `.env`:
+   ```bash
+   GOOGLE_APPLICATION_CREDENTIALS=./credentials/gcp-speech.json
+   STT_PROVIDER=googlecloud
+   ```
+
+> **Importante:** Nunca subas la carpeta `credentials/` a git. Ya está en `.gitignore`.
+
+---
+
+## Configuración de TTS
+
+```bash
+# Opciones: deepgram | local
+TTS_PROVIDER=deepgram
+TTS_MODEL=aura-2-celeste-es
+```
+
+La voz por defecto es `aura-2-celeste-es`. Otras opciones en español:
+- `aura-2-alejandra-es`
+- `aura-2-sofia-es`
+- `aura-2-marcos-es`
+- `aura-2-octavio-es`
+
+---
+
+## Funcionalidades principales
+
+- **Wake word**: `"ronaldo"` detectada offline con Vosk
+- **STT**: Groq Whisper, Deepgram Nova-3 o Google Cloud Speech-to-Text
+- **TTS**: Deepgram Aura-2 en español
+- **Navegación**: comandos directos a edificios del campus
+- **Robot**: comandos de movimiento (`siéntate`, `baila`, `camina`, etc.)
+- **Conversación**: LLM con tool calling nativo sobre 15 herramientas MCP
+- **Modo conversación**: tras una respuesta, el asistente sigue escuchando sin repetir wake word
+- **Modo texto**: prueba todo sin micrófono
+
+---
+
+## Estructura del proyecto
+
+```
+src/prospectiva/
+├── main.py                 # Punto de entrada y orquestación de procesos
+├── bus/
+│   └── event_bus.py        # Bus de eventos entre procesos
+├── modulos/
+│   ├── llm/                # Groq LLM
+│   ├── stt/                # STT providers (Groq, Deepgram, Google Cloud)
+│   ├── tts/                # TTS providers (Deepgram, Local mock)
+│   ├── muta/               # Audio input, VAD, wake word
+│   └── classifier/         # Clasificador de intents
+├── procesos/
+│   ├── audio.py            # Proceso de audio (micrófono)
+│   ├── text_input.py       # Modo texto (stdin)
+│   ├── orquestador.py      # Orquestador central
+│   ├── playback.py         # Reproducción de audio
+│   └── movement.py         # Ejecución de movimientos
+└── utils/                  # MCP client, Route client, audio utils
+```
+
+---
+
+## Notas
+
+- El proyecto usa **multiprocessing**. En modo audio usa `spawn`; en modo texto usa `fork` para evitar problemas con stdin.
+- El modo `--test` usa clientes MCP y Route mock para pruebas sin levantar servidores.
+- La carpeta `credentials/` está ignorada en git para proteger las claves de Google Cloud.

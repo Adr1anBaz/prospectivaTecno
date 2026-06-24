@@ -1,90 +1,22 @@
-<<<<<<< HEAD
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-=======
-# Python
+# Python-generated files
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-*.egg-info/
+*.py[oc]
+build/
 dist/
-build/
+wheels/
+*.egg-info
 
-# Virtual environment - todos los niveles
-**/.venv/
-**/venv/
-**/ENV/
-.venv/
-venv/
-ENV/
+# Virtual environments
+.venv
 
-# Audio files
-*.wav
-*.mp3
-*.m4a
-*.flac
+# Environment credentials
+.env
 
-# Transcription files
-transcription_*.txt
-recording_*.wav
+# Full Vosk model (not used — the small model is the default)
+models/vosk/vosk-model-es-0.42/
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
+# Graphify regeneratable cache
+graphify-out/cache/
 
-# OS
-.DS_Store
-Thumbs.db
-
-# uv
-.uv/
-
-# ========== ROS2 / Simulacion MuJoCo ==========
-
-# MuJoCo binary distribution (100MB+)
-**/mujoco/
-mujoco/
-
-# ROS 2 colcon build artifacts
-build/
-install/
-log/
-
-# Large binary downloads
-*.tar.gz
-*.zip
-
-# Python
-*.pyc
-__pycache__/
-
-# Simulation recordings / bags
-*.mcap
-*.db3
->>>>>>> e21da9bcef627ef9c8a55b2ca790f6c5f0153345
+# Google Cloud service account credentials
+credentials/
