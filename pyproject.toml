@@ -1,0 +1,28 @@
+[project]
+name = "proyecto-prospectiva"
+version = "0.1.0"
+description = "Asistente de Voz Universitario - Online Only"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.24",
+    "sounddevice>=0.5.5",
+    "pvporcupine>=4.0.2",
+    "silero-vad>=6.2",
+    "onnxruntime>=1.15",
+    "groq>=1.3.0",
+    "deepgram-sdk>=3.0",
+    "python-dotenv>=1.0",
+    "scipy>=1.10",
+    "vosk>=0.3.45",
+    "pyyaml>=6.0.3",
+    "mcp>=1.28.0",
+    "google-cloud-speech>=2.40.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/prospectiva"]
