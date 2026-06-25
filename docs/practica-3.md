@@ -11,7 +11,7 @@ description: "Chatbot LLM Local con Contexto usando SQLite"
 Sistema de chatbot web con gestión de contexto conversacional usando Ollama, FastAPI y SQLite
 {: .fs-6 .fw-300 }
 
-[Ver en GitHub](https://github.com/Adr1anBaz/prospectivaTecno/tree/main/practicas/practica-3){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 }
+[Ver en GitHub](https://github.com/Adr1anBaz/prospectivaTecno/tree/main/practicas){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 }
 
 ---
 

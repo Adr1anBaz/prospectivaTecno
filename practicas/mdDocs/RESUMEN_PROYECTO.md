@@ -171,22 +171,20 @@ GET    /docs                   - Documentación Swagger
 ## 📁 Estructura de Archivos
 
 ```
-practica-3/
-├── backend/
-│   ├── main.py                    # API con perfiles (450 líneas)
-│   ├── database.py                # Modelos SQLite extendidos
-│   ├── migrate_db.py              # Script de migración
-│   ├── requirements.txt           # Dependencias
-│   └── chatbot.db                 # Base de datos
-├── frontend/
-│   ├── index.html                 # UI con selector de perfiles
-│   ├── styles.css                 # Estilos modernos (~500 líneas)
-│   └── app.js                     # Lógica con perfiles (~280 líneas)
-├── tests/
-│   ├── test_ollama_context.py     # Test básico
-│   ├── test_context_with_db.py    # Test con BD
-│   └── test_full_system.py        # Test completo
-├── docs/
+backend/
+├── main.py                    # API con perfiles (450 líneas)
+├── database.py                # Modelos SQLite extendidos
+├── migrate_db.py              # Script de migración
+├── requirements.txt           # Dependencias
+└── chatbot.db                 # Base de datos
+frontend/
+├── index.html                 # UI con selector de perfiles
+├── styles.css                 # Estilos modernos (~500 líneas)
+└── app.js                     # Lógica con perfiles (~280 líneas)
+test_ollama_context.py         # Test básico
+test_context_with_db.py        # Test con BD
+test_full_system.py            # Test completo
+mdDocs/
 │   ├── README.md                  # Documentación principal
 │   ├── UPGRADE_GUIDE.md           # Guía de actualización
 │   ├── CAMBIOS_IMPLEMENTADOS.md   # Changelog técnico
