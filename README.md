@@ -2,7 +2,7 @@
 
 Asistente de navegación e información para campus universitario. Wake word offline, STT/LLM/TTS online, integración con servidor MCP y Route API.
 
-> Rama activa de desarrollo: `fer`
+> Rama activa de desarrollo: `main`
 
 ---
 
@@ -20,8 +20,8 @@ Asistente de navegación e información para campus universitario. Wake word off
 ## Instalación
 
 ```bash
-# 1. Clonar la rama fer
-git clone -b fer https://github.com/Adr1anBaz/prospectivaTecno.git
+# 1. Clonar la rama main
+git clone -b main https://github.com/Adr1anBaz/prospectivaTecno.git
 cd prospectivaTecno
 
 # 2. Crear .env a partir del ejemplo
