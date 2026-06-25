@@ -1,0 +1,527 @@
+run,prompt,expected_action,predicted_action,correct,json_valid,parse_error,mqtt_published,architecture_success,confidence,reason,total_latency_s,ollama_latency_s,prompt_tokens,response_tokens,raw_response
+1,qué es MQTT,none,,False,False,no_json,False,False,,,7.5305,7.5303,264,293,MQTT (Message Queuing Telemetry Transport) es un protocolo de comunicación asincrona utilizado para enviar y recibir mensajes entre dispositivos y sistemas. Fue diseñado originalmente para ser utiliza
+2,ilumina el led,on,on,True,True,,True,True,1.0,El LED está siendo encendido,0.905,0.8381,266,30,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""El LED está siendo encendido""
+}"
+3,enciende el led,on,on,True,True,,True,True,1.0,Instrucción clara para encender el LED,0.9994,0.9237,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para encender el LED""
+}"
+4,explícame el protocolo,none,off,False,True,,True,True,0.8,El usuario pidió apagar el LED,7.4098,7.3421,267,306,"El protocolo es el siguiente:
+
+**Preguntas posibles**
+
+* ¿Quieres encender, prender o activar el LED? (Respuesta: on)
+* ¿Quieres apagar o desactivar el LED? (Respuesta: off)
+* No hay una instrucción c"
+5,haz que el led brille,on,on,True,True,,True,True,1.0,Encendiendo el LED,0.9276,0.8571,268,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+6,enciende el indicador,on,on,True,True,,True,True,1.0,Encendiendo el LED,0.9066,0.8386,266,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+7,enciende el indicador,on,on,True,True,,True,True,1.0,Encendiendo el LED,0.8221,0.7522,266,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+8,enciende la luz,on,on,True,True,,True,True,1.0,Instrucción clara para encender el LED,1.0527,0.9817,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para encender el LED""
+}"
+9,explícame el protocolo,none,off,False,True,,True,True,0.8,El usuario pidió apagar el LED,7.5485,7.4809,267,306,"El protocolo es el siguiente:
+
+**Preguntas posibles**
+
+* ¿Quieres encender, prender o activar el LED? (Respuesta: on)
+* ¿Quieres apagar o desactivar el LED? (Respuesta: off)
+* No hay una instrucción c"
+10,ilumina el led,on,on,True,True,,True,True,1.0,El LED está siendo encendido,0.9728,0.9008,266,30,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""El LED está siendo encendido""
+}"
+11,no enciendas el led,none,none,True,True,,False,False,1.0,Instrucción no clara,0.8445,0.8445,267,28,"{
+  ""action"": ""none"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción no clara""
+}"
+12,explícame el protocolo,none,off,False,True,,True,True,0.8,El usuario pidió apagar el LED,7.699,7.6321,267,306,"El protocolo es el siguiente:
+
+**Preguntas posibles**
+
+* ¿Quieres encender, prender o activar el LED? (Respuesta: on)
+* ¿Quieres apagar o desactivar el LED? (Respuesta: off)
+* No hay una instrucción c"
+13,dime la hora,none,none,True,True,,False,False,0.0,No se proporcionó información relevante para determinar una acción,1.0482,1.0481,265,35,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""No se proporcionó información relevante para determinar una acción""
+}"
+14,quítale la luz,off,none,False,True,,False,False,0.0,Instrucción ambigua,0.8338,0.8337,266,27,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""Instrucción ambigua""
+}"
+15,activa el led,on,on,True,True,,True,True,1.0,Instrucción clara para activar el LED,1.1381,1.0713,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para activar el LED""
+}"
+16,oscurece el led,off,none,False,True,,False,False,0.0,Instrucción no clara,0.9993,0.9988,266,28,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""Instrucción no clara""
+}"
+17,desconecta el led,off,off,True,True,,True,True,1.0,Apagar el LED,0.9495,0.8807,266,27,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagar el LED""
+}"
+18,prende la luz del prototipo,on,on,True,True,,True,True,1.0,Encendiendo el LED para probar el prototipo,1.1264,1.0552,269,35,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED para probar el prototipo""
+}"
+19,enciende el led,on,on,True,True,,True,True,1.0,Instrucción clara para encender el LED,1.017,0.9491,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para encender el LED""
+}"
+20,activa el led,on,on,True,True,,True,True,1.0,Instrucción clara para activar el LED,1.0159,0.9461,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para activar el LED""
+}"
+21,conecta el led,on,on,True,True,,True,True,1.0,Conectado al LED,0.9321,0.8654,265,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Conectado al LED""
+}"
+22,enciende el indicador,on,on,True,True,,True,True,1.0,Encendiendo el LED,0.9192,0.8443,266,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+23,apaga la lampara,off,off,True,True,,True,True,1.0,Instrucción específica para apagar,0.9768,0.9098,266,30,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción específica para apagar""
+}"
+24,desactiva el foco,off,off,True,True,,True,True,1.0,Apagar el LED,0.9124,0.8445,267,27,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagar el LED""
+}"
+25,enciende el led,on,on,True,True,,True,True,1.0,Instrucción clara para encender el LED,1.0136,0.9405,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para encender el LED""
+}"
+26,quítale la luz,off,none,False,True,,False,False,0.0,Instrucción ambigua,0.8403,0.8402,266,27,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""Instrucción ambigua""
+}"
+27,conecta el led,on,on,True,True,,True,True,1.0,Conectado al LED,0.9,0.8279,265,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Conectado al LED""
+}"
+28,mañana prende el led,none,on,False,True,,True,True,1.0,El LED se encenderá mañana,0.9553,0.887,267,30,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""El LED se encenderá mañana""
+}"
+29,qué es MQTT,none,,False,False,no_json,False,False,,,7.7281,7.7279,264,293,MQTT (Message Queuing Telemetry Transport) es un protocolo de comunicación asincrona utilizado para enviar y recibir mensajes entre dispositivos y sistemas. Fue diseñado originalmente para ser utiliza
+30,mañana prende el led,none,on,False,True,,True,True,1.0,El LED se encenderá mañana,0.9681,0.8947,267,30,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""El LED se encenderá mañana""
+}"
+31,quítale la luz,off,none,False,True,,False,False,0.0,Instrucción ambigua,0.8473,0.8472,266,27,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""Instrucción ambigua""
+}"
+32,desconecta el led,off,off,True,True,,True,True,1.0,Apagar el LED,0.9048,0.8378,266,27,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagar el LED""
+}"
+33,enciende el indicador,on,on,True,True,,True,True,1.0,Encendiendo el LED,0.9457,0.8746,266,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+34,apaga el indicador,off,off,True,True,,True,True,1.0,Apagando el LED,0.912,0.8445,266,28,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando el LED""
+}"
+35,oscurece el led,off,none,False,True,,False,False,0.0,Instrucción no clara,0.8328,0.8327,266,28,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""Instrucción no clara""
+}"
+36,haz que el led brille,on,on,True,True,,True,True,1.0,Encendiendo el LED,0.8644,0.7929,268,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+37,cómo funciona un led,none,none,True,True,,False,False,0.5,La pregunta es demasiado amplia,0.951,0.9509,266,32,"{
+  ""action"": ""none"",
+  ""confidence"": 0.5,
+  ""reason"": ""La pregunta es demasiado amplia""
+}"
+38,qué temperatura hay,none,none,True,True,,False,False,0.0,No se proporcionó información sobre la temperatura,0.9802,0.9801,264,31,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""No se proporcionó información sobre la temperatura""
+}"
+39,enciende el led,on,on,True,True,,True,True,1.0,Instrucción clara para encender el LED,1.011,0.9392,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para encender el LED""
+}"
+40,hola,none,none,True,True,,False,False,0.5,No hay instrucción clara para cambiar el LED,1.088,1.0879,263,35,"{
+  ""action"": ""none"",
+  ""confidence"": 0.5,
+  ""reason"": ""No hay instrucción clara para cambiar el LED""
+}"
+41,cómo funciona un led,none,none,True,True,,False,False,0.5,La pregunta es demasiado amplia,0.9458,0.9457,266,32,"{
+  ""action"": ""none"",
+  ""confidence"": 0.5,
+  ""reason"": ""La pregunta es demasiado amplia""
+}"
+42,prende la lampara,on,on,True,True,,True,True,1.0,Instrucción clara para encender el LED,1.0379,0.9715,266,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para encender el LED""
+}"
+43,mañana prende el led,none,on,False,True,,True,True,1.0,El LED se encenderá mañana,1.0033,0.9279,267,30,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""El LED se encenderá mañana""
+}"
+44,desconecta el led,off,off,True,True,,True,True,1.0,Apagar el LED,0.8757,0.8017,266,27,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagar el LED""
+}"
+45,apaga el led,off,off,True,True,,True,True,1.0,Apagando el LED,0.952,0.8807,265,30,"{
+  ""action"": ""off"",
+  ""confidence"": 1.0,
+  ""reason"": ""Apagando el LED""
+}"
+46,haz que el led brille,on,on,True,True,,True,True,1.0,Encendiendo el LED,0.9025,0.8357,268,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+47,enciende la luz,on,on,True,True,,True,True,1.0,Instrucción clara para encender el LED,0.9751,0.9045,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para encender el LED""
+}"
+48,conecta el led,on,on,True,True,,True,True,1.0,Conectado al LED,0.8938,0.8257,265,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Conectado al LED""
+}"
+49,hola,none,none,True,True,,False,False,0.5,No hay instrucción clara para cambiar el LED,1.0315,1.0315,263,35,"{
+  ""action"": ""none"",
+  ""confidence"": 0.5,
+  ""reason"": ""No hay instrucción clara para cambiar el LED""
+}"
+50,apaga el led,off,off,True,True,,True,True,1.0,Apagando el LED,0.9268,0.8599,265,30,"{
+  ""action"": ""off"",
+  ""confidence"": 1.0,
+  ""reason"": ""Apagando el LED""
+}"
+51,ilumina el led,on,on,True,True,,True,True,1.0,El LED está siendo encendido,0.9568,0.8849,266,30,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""El LED está siendo encendido""
+}"
+52,activa el led,on,on,True,True,,True,True,1.0,Instrucción clara para activar el LED,0.9851,0.9097,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para activar el LED""
+}"
+53,apaga la luz,off,off,True,True,,True,True,1.0,Apagando la luz según instrucción,1.0019,0.9265,265,31,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando la luz según instrucción""
+}"
+54,ilumina el led,on,on,True,True,,True,True,1.0,El LED está siendo encendido,0.9523,0.8769,266,30,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""El LED está siendo encendido""
+}"
+55,desactiva la salida,off,off,True,True,,True,True,1.0,Apagando la salida,0.9001,0.8259,266,28,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando la salida""
+}"
+56,qué temperatura hay,none,none,True,True,,False,False,0.0,No se proporcionó información sobre la temperatura,0.9394,0.9394,264,31,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""No se proporcionó información sobre la temperatura""
+}"
+57,desactiva la salida,off,off,True,True,,True,True,1.0,Apagando la salida,0.8723,0.7948,266,28,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando la salida""
+}"
+58,desactiva el foco,off,off,True,True,,True,True,1.0,Apagar el LED,0.9579,0.8843,267,27,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagar el LED""
+}"
+59,haz que el led brille,on,on,True,True,,True,True,1.0,Encendiendo el LED,0.909,0.8372,268,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+60,cómo funciona un led,none,none,True,True,,False,False,0.5,La pregunta es demasiado amplia,0.9206,0.9205,266,32,"{
+  ""action"": ""none"",
+  ""confidence"": 0.5,
+  ""reason"": ""La pregunta es demasiado amplia""
+}"
+61,prende la luz del prototipo,on,on,True,True,,True,True,1.0,Encendiendo el LED para probar el prototipo,1.0525,0.9846,269,35,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED para probar el prototipo""
+}"
+62,explícame el protocolo,none,off,False,True,,True,True,0.8,El usuario pidió apagar el LED,7.6109,7.5446,267,306,"El protocolo es el siguiente:
+
+**Preguntas posibles**
+
+* ¿Quieres encender, prender o activar el LED? (Respuesta: on)
+* ¿Quieres apagar o desactivar el LED? (Respuesta: off)
+* No hay una instrucción c"
+63,apaga el indicador,off,off,True,True,,True,True,1.0,Apagando el LED,0.8987,0.8278,266,28,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando el LED""
+}"
+64,quítale la luz,off,none,False,True,,False,False,0.0,Instrucción ambigua,0.8082,0.8082,266,27,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""Instrucción ambigua""
+}"
+65,ilumina el led,on,on,True,True,,True,True,1.0,El LED está siendo encendido,0.9418,0.8696,266,30,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""El LED está siendo encendido""
+}"
+66,gracias,none,,False,False,no_json,False,False,,,1.253,1.253,263,41,"De nada! Espero que todo salga bien con tu clasificador de intención para el LED. Si necesitas algo más, no dudes en preguntar. ¡Buena suerte!"
+67,apaga la luz,off,off,True,True,,True,True,1.0,Apagando la luz según instrucción,0.9548,0.8878,265,31,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando la luz según instrucción""
+}"
+68,activa el led,on,on,True,True,,True,True,1.0,Instrucción clara para activar el LED,0.997,0.9224,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para activar el LED""
+}"
+69,quítale la luz,off,none,False,True,,False,False,0.0,Instrucción ambigua,0.8126,0.8125,266,27,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""Instrucción ambigua""
+}"
+70,prende el foco,on,on,True,True,,True,True,1.0,Se ha activado el foco del LED,1.0101,0.9414,266,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Se ha activado el foco del LED""
+}"
+71,buenos días,none,none,True,True,,False,False,0.5,No se proporcionó una instrucción clara para cambiar el estado del LED,1.1097,1.1097,265,40,"{
+  ""action"": ""none"",
+  ""confidence"": 0.5,
+  ""reason"": ""No se proporcionó una instrucción clara para cambiar el estado del LED""
+}"
+72,qué es MQTT,none,,False,False,no_json,False,False,,,7.5471,7.547,264,293,MQTT (Message Queuing Telemetry Transport) es un protocolo de comunicación asincrona utilizado para enviar y recibir mensajes entre dispositivos y sistemas. Fue diseñado originalmente para ser utiliza
+73,desactiva el foco,off,off,True,True,,True,True,1.0,Apagar el LED,0.8615,0.7929,267,27,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagar el LED""
+}"
+74,dime la hora,none,none,True,True,,False,False,0.0,No se proporcionó información relevante para determinar una acción,1.0077,1.0076,265,35,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""No se proporcionó información relevante para determinar una acción""
+}"
+75,qué temperatura hay,none,none,True,True,,False,False,0.0,No se proporcionó información sobre la temperatura,1.0665,1.0664,264,31,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""No se proporcionó información sobre la temperatura""
+}"
+76,desactiva la salida,off,off,True,True,,True,True,1.0,Apagando la salida,0.9237,0.8571,266,28,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando la salida""
+}"
+77,oscurece el led,off,none,False,True,,False,False,0.0,Instrucción no clara,0.8318,0.8317,266,28,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""Instrucción no clara""
+}"
+78,conecta el led,on,on,True,True,,True,True,1.0,Conectado al LED,0.9038,0.8256,265,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Conectado al LED""
+}"
+79,mañana prende el led,none,on,False,True,,True,True,1.0,El LED se encenderá mañana,0.971,0.8977,267,30,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""El LED se encenderá mañana""
+}"
+80,activa el led,on,on,True,True,,True,True,1.0,Instrucción clara para activar el LED,0.9993,0.931,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para activar el LED""
+}"
+81,prende la luz del prototipo,on,on,True,True,,True,True,1.0,Encendiendo el LED para probar el prototipo,1.0889,1.009,269,35,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED para probar el prototipo""
+}"
+82,no enciendas el led,none,none,True,True,,False,False,1.0,Instrucción no clara,0.9469,0.9468,267,28,"{
+  ""action"": ""none"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción no clara""
+}"
+83,enciende el indicador,on,on,True,True,,True,True,1.0,Encendiendo el LED,0.9044,0.833,266,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+84,hola,none,none,True,True,,False,False,0.5,No hay instrucción clara para cambiar el LED,1.0488,1.0487,263,35,"{
+  ""action"": ""none"",
+  ""confidence"": 0.5,
+  ""reason"": ""No hay instrucción clara para cambiar el LED""
+}"
+85,prende el foco,on,on,True,True,,True,True,1.0,Se ha activado el foco del LED,1.1051,1.0343,266,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Se ha activado el foco del LED""
+}"
+86,activa el led,on,on,True,True,,True,True,1.0,Instrucción clara para activar el LED,1.0048,0.9254,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para activar el LED""
+}"
+87,qué temperatura hay,none,none,True,True,,False,False,0.0,No se proporcionó información sobre la temperatura,0.9707,0.9706,264,31,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""No se proporcionó información sobre la temperatura""
+}"
+88,enciende el indicador,on,on,True,True,,True,True,1.0,Encendiendo el LED,1.0049,0.9382,266,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+89,qué temperatura hay,none,none,True,True,,False,False,0.0,No se proporcionó información sobre la temperatura,0.9908,0.9908,264,31,"{
+  ""action"": ""none"",
+  ""confidence"": 0,
+  ""reason"": ""No se proporcionó información sobre la temperatura""
+}"
+90,ilumina el led,on,on,True,True,,True,True,1.0,El LED está siendo encendido,0.938,0.868,266,30,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""El LED está siendo encendido""
+}"
+91,apaga la luz,off,off,True,True,,True,True,1.0,Apagando la luz según instrucción,0.9687,0.9015,265,31,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando la luz según instrucción""
+}"
+92,haz que el led brille,on,on,True,True,,True,True,1.0,Encendiendo el LED,0.908,0.8383,268,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+93,apaga el indicador,off,off,True,True,,True,True,1.0,Apagando el LED,0.9028,0.8348,266,28,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando el LED""
+}"
+94,qué es MQTT,none,,False,False,no_json,False,False,,,7.2602,7.2601,264,293,MQTT (Message Queuing Telemetry Transport) es un protocolo de comunicación asincrona utilizado para enviar y recibir mensajes entre dispositivos y sistemas. Fue diseñado originalmente para ser utiliza
+95,buenos días,none,none,True,True,,False,False,0.5,No se proporcionó una instrucción clara para cambiar el estado del LED,1.1097,1.1096,265,40,"{
+  ""action"": ""none"",
+  ""confidence"": 0.5,
+  ""reason"": ""No se proporcionó una instrucción clara para cambiar el estado del LED""
+}"
+96,desactiva la salida,off,off,True,True,,True,True,1.0,Apagando la salida,0.8885,0.8103,266,28,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando la salida""
+}"
+97,prende la lampara,on,on,True,True,,True,True,1.0,Instrucción clara para encender el LED,0.9843,0.9167,266,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para encender el LED""
+}"
+98,desactiva la salida,off,off,True,True,,True,True,1.0,Apagando la salida,0.9042,0.8311,266,28,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando la salida""
+}"
+99,desactiva la salida,off,off,True,True,,True,True,1.0,Apagando la salida,0.8555,0.7887,266,28,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagando la salida""
+}"
+100,conecta el led,on,on,True,True,,True,True,1.0,Conectado al LED,0.9007,0.8269,265,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Conectado al LED""
+}"
+101,no enciendas el led,none,none,True,True,,False,False,1.0,Instrucción no clara,0.8283,0.8283,267,28,"{
+  ""action"": ""none"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción no clara""
+}"
+102,haz que el led brille,on,on,True,True,,True,True,1.0,Encendiendo el LED,0.9006,0.8262,268,28,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Encendiendo el LED""
+}"
+103,mañana prende el led,none,on,False,True,,True,True,1.0,El LED se encenderá mañana,0.9614,0.8869,267,30,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""El LED se encenderá mañana""
+}"
+104,gracias,none,,False,False,no_json,False,False,,,1.2011,1.2011,263,41,"De nada! Espero que todo salga bien con tu clasificador de intención para el LED. Si necesitas algo más, no dudes en preguntar. ¡Buena suerte!"
+105,no enciendas el led,none,none,True,True,,False,False,1.0,Instrucción no clara,0.8147,0.8146,267,28,"{
+  ""action"": ""none"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción no clara""
+}"
+106,qué es MQTT,none,,False,False,no_json,False,False,,,7.4359,7.4359,264,293,MQTT (Message Queuing Telemetry Transport) es un protocolo de comunicación asincrona utilizado para enviar y recibir mensajes entre dispositivos y sistemas. Fue diseñado originalmente para ser utiliza
+107,activa el led,on,on,True,True,,True,True,1.0,Instrucción clara para activar el LED,1.0152,0.947,265,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para activar el LED""
+}"
+108,desactiva el foco,off,off,True,True,,True,True,1.0,Apagar el LED,0.8946,0.826,267,27,"{
+  ""action"": ""off"",
+  ""confidence"": 1,
+  ""reason"": ""Apagar el LED""
+}"
+109,qué es MQTT,none,,False,False,no_json,False,False,,,7.5559,7.5559,264,293,MQTT (Message Queuing Telemetry Transport) es un protocolo de comunicación asincrona utilizado para enviar y recibir mensajes entre dispositivos y sistemas. Fue diseñado originalmente para ser utiliza
+110,prende la lampara,on,on,True,True,,True,True,1.0,Instrucción clara para encender el LED,1.1512,1.0835,266,32,"{
+  ""action"": ""on"",
+  ""confidence"": 1,
+  ""reason"": ""Instrucción clara para encender el LED""
+}"
