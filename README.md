@@ -130,6 +130,61 @@ STT_PROVIDER=groq
 
 ---
 
+## Servidores externos (MCP + Route)
+
+Este repositorio contiene únicamente el **asistente**. Los datos del campus y el cálculo de rutas viven en el repositorio companion [`mcp-blu`](https://github.com/Adr1anBaz/mcp-blu).
+
+### 1. Clonar y levantar `mcp-blu`
+
+```bash
+git clone https://github.com/Adr1anBaz/mcp-blu.git
+cd mcp-blu
+
+# Configurar variables de entorno (mismo token en ambos .env)
+cp .env.example .env
+cp mcp-server/.env.example mcp-server/.env
+
+# Levantar PostgreSQL con datos de ejemplo
+docker compose up -d
+```
+
+### 2. Iniciar MCP server (terminal 1)
+
+```bash
+cd mcp-blu/mcp-server
+uv run server.py
+# -> http://localhost:8000/mcp
+```
+
+### 3. Iniciar Route server (terminal 2)
+
+```bash
+cd mcp-blu
+uv run route_server.py
+# -> http://localhost:8001
+```
+
+### 4. Configurar el asistente
+
+En el `.env` de `prospectivaTecno` asegúrate de que apunten a los servidores anteriores:
+
+```bash
+MCP_URL=http://localhost:8000/mcp
+MCP_BEARER_TOKEN=el-mismo-token-de-mcp-blu
+ROUTE_API_URL=http://localhost:8001
+```
+
+### 5. Iniciar el asistente (terminal 3)
+
+```bash
+cd prospectivaTecno
+uv run python src/prospectiva/main.py --text
+```
+
+> El asistente en modo `--test` usa clientes mock y no requiere los servidores externos.
+
+---
+
 ## Configuración de TTS
 
 ```bash

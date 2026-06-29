@@ -23,27 +23,33 @@ class DeepgramTTS(TextToSpeech):
 
     def synthesize(self, text: str) -> bytes:
         if not self.available:
-            logger.warning("[DeepgramTTS] Not available, skipping synthesis")
             return b""
         try:
             logger.info(f"[DeepgramTTS] Synthesizing: '{text[:50]}...'")
-            
-            # Deepgram SDK v7: generate returns Iterator[bytes]
             response = self.client.speak.v1.audio.generate(
-                text=text,
-                model=self.model,
-                encoding="linear16",
-                container="wav",
+                text=text, model=self.model,
+                encoding="linear16", container="wav",
             )
-            
-            # Collect all bytes from the iterator
-            audio_bytes = b"".join(response)
-            
-            logger.info(f"[DeepgramTTS] Synthesized {len(audio_bytes)} bytes")
-            return audio_bytes
+            audio = b"".join(response)
+            logger.info(f"[DeepgramTTS] Synthesized {len(audio)} bytes")
+            return audio
         except Exception as e:
             logger.error(f"[DeepgramTTS] Error: {e}")
             return b""
+
+    def synthesize_stream(self, text: str):
+        if not self.available:
+            return
+        try:
+            logger.info(f"[DeepgramTTS] Streaming: '{text[:50]}...'")
+            response = self.client.speak.v1.audio.generate(
+                text=text, model=self.model,
+                encoding="linear16", container="wav",
+            )
+            for chunk in response:
+                yield chunk
+        except Exception as e:
+            logger.error(f"[DeepgramTTS] Stream error: {e}")
 
     def is_available(self) -> bool:
         return self.available

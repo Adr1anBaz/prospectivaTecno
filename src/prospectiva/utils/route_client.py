@@ -16,8 +16,9 @@ class RouteClient:
     de movimiento para ir del nodo inicio al nodo destino.
     """
 
-    def __init__(self, base_url: str | None = None, timeout: float = 10.0):
-        self.base_url = base_url or os.getenv("ROUTE_API_URL", "http://localhost:8081")
+    def __init__(self, base_url: str | None = None, token: str | None = None, timeout: float = 10.0):
+        self.base_url = base_url or os.getenv("ROUTE_API_URL", "http://localhost:8001")
+        self.token = token or os.getenv("MCP_BEARER_TOKEN", "")
         self.timeout = timeout
         self._client = httpx.Client(base_url=self.base_url, timeout=timeout)
         self._available = False
@@ -26,10 +27,16 @@ class RouteClient:
         except Exception as e:
             logger.warning(f"[RouteClient] Route API not available at {self.base_url}: {e}")
 
+    def _headers(self) -> dict:
+        headers = {}
+        if self.token:
+            headers["Authorization"] = f"Bearer {self.token}"
+        return headers
+
     def _check_health(self) -> bool:
         """Check if Route API is up."""
         try:
-            resp = self._client.get("/api/health")
+            resp = self._client.get("/api/health", headers=self._headers())
             if resp.status_code == 200:
                 self._available = True
                 logger.info(f"[RouteClient] Route API connected at {self.base_url}")
@@ -72,7 +79,8 @@ class RouteClient:
             logger.info(f"[RouteClient] Calculating route: {start_node} → {end_node}")
             resp = self._client.post(
                 "/api/routes/calculate",
-                json={"start": start_node, "end": end_node}
+                json={"start": start_node, "end": end_node},
+                headers=self._headers(),
             )
             if resp.status_code == 200:
                 data = resp.json()

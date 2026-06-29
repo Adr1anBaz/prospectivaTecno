@@ -9,7 +9,7 @@ from prospectiva.interfaces.stt import TextGenerator
 logger = logging.getLogger(__name__)
 
 class GroqLLM(TextGenerator):
-    def __init__(self, api_key: str | None = None, model: str = "llama-3.1-8b-instant", max_tokens: int = 260):
+    def __init__(self, api_key: str | None = None, model: str = "meta-llama/llama-4-scout-17b-16e-instruct", max_tokens: int = 160):
         from groq import Groq
         self.client = Groq(api_key=api_key or os.getenv("GROQ_API_KEY"))
         self.model = model
@@ -29,7 +29,7 @@ class GroqLLM(TextGenerator):
                 messages=messages,
                 stream=True,
                 max_tokens=self.max_tokens,
-                temperature=0.2,
+                temperature=0.1,
                 timeout=30.0
             )
             for chunk in stream:
@@ -68,7 +68,7 @@ class GroqLLM(TextGenerator):
                 tools=tools,
                 tool_choice="auto",
                 max_tokens=self.max_tokens,
-                temperature=0.2,
+                temperature=0.1,
                 timeout=30.0
             )
             
@@ -109,22 +109,18 @@ class GroqLLM(TextGenerator):
 
     def send_tool_results(self, tool_calls: List[Dict], tool_results: List[Dict], 
                          system_prompt: str | None = None) -> Dict[str, Any]:
-        """
-        Send tool results back to the LLM to get the final response.
-        
-        Args:
-            tool_calls: List of tool calls from previous response
-            tool_results: List of {tool_call_id, result} dicts
-            system_prompt: Optional system prompt
-        
-        Returns:
-            Dict with content, tool_calls, finish_reason
-        """
+        return self._stream_tool_results(tool_calls, tool_results, system_prompt)
+
+    def stream_tool_results(self, tool_calls: List[Dict], tool_results: List[Dict],
+                           system_prompt: str | None = None):
+        return self._stream_tool_results(tool_calls, tool_results, system_prompt, streaming=True)
+
+    def _stream_tool_results(self, tool_calls: List[Dict], tool_results: List[Dict],
+                            system_prompt: str | None = None, streaming: bool = False):
         messages = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
-        
-        # Add the assistant message that called the tools
+
         messages.append({
             "role": "assistant",
             "content": None,
@@ -140,36 +136,55 @@ class GroqLLM(TextGenerator):
                 for tc in tool_calls
             ]
         })
-        
-        # Add tool results
+
         for result in tool_results:
             messages.append({
                 "role": "tool",
                 "tool_call_id": result["tool_call_id"],
                 "content": json.dumps(result["result"]),
             })
-        
+
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                max_tokens=self.max_tokens,
-                temperature=0.2,
-                timeout=30.0
-            )
-            
-            message = response.choices[0].message
-            return {
-                "content": message.content,
-                "tool_calls": [],
-                "finish_reason": response.choices[0].finish_reason,
-                "raw_response": response,
-            }
+            if streaming:
+                stream = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    max_tokens=self.max_tokens,
+                    temperature=0.1,
+                    timeout=30.0,
+                    stream=True,
+                )
+                full_content = ""
+                for chunk in stream:
+                    delta = chunk.choices[0].delta.content
+                    if delta:
+                        full_content += delta
+                        yield delta
+                yield None  # signal end
+                logger.info(f"[GroqLLM] Streamed {len(full_content)} chars")
+            else:
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    max_tokens=self.max_tokens,
+                    temperature=0.1,
+                    timeout=30.0,
+                )
+                message = response.choices[0].message
+                return {
+                    "content": message.content,
+                    "tool_calls": [],
+                    "finish_reason": response.choices[0].finish_reason,
+                    "raw_response": response,
+                }
         except Exception as e:
-            logger.error(f"[GroqLLM] Error sending tool results: {e}")
-            return {
-                "content": "Lo siento, hubo un error procesando los resultados.",
-                "tool_calls": [],
-                "finish_reason": "error",
-                "raw_response": None,
-            }
+            logger.error(f"[GroqLLM] Error in tool results: {e}")
+            if streaming:
+                yield ""
+            else:
+                return {
+                    "content": "Lo siento, hubo un error.",
+                    "tool_calls": [],
+                    "finish_reason": "error",
+                    "raw_response": None,
+                }

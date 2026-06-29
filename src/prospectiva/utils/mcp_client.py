@@ -14,10 +14,10 @@ class MCPError(Exception):
 
 class MCPClient:
     """
-    MCP JSON-RPC client for the campus information server.
-    
-    Connects to a FastMCP server (server.py) via JSON-RPC 2.0 over HTTP.
-    Follows the MCP protocol: initialize → initialized → call tools.
+    MCP JSON-RPC client for the external campus information server.
+
+    Connects to a FastMCP server (e.g. mcp-blu) via JSON-RPC 2.0 over HTTP.
+    Follows the MCP protocol: initialize -> initialized -> call tools.
     """
 
     def __init__(self, url: str | None = None, token: str | None = None, timeout: float = 10.0):
@@ -120,11 +120,23 @@ class MCPClient:
                 "name": name,
                 "arguments": arguments or {},
             })
+            # FastMCP con json_response=True expone el resultado tipado en
+            # structuredContent.result; el bloque 'content' puede perder la
+            # estructura de listas en algunas versiones. Preferimos el
+            # structuredContent cuando existe.
+            structured = result.get("structuredContent")
+            if isinstance(structured, dict) and "result" in structured:
+                return structured["result"]
+
             content = result.get("content", [])
             for block in content:
                 if block.get("type") == "text":
-                    return json.loads(block["text"])
-            return content
+                    text = block.get("text", "")
+                    try:
+                        return json.loads(text)
+                    except json.JSONDecodeError:
+                        return {"result": text}
+            return content if content else result
         except MCPError as e:
             return {"error": str(e)}
 

@@ -19,7 +19,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Load .env
-load_dotenv()
+load_dotenv(override=True)
 
 # System prompt for university context
 SYSTEM_PROMPT = """Eres un asistente de navegación universitario. Hablas español."""
@@ -38,6 +38,10 @@ def get_stt_provider(groq_key: str, deepgram_key: str, provider: str = "groq"):
         logger.info("🎙️ STT Provider: Google Cloud Speech-to-Text")
         from prospectiva.modulos.stt.google_stt import GoogleCloudSTT
         return GoogleCloudSTT()
+    elif provider == "parakeet":
+        logger.info("🎙️ STT Provider: Parakeet (local ONNX)")
+        from prospectiva.modulos.stt.parakeet_stt import ParakeetSTT
+        return ParakeetSTT()
     else:
         logger.info("🎙️ STT Provider: Groq (Whisper)")
         from prospectiva.modulos.stt.groq_stt import GroqSTT
@@ -50,6 +54,10 @@ def get_tts_provider(deepgram_key: str, provider: str = "deepgram", model: str =
         logger.info("🔊 TTS Provider: Local (Mock)")
         from prospectiva.modulos.tts.local_tts import LocalTTS
         return LocalTTS()
+    elif provider == "edge":
+        logger.info(f"🔊 TTS Provider: Edge TTS (model={model})")
+        from prospectiva.modulos.tts.edge_tts import EdgeTTS
+        return EdgeTTS(voice=model)
     else:
         logger.info(f"🔊 TTS Provider: Deepgram (Aura-2, model={model})")
         from prospectiva.modulos.tts.deepgram_tts import DeepgramTTS
@@ -98,7 +106,7 @@ def audio_worker(bus, my_queue, vosk_model_path, wake_word_engine,
             keyword="ronaldo",
             sample_rate=16000,
             cooldown_seconds=1.5,
-            allow_partial=False,
+            allow_partial=True,
         )
         wake_word.initialize()
 
@@ -110,11 +118,11 @@ def audio_worker(bus, my_queue, vosk_model_path, wake_word_engine,
 
 def orquestador_worker(bus, my_queue, system_prompt, groq_key, deepgram_key,
                        mcp_url, route_url, start_node, test_mode,
-                       stt_provider, tts_provider, tts_model):
+                       stt_provider, tts_provider, tts_model,
+                       llm_provider="groq", llm_model="llama-3.1-8b-instant"):
     """Orquestador with configurable providers."""
     _setup_logging()
     bus.set_private_queue(my_queue)
-    from prospectiva.modulos.llm.groq_llm import GroqLLM
     from prospectiva.modulos.classifier.configurable_classifier import ConfigurableClassifier
     from prospectiva.procesos.orquestador import Orquestador
 
@@ -124,8 +132,26 @@ def orquestador_worker(bus, my_queue, system_prompt, groq_key, deepgram_key,
     # Create TTS provider
     tts = get_tts_provider(deepgram_key, tts_provider, model=tts_model)
 
-    # LLM
-    llm = GroqLLM(api_key=groq_key)
+    # LLM: Groq primario + OpenRouter como fallback universal
+    from prospectiva.modulos.llm.groq_llm import GroqLLM
+    from prospectiva.modulos.llm.fallback_llm import FallbackLLM
+    groq_llm = GroqLLM(api_key=groq_key)
+    if llm_provider == "openrouter":
+        from prospectiva.modulos.llm.openrouter_llm import OpenRouterLLM
+        openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
+        primary = OpenRouterLLM(api_key=openrouter_key, model=llm_model)
+        llm = FallbackLLM(primary=primary, secondary=groq_llm)
+        logger.info(f"[OrquestadorWorker] OpenRouter ({llm_model}) + Fallback Groq")
+    else:
+        from prospectiva.modulos.llm.openrouter_llm import OpenRouterLLM
+        openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
+        if openrouter_key:
+            fallback = OpenRouterLLM(api_key=openrouter_key, model="qwen/qwen3.6-flash")
+            llm = FallbackLLM(primary=groq_llm, secondary=fallback)
+            logger.info(f"[OrquestadorWorker] Groq + Fallback OpenRouter")
+        else:
+            llm = groq_llm
+            logger.info(f"[OrquestadorWorker] Groq (sin fallback)")
     
     # Classifier
     classifier = ConfigurableClassifier(config_path="config/commands.yaml")
@@ -142,7 +168,7 @@ def orquestador_worker(bus, my_queue, system_prompt, groq_key, deepgram_key,
         from prospectiva.utils.route_client import RouteClient
         mcp_token = os.getenv("MCP_BEARER_TOKEN", "")
         mcp_client = MCPClient(url=mcp_url, token=mcp_token) if mcp_url else None
-        route_client = RouteClient(base_url=route_url) if route_url else None
+        route_client = RouteClient(base_url=route_url, token=mcp_token) if route_url else None
 
     logger.info(f"[OrquestadorWorker] STT: {stt_provider}, TTS: {tts_provider}")
     
@@ -233,9 +259,15 @@ class Assistant:
         porcupine_access_key = os.getenv("PORCUPINE_ACCESS_KEY", "")
         porcupine_keyword_path = os.getenv("PORCUPINE_KEYWORD_PATH", "")
 
+        # LLM provider configuration
+        llm_provider = os.getenv("LLM_PROVIDER", "groq").lower()
+        llm_model = os.getenv("LLM_MODEL", "meta-llama/llama-4-scout-17b-16e-instruct")
+        openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
+
         logger.info(
             f"⚙️  Config: STT={stt_provider}, TTS={tts_provider}, "
-            f"TTS_MODEL={tts_model}, WAKE_WORD={wake_word_engine}"
+            f"TTS_MODEL={tts_model}, LLM={llm_provider} ({llm_model}), "
+            f"WAKE_WORD={wake_word_engine}"
         )
         
         # Config for new features
@@ -282,7 +314,8 @@ class Assistant:
             mp.Process(target=orquestador_worker, args=(
                 self.event_bus, orq_queue, SYSTEM_PROMPT, groq_key, deepgram_key,
                 mcp_url, route_url, start_node, self.test_mode,
-                stt_provider, tts_provider, tts_model
+                stt_provider, tts_provider, tts_model,
+                llm_provider, llm_model
             ), name="Orquestador"),
             mp.Process(target=playback_worker, args=(self.event_bus, playback_queue), name="AudioPlayback"),
             mp.Process(target=movement_worker, args=(self.event_bus, movement_queue), name="MovementProcess"),

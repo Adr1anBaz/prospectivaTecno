@@ -35,49 +35,17 @@ class Orquestador:
     del MCP llamar. Luego se muestran qué herramientas usó.
     """
 
-    # Tools disponibles para el LLM (MCP server)
+    # Tools disponibles para el LLM (12 herramientas, ordenadas por frecuencia de uso)
     LLM_TOOLS = [
         {
             "type": "function",
             "function": {
-                "name": "health_check",
-                "description": "Check that the MCP server can connect to the database",
-                "parameters": {"type": "object", "properties": {}},
-            }
-        },
-        {
-            "type": "function",
-            "function": {
-                "name": "database_summary",
-                "description": "Return a quick summary of the database: total places and count by type",
-                "parameters": {"type": "object", "properties": {}},
-            }
-        },
-        {
-            "type": "function",
-            "function": {
-                "name": "list_places",
-                "description": "List campus places. Optionally filter by type: restaurant, classroom, lab, store, office, department, gate, common_area",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "place_type": {
-                            "type": "string",
-                            "description": "Optional filter: restaurant, classroom, lab, store, office, department, gate, common_area"
-                        }
-                    },
-                }
-            }
-        },
-        {
-            "type": "function",
-            "function": {
                 "name": "search_places",
-                "description": "Search places by name, description, type, room code, building name or metadata",
+                "description": "BUSCAR LUGARES: restaurantes, laboratorios, salones, oficinas por nombre, tipo o equipamiento. Busca en ingles el equipamiento: 'projector', 'ROS', 'FPGA', 'robots', 'oscilloscope'. NO es para buscar productos en tiendas (usa search_products). NO es para buscar comida (usa search_food).",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "query": {"type": "string", "description": "Search query text"}
+                        "query": {"type": "string", "description": "Texto a buscar: nombre, tipo, equipo (en ingles)"}
                     },
                     "required": ["query"]
                 }
@@ -86,14 +54,14 @@ class Orquestador:
         {
             "type": "function",
             "function": {
-                "name": "get_place_detail",
-                "description": "Get detailed information about a place using its place_id (UUID). Includes opening hours and type-specific profile",
+                "name": "navigate_to",
+                "description": "NAVEGAR hacia un lugar. Llama esta tool cuando el usuario pida ir a algun lado: 'llevame a X', 'quiero ir a X', 'navega a X', 'dirigete a X'. El destino debe ser el nombre exacto del lugar.",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "place_id": {"type": "string", "description": "UUID of the place"}
+                        "destination": {"type": "string", "description": "Nombre del destino exacto (ej: Cafe Borrego, Laboratorio de Robotica, Sushi Nagoya)"}
                     },
-                    "required": ["place_id"]
+                    "required": ["destination"]
                 }
             }
         },
@@ -101,11 +69,11 @@ class Orquestador:
             "type": "function",
             "function": {
                 "name": "get_place_detail_by_name",
-                "description": "Get detailed information about a place using its name (useful when the user does not know the UUID)",
+                "description": "DETALLE COMPLETO de un lugar por su nombre: horarios, menu, productos, perfil, eventos.",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "name": {"type": "string", "description": "Place name to search"}
+                        "name": {"type": "string", "description": "Nombre del lugar"}
                     },
                     "required": ["name"]
                 }
@@ -115,12 +83,11 @@ class Orquestador:
             "type": "function",
             "function": {
                 "name": "search_food",
-                "description": "Search restaurant menu items by name, description, category or dietary tags. Optionally filter by max price",
+                "description": "BUSCAR COMIDA: busca platillos en restaurantes. Ej: 'tacos', 'sushi', 'pizza', 'cafe'.",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "query": {"type": "string", "description": "Food search query"},
-                        "max_price": {"type": "number", "description": "Optional maximum price filter"}
+                        "query": {"type": "string", "description": "Nombre del platillo o tipo de comida"}
                     },
                     "required": ["query"]
                 }
@@ -130,11 +97,11 @@ class Orquestador:
             "type": "function",
             "function": {
                 "name": "get_restaurant_menu_by_name",
-                "description": "Get restaurant menu using the restaurant name",
+                "description": "MENU COMPLETO de un restaurante por su nombre exacto. Si no sabes el nombre exacto, usa search_places PRIMERO.",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "name": {"type": "string", "description": "Restaurant name"}
+                        "name": {"type": "string", "description": "Nombre exacto del restaurante (ej: Sushi Nagoya, Cafe Borrego)"}
                     },
                     "required": ["name"]
                 }
@@ -143,43 +110,14 @@ class Orquestador:
         {
             "type": "function",
             "function": {
-                "name": "get_restaurant_menu",
-                "description": "Get menus and menu items for a restaurant using its place_id (UUID). Use get_place_detail_by_name first to find the ID",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "place_id": {"type": "string", "description": "UUID of the restaurant place"}
-                    },
-                    "required": ["place_id"]
-                }
-            }
-        },
-        {
-            "type": "function",
-            "function": {
                 "name": "search_products",
-                "description": "Search store products by name, description or category. Optionally filter by max price",
+                "description": "BUSCAR PRODUCTOS EN TIENDAS. Ej: 'calculadora', 'cuaderno', 'USB', 'pluma'.",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "query": {"type": "string", "description": "Product search query"},
-                        "max_price": {"type": "number", "description": "Optional maximum price filter"}
+                        "query": {"type": "string", "description": "Nombre del producto"}
                     },
                     "required": ["query"]
-                }
-            }
-        },
-        {
-            "type": "function",
-            "function": {
-                "name": "get_store_products",
-                "description": "Get products for a store using its place_id (UUID)",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "place_id": {"type": "string", "description": "UUID of the store place"}
-                    },
-                    "required": ["place_id"]
                 }
             }
         },
@@ -187,11 +125,11 @@ class Orquestador:
             "type": "function",
             "function": {
                 "name": "find_office_by_need",
-                "description": "Search offices/departments by purpose, department type or services",
+                "description": "BUSCAR OFICINAS por profesor, departamento o servicio. Ej: 'Dr. Sanchez', 'control', 'becas'.",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "query": {"type": "string", "description": "Search query for office purpose, department type or services"}
+                        "query": {"type": "string", "description": "Nombre de profesor, departamento o servicio"}
                     },
                     "required": ["query"]
                 }
@@ -200,8 +138,32 @@ class Orquestador:
         {
             "type": "function",
             "function": {
+                "name": "list_places",
+                "description": "LISTAR TODOS los lugares de un tipo. Usa SOLO si el usuario pide un listado completo. Ej: 'list_places(\"restaurant\")' para todos los restaurantes. Para busquedas especificas usa search_places.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "place_type": {
+                            "type": "string",
+                            "description": "Tipo: restaurant, lab, store, office, classroom, gate, common_area"
+                        }
+                    },
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "database_summary",
+                "description": "RESUMEN del campus: cuantos lugares hay de cada tipo. Solo para preguntas generales como 'que hay en el campus'.",
+                "parameters": {"type": "object", "properties": {}},
+            }
+        },
+        {
+            "type": "function",
+            "function": {
                 "name": "get_gates",
-                "description": "List campus gates with entry/exit permissions and adjacent streets",
+                "description": "LISTAR puertas de acceso al campus.",
                 "parameters": {"type": "object", "properties": {}},
             }
         },
@@ -209,7 +171,7 @@ class Orquestador:
             "type": "function",
             "function": {
                 "name": "get_current_crowd_levels",
-                "description": "Get latest crowd level per place when available",
+                "description": "NIVELES DE AFLUENCIA actuales por lugar.",
                 "parameters": {"type": "object", "properties": {}},
             }
         },
@@ -217,11 +179,11 @@ class Orquestador:
             "type": "function",
             "function": {
                 "name": "search_semantic_documents",
-                "description": "Search semantic documents by text (temporary lexical search, later vector search)",
+                "description": "BUSCAR DOCUMENTOS del campus por texto.",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "query": {"type": "string", "description": "Document search query"}
+                        "query": {"type": "string", "description": "Texto a buscar"}
                     },
                     "required": ["query"]
                 }
@@ -290,8 +252,13 @@ class Orquestador:
             self._handle_movement_completed(payload)
         elif event_type == "WAKE_WORD_DETECTED":
             logger.info("[Orquestador] Wake word detected - ready for speech")
-        elif event_type in ("AUDIO_SYNTHESIZED", "CONVERSATION_CONTINUING", "CONVERSATION_END", "STOP"):
-            # AudioPlayback handles AUDIO_SYNTHESIZED; AudioProcess/TextInputProcess handle conversation events
+        elif event_type in (
+            "AUDIO_SYNTHESIZED", "AUDIO_STREAM_START", "AUDIO_STREAM_CHUNK", "AUDIO_STREAM_END",
+            "CONVERSATION_CONTINUING", "CONVERSATION_END",
+            "MOVEMENT_SEQUENCE_READY",
+            "STOP",
+        ):
+            # Events for other processes (AudioPlayback, MovementProcess, etc.)
             pass
         elif event_type == "ERROR":
             logger.error(f"[Orquestador] Error event: {payload}")
@@ -318,6 +285,8 @@ class Orquestador:
             else:
                 logger.warning("[Orquestador] STT returned empty text, ignoring")
                 print("⚠️ No se detectó voz clara. Repite el comando.")
+                # End conversation to avoid infinite loop on noise/echo
+                self.event_bus.publish("CONVERSATION_END", {})
         except Exception as e:
             logger.error(f"[Orquestador] STT error: {e}")
             logger.error(traceback.format_exc())
@@ -338,10 +307,12 @@ class Orquestador:
             return text
         import re
 
+        text = text.strip()
+
         # Normalize punctuation and lowercase for comparison
         words = text.lower().split()
         if len(words) < 2:
-            return text.strip()
+            return text
 
         # Strip trailing punctuation for comparison
         def clean_word(w: str) -> str:
@@ -353,9 +324,6 @@ class Orquestador:
                 cleaned.append(word)
 
         result = " ".join(cleaned)
-        # Preserve original capitalization of first letter
-        if text and result:
-            result = text[0] + result[1:]
         return result.strip()
 
     def _handle_text_transcribed(self, text: str):
@@ -443,82 +411,70 @@ class Orquestador:
             
             logger.info(f"[Orquestador] LLM first response: finish_reason={first_response['finish_reason']}")
             
+            # Si finish_reason=error sin tools: reintentar sin tools
+            if first_response["finish_reason"] == "error" and not first_response["tool_calls"]:
+                logger.info("[Orquestador] Tool call error, retrying without tools...")
+                self._handle_without_tools(user_text, system_prompt)
+                return
+
             # If LLM called tools, execute them
             if first_response["tool_calls"]:
-                self._execute_tool_calls(first_response["tool_calls"])
-                
-                # Second call: send tool results back to LLM
-                tool_results = self._prepare_tool_results(first_response["tool_calls"])
-                final_response = self.llm.send_tool_results(
-                    tool_calls=first_response["tool_calls"],
-                    tool_results=tool_results,
-                    system_prompt=system_prompt
-                )
-                
+                tool_results = self._execute_and_collect(first_response["tool_calls"])
+
+                stream_fn = getattr(self.llm, 'stream_tool_results', None)
+                if stream_fn:
+                    logger.info("[Orquestador] Streaming final response...")
+                    full_content = ""
+                    for fragment in stream_fn(
+                        tool_calls=first_response["tool_calls"],
+                        tool_results=tool_results,
+                        system_prompt=system_prompt
+                    ):
+                        if fragment is None:
+                            break
+                        full_content += fragment
+                    final_response = {"content": full_content, "tool_calls": [], "finish_reason": "stop"}
+                else:
+                    final_response = self.llm.send_tool_results(
+                        tool_calls=first_response["tool_calls"],
+                        tool_results=tool_results,
+                        system_prompt=system_prompt
+                    )
+
                 logger.info(f"[Orquestador] LLM final response after tools")
-                self._process_llm_response(final_response, user_text)
+                self._process_llm_response(final_response, user_text, tool_calls=first_response["tool_calls"])
             else:
                 # No tools called, process directly
                 self._process_llm_response(first_response, user_text)
                 
         except Exception as e:
             logger.error(f"[Orquestador] Tool calling error: {e}")
-            logger.error(traceback.format_exc())
-            self._fallback_response("No entendí bien, ¿podrías repetir?", user_text)
+            # Reintentar SIN tools por si el error es del tool calling
+            try:
+                logger.info("[Orquestador] Retrying with simple generation (no tools)...")
+                simple_prompt = self._build_system_prompt() + "\n\nUSUARIO:\n" + user_text
+                buffer = ""
+                for fragment in self.llm.generate(simple_prompt, ""):
+                    buffer += fragment
+                response_text = buffer if buffer else "No entendí bien, ¿podrías repetir?"
+                self._process_llm_response({"content": response_text, "tool_calls": [], "finish_reason": "stop"}, user_text)
+            except Exception as e2:
+                logger.error(f"[Orquestador] Fallback also failed: {e2}")
+                self._fallback_response("No entendí bien, ¿podrías repetir?", user_text)
 
-    def _execute_tool_calls(self, tool_calls: List[Dict]):
-        """Execute tool calls and track them."""
+    def _execute_and_collect(self, tool_calls: List[Dict]) -> List[Dict]:
+        """Execute tools UNA VEZ y devolver resultados para el LLM."""
         logger.info(f"[Orquestador] Executing {len(tool_calls)} tool call(s)...")
-
         TOOL_DISPATCH = {
-            "health_check": self._tool_health_check,
-            "database_summary": self._tool_database_summary,
-            "list_places": self._tool_list_places,
             "search_places": self._tool_search_places,
-            "get_place_detail": self._tool_get_place_detail,
+            "navigate_to": self._tool_navigate_to,
             "get_place_detail_by_name": self._tool_get_place_detail_by_name,
             "search_food": self._tool_search_food,
             "get_restaurant_menu_by_name": self._tool_get_restaurant_menu_by_name,
-            "get_restaurant_menu": self._tool_get_restaurant_menu,
             "search_products": self._tool_search_products,
-            "get_store_products": self._tool_get_store_products,
             "find_office_by_need": self._tool_find_office_by_need,
-            "get_gates": self._tool_get_gates,
-            "get_current_crowd_levels": self._tool_get_current_crowd_levels,
-            "search_semantic_documents": self._tool_search_semantic_documents,
-        }
-
-        for tc in tool_calls:
-            tool_name = tc["name"]
-            args = tc["arguments"]
-            start_time = time.time()
-            handler = TOOL_DISPATCH.get(tool_name)
-            if handler:
-                try:
-                    result = handler(**(args or {}))
-                except Exception as e:
-                    result = {"error": str(e)}
-            else:
-                result = {"error": f"Unknown tool: {tool_name}"}
-            duration = (time.time() - start_time) * 1000
-            self.tool_tracker.record(tool_name, args, result, duration)
-            logger.info(f"[Orquestador] Tool {tool_name} executed in {duration:.0f}ms")
-
-    def _prepare_tool_results(self, tool_calls: List[Dict]) -> List[Dict]:
-        """Prepare tool results for sending back to LLM."""
-        TOOL_DISPATCH = {
-            "health_check": self._tool_health_check,
-            "database_summary": self._tool_database_summary,
             "list_places": self._tool_list_places,
-            "search_places": self._tool_search_places,
-            "get_place_detail": self._tool_get_place_detail,
-            "get_place_detail_by_name": self._tool_get_place_detail_by_name,
-            "search_food": self._tool_search_food,
-            "get_restaurant_menu_by_name": self._tool_get_restaurant_menu_by_name,
-            "get_restaurant_menu": self._tool_get_restaurant_menu,
-            "search_products": self._tool_search_products,
-            "get_store_products": self._tool_get_store_products,
-            "find_office_by_need": self._tool_find_office_by_need,
+            "database_summary": self._tool_database_summary,
             "get_gates": self._tool_get_gates,
             "get_current_crowd_levels": self._tool_get_current_crowd_levels,
             "search_semantic_documents": self._tool_search_semantic_documents,
@@ -616,28 +572,103 @@ class Orquestador:
             return self.mcp_client.search_semantic_documents(query)
         return [{"error": "MCP client not available"}]
 
+    def _tool_navigate_to(self, destination: str) -> dict:
+        if not self.route_client or not self.route_client.is_available():
+            return {"error": "Route API no disponible", "success": False}
+        current = self.memory.get_current_node()
+        logger.info(f"[Orquestador] Navigate: {current} -> {destination}")
+
+        # Si current y destination son iguales, ya estamos ahi
+        if current.lower() == destination.lower():
+            return {
+                "success": True,
+                "destination": destination,
+                "from": current,
+                "response": f"Ya estas en {destination}.",
+                "distance_m": 0,
+                "estimated_time": 0,
+            }
+
+        result = self.route_client.calculate_route(current, destination)
+        if result.get("success"):
+            movement_files = result.get("movement_files") or result.get("route_files") or []
+            dist = result.get("total_distance_m", 0)
+            has_real_files = any(f and f.endswith('.csv') for f in movement_files)
+
+            if not has_real_files and dist == 0:
+                return {
+                    "success": True,
+                    "destination": destination,
+                    "from": current,
+                    "response": f"Ya estas en {destination}.",
+                    "distance_m": 0,
+                    "estimated_time": 0,
+                }
+            if not has_real_files:
+                self.memory.set_current_node(destination)
+                return {
+                    "success": True,
+                    "destination": destination,
+                    "from": current,
+                    "response": f"Ruta calculada a {destination}. Son {dist} metros.",
+                    "distance_m": dist,
+                    "estimated_time": result.get("estimated_time", 0),
+                    "note": "Sin archivos CSV de moviemiento, solo ruta teorica.",
+                }
+
+            self.memory.set_current_node(destination)
+            self._send_movement_sequence(movement_files, destination)
+            return {
+                "success": True,
+                "destination": destination,
+                "from": current,
+                "response": f"Voy a {destination}. Son {dist} metros, aproximadamente {result.get('estimated_time', 0)} segundos.",
+                "distance_m": dist,
+                "estimated_time": result.get("estimated_time", 0),
+            }
+        return {
+            "success": False,
+            "error": result.get("error", f"No se pudo calcular la ruta a '{destination}'"),
+        }
+
     def _build_system_prompt(self) -> str:
         """Build system prompt with context and history."""
         parts = [
             "Eres un asistente de información universitaria. Hablas español.",
             "",
-            "INFORMACIÓN DEL CAMPUS DISPONIBLE:",
-            "- search_places(query): busca lugares por nombre, descripción, tipo o edificio",
-            "- get_place_detail_by_name(name): obtén horarios, menús, productos de un lugar",
-            "- search_food(query, max_price?): busca platillos por nombre, descripción o precio",
-            "- get_restaurant_menu_by_name(name): obtén el menú completo de un restaurante",
-            "- search_products(query, max_price?): busca productos en tiendas",
-            "- find_office_by_need(query): busca oficinas/departamentos por servicio",
-            "- get_gates(): lista las puertas de acceso al campus",
-            "- get_current_crowd_levels(): niveles de afluencia actual",
-            "- search_semantic_documents(query): busca documentos del campus",
+            "DATOS DISPONIBLES EN EL CAMPUS:",
+            "Restaurantes (9): Tacos Don Julio, Sushi Nagoya, Dragon Dorado, Cafe Borrego, La Bella Italia, Green Bowl, El Rincon del Sabor, Subway Campus, Giornale",
+            "Tiendas: Papeleria Campus (cuadernos, calculadoras, plumas), Tienda de Conveniencia (snacks, bebidas, cargadores)",
+            "Oficinas: Dr. Sanchez, Dra. Gonzalez, Dr. Mendoza, etc.",
+            "Laboratorios: Robotica (ROS), Circuitos (FPGA), Control (projector, plantas, motores)",
+            "Equipamiento en laboratorios (buscar en INGLES con terminos SIMPLES): 'projector' (proyector), 'ROS', 'FPGA', 'oscilloscope', 'robots'",
+            "Cuando busques equipamiento, NO combines palabras. Busca terminos individuales: 'projector' para proyector, 'robots' para robotica.",
+            "Puertas: Puerta 10 (principal)",
+            "",
+            "GUIA DE HERRAMIENTAS:",
+            "- PRODUCTOS de tienda (calculadora, cuaderno, USB) -> search_products",
+            "- COMIDA/platillos (tacos, sushi, pizza) -> search_food",
+            "- MENU de un restaurante (nombre exacto) -> get_restaurant_menu_by_name",
+            "- Si falla el nombre exacto, busca el lugar con search_places PRIMERO",
+            "- NAVEGAR a un lugar (llevame a X, quiero ir a X) -> navigate_to",
+            "- LUGARES (restaurantes, laboratorios, salones) -> search_places",
+            "- OFICINAS de profesores/departamentos -> find_office_by_need",
+            "- DETALLE + horarios de un lugar -> get_place_detail_by_name",
+            "- PUERTAS de acceso -> get_gates",
+            "- DOCUMENTOS del campus -> search_semantic_documents",
+            "- AFLUENCIA actual -> get_current_crowd_levels",
             "",
             "REGLAS:",
-            "- Cuando el usuario pregunte por lugares, comida, horarios, usa las herramientas",
-            "- Si el usuario pide un lugar específico, infiere el destino",
-            "- Si no tienes suficiente información, haz preguntas de seguimiento",
-            "- Máximo 2 preguntas de seguimiento",
-            "- Máximo 1 oración en tu respuesta",
+            "- Cuando el usuario pregunte por algo, USA SIEMPRE las herramientas primero",
+            "- Si un tool falla porque el nombre no es exacto, usa search_places para encontrar el nombre correcto y vuelve a intentar",
+            "- No inventes nombres de restaurantes o productos; busca siempre en la BD",
+            "- NUNCA uses sintaxis '<function=...>' ni '<...>' en tus respuestas. Responde solo como texto natural.",
+            "- Cuando navigate_to devuelva success=true y 'distance_m' sea 0, significa que YA estas en ese lugar. Di 'Ya estas ahi.'",
+            "- Cuando navigate_to devuelva success=true y un campo 'response', USA ese texto como tu respuesta directa.",
+            "- Cuando navigate_to falle porque el destino no existe en la BD, usa search_places PRIMERO para encontrar el nombre exacto, luego llama navigate_to de nuevo.",
+            "- Ejemplo: si navigate_to('salon L') falla, busca con search_places('salon L') para obtener el nombre real, luego navigate_to('Salon A-201').",
+            "- Si no tienes suficiente información, haz máximo 1 pregunta de seguimiento",
+            "- Máximo 1 oracion en tu respuesta. Responde directo y sin rodeos.",
             "- Responde de forma natural y útil en español",
             "",
             f"UBICACIÓN ACTUAL DEL ROBOT: {self.memory.get_current_node()}",
@@ -652,9 +683,9 @@ class Orquestador:
         
         return "\n".join(parts)
 
-    def _process_llm_response(self, response: Dict, user_text: str):
+    def _process_llm_response(self, response: Dict, user_text: str, tool_calls: list | None = None):
         """Process LLM response (after tool calling or direct)."""
-        content = response.get("content", "No entendí bien.")
+        content = self._clean_response(response.get("content", "") or "")
         
         # Try to parse JSON from content
         parsed = self._parse_llm_json(content)
@@ -712,7 +743,7 @@ class Orquestador:
             )
             self._synthesize_and_publish(response_text)
             # Signal AudioProcess to stay in listening mode for natural conversation
-            self._publish_conversation_continuing(response_text)
+            self._publish_conversation_continuing(response_text, tool_calls=tool_calls)
 
     def _handle_conversational_legacy(self, user_text: str):
         """Legacy conversational mode without tool calling (fallback)."""
@@ -797,6 +828,35 @@ class Orquestador:
         else:
             self._synthesize_and_publish(response_text)
 
+    def _clean_response(self, text: str) -> str:
+        """Remove raw function call syntax the LLM might leak."""
+        if not text:
+            return text
+        text = re.sub(r'<function=\w+>.*?</function>', '', text, flags=re.DOTALL)
+        text = re.sub(r'<function=\w+>', '', text)
+        text = re.sub(r'</function>', '', text)
+        text = re.sub(r'\[function=\w+\].*?\[/function\]', '', text, flags=re.DOTALL)
+        text = text.strip()
+        return text if text else "No tengo esa información disponible."
+
+    def _handle_without_tools(self, user_text: str, system_prompt: str):
+        """Responder sin tools cuando el tool calling falla."""
+        try:
+            prompt = system_prompt + "\n\nUSUARIO:\n" + user_text
+            buffer = ""
+            for fragment in self.llm.generate(prompt, ""):
+                buffer += fragment
+            if buffer:
+                self._process_llm_response(
+                    {"content": self._clean_response(buffer), "tool_calls": [], "finish_reason": "stop"},
+                    user_text
+                )
+            else:
+                self._fallback_response("No entendí bien, ¿podrías repetir?", user_text)
+        except Exception as e:
+            logger.error(f"[Orquestador] Without-tools fallback failed: {e}")
+            self._fallback_response("No entendí bien, ¿podrías repetir?", user_text)
+
     def _parse_llm_json(self, buffer: str) -> dict | None:
         """Extract and parse JSON from LLM response."""
         try:
@@ -859,24 +919,58 @@ class Orquestador:
         self.memory.set_current_node(end_node)
 
     def _synthesize_and_publish(self, text: str):
-        """Synthesize text and publish AUDIO_SYNTHESIZED."""
+        """Synthesize text and publish audio (streaming si el TTS lo soporta)."""
         try:
-            logger.info(f"[Orquestador] Synthesizing: '{text[:80]}...'")
+            if hasattr(self.tts, 'synthesize_stream'):
+                logger.info(f"[Orquestador] Streaming TTS: '{text[:80]}...'")
+                stream = self.tts.synthesize_stream(text)
+                header = b""
+                sent_start = False
+                for i, chunk in enumerate(stream):
+                    if not chunk:
+                        continue
+                    if i == 0 and len(chunk) > 44:
+                        # Primera llamada tiene el WAV header + data
+                        header = chunk[:44]
+                        data = chunk[44:]
+                        self.event_bus.publish("AUDIO_STREAM_START", {"header": header})
+                        if data:
+                            self.event_bus.publish("AUDIO_STREAM_CHUNK", {"chunk": data})
+                        sent_start = True
+                    elif i == 0:
+                        header = chunk
+                        self.event_bus.publish("AUDIO_STREAM_START", {"header": header})
+                        sent_start = True
+                    else:
+                        self.event_bus.publish("AUDIO_STREAM_CHUNK", {"chunk": chunk})
+                if sent_start:
+                    self.event_bus.publish("AUDIO_STREAM_END", {})
+                return
+
+            # Legacy: full audio
             audio_bytes = self.tts.synthesize(text)
             if audio_bytes:
-                logger.info(f"[Orquestador] Publishing AUDIO_SYNTHESIZED ({len(audio_bytes)} bytes)")
                 self.event_bus.publish("AUDIO_SYNTHESIZED", {"audio": audio_bytes})
-            else:
-                logger.warning("[Orquestador] TTS returned empty audio")
         except Exception as e:
             logger.error(f"[Orquestador] TTS error: {e}")
             logger.error(traceback.format_exc())
 
-    def _publish_conversation_continuing(self, response_text: str):
+    RESOLUTIVE_TOOLS = {"navigate_to", "list_places", "get_gates", "database_summary"}
+
+    def _publish_conversation_continuing(self, response_text: str, tool_calls: list | None = None):
         """
         Signal AudioProcess to stay in listening mode for natural conversation.
-        Publishes CONVERSATION_CONTINUING unless the response indicates conversation end.
+        Publishes CONVERSATION_CONTINUING unless the response indicates conversation end
+        or a resolutive tool was called (navigate, list, etc.).
         """
+        # If LLM called a resolutive tool (navigation, listing), end conversation
+        if tool_calls:
+            called_names = {tc.get("name", "") for tc in tool_calls if isinstance(tc, dict)}
+            if called_names & self.RESOLUTIVE_TOOLS:
+                self.event_bus.publish("CONVERSATION_END", {})
+                logger.info(f"[Orquestador] Conversation ended — resolutive tool(s) called: {called_names}")
+                return
+
         end_phrases = ["adiós", "adios", "hasta luego", "chao", "bye", "nos vemos",
                        "eso es todo", "gracias por nada", "ya no necesito"]
         text_lower = response_text.lower()

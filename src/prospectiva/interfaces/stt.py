@@ -25,6 +25,10 @@ class TextToSpeech(ABC):
         """Synthesize text to audio bytes (e.g., WAV or MP3)."""
         ...
 
+    def synthesize_stream(self, text: str):
+        """Optional: yield audio chunks as they arrive. Default returns single chunk."""
+        yield self.synthesize(text)
+
     @abstractmethod
     def is_available(self) -> bool:
         ...
