@@ -1,6 +1,6 @@
 # Asistente de Voz Universitario — Blu
 
-Asistente de navegación e información para campus universitario. Wake word offline, STT/LLM/TTS online, integración con servidor MCP y Route API.
+Asistente de navegación e información para campus universitario con reconocimiento de voz local, wake word offline, múltiples proveedores de STT/TTS/LLM, e integración con servidor MCP y Route API.
 
 > Rama activa de desarrollo: `main`
 
@@ -10,9 +10,11 @@ Asistente de navegación e información para campus universitario. Wake word off
 
 - Python 3.11+
 - [uv](https://docs.astral.sh/uv/) para manejo de dependencias
-- API keys:
+- API keys (según proveedores que uses):
   - **Groq** (`GROQ_API_KEY`): https://console.groq.com
   - **Deepgram** (`DEEPGRAM_API_KEY`): https://developers.deepgram.com
+  - **OpenRouter** (`OPENROUTER_API_KEY`, opcional): https://openrouter.ai
+- **Parakeet STT local** (opcional): requiere el modelo ONNX descargado por la app Handy (ver sección [Modelo Parakeet](#modelo-parakeet-stt-local))
 - (Opcional) Cuenta de Google Cloud con **Cloud Speech-to-Text API** habilitada
 
 ---
@@ -27,7 +29,7 @@ cd prospectivaTecno
 # 2. Crear .env a partir del ejemplo
 cp .env.example .env
 
-# 3. Editar .env con tus API keys
+# 3. Editar .env con tus API keys y proveedores deseados
 #    GROQ_API_KEY=...
 #    DEEPGRAM_API_KEY=...
 
@@ -45,6 +47,49 @@ uv run python scripts/download_vosk_model.py
 
 > Si solo usarás el **modo texto** (`--text`), no necesitas el modelo Vosk.
 
+### Modelo Parakeet STT (local, opcional)
+
+Para usar el proveedor `parakeet` (STT 100% local sin conexión a internet), necesitas el modelo ONNX de NVIDIA NeMo Parakeet-TDT que la app Handy descarga automáticamente. El asistente lo usa en modo solo lectura (no modifica los archivos de Handy).
+
+**Si tienes Handy instalado**, el modelo ya está en:
+
+```
+~/.local/share/com.pais.handy/models/parakeet-tdt-0.6b-v3-int8/
+```
+
+Debe contener estos 4 archivos:
+
+| Archivo | Rol |
+|---|---|
+| `nemo128.onnx` | Preprocesador acústico (waveform → features) |
+| `encoder-model.int8.onnx` | Encoder acústico |
+| `decoder_joint-model.int8.onnx` | Decoder Transducer (RNNT greedy) |
+| `vocab.txt` | Vocabulario de 8193 tokens (blank=8192) |
+
+**Si no tienes Handy**, descarga el modelo manualmente:
+
+```bash
+# Crear el directorio
+mkdir -p ~/.local/share/com.pais.handy/models/
+
+# Descargar desde Hugging Face (NVIDIA NeMo)
+# Parakeet-TDT 0.6B (int8 quantized)
+wget -P ~/.local/share/com.pais.handy/models/parakeet-tdt-0.6b-v3-int8/ \
+  https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3-int8/resolve/main/nemo128.onnx \
+  https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3-int8/resolve/main/encoder-model.int8.onnx \
+  https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3-int8/resolve/main/decoder_joint-model.int8.onnx \
+  https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3-int8/resolve/main/vocab.txt
+```
+
+Luego en `.env`:
+
+```bash
+STT_PROVIDER=parakeet
+PARAKEET_MODEL_DIR=/home/rimuru/.local/share/com.pais.handy/models/parakeet-tdt-0.6b-v3-int8
+```
+
+> **Nota:** La primera transcripción carga los 3 modelos ONNX (~2-3s). Las siguientes son rápidas porque las sesiones se reutilizan. Si tienes GPU NVIDIA, automáticamente usará `CUDAExecutionProvider`.
+
 ---
 
 ## Modo de ejecución
@@ -54,6 +99,10 @@ uv run python scripts/download_vosk_model.py
 Usa el micrófono. Di `"ronaldo"` seguido del comando.
 
 ```bash
+# Con servidores reales (MCP + Route)
+uv run python src/prospectiva/main.py
+
+# Con clientes mock (no requiere servidores externos)
 uv run python src/prospectiva/main.py --test
 ```
 
@@ -88,7 +137,6 @@ uv run python src/prospectiva/main.py --text --test
 🎤 [ronaldo] > ronaldo qué comida hay en la cafetería
 🧠 RESPUESTA CONVERSACIONAL
   ...
-🗣️ Entrando a modo conversación...
 
 🗣️  > gracias
 🧠 RESPUESTA CONVERSACIONAL
@@ -103,30 +151,81 @@ uv run python src/prospectiva/main.py --text --test
 
 ---
 
-## Configuración de STT
+## Proveedores
 
-El motor de Speech-to-Text se elige con `STT_PROVIDER` en `.env`:
+### STT (Speech-to-Text)
+
+| Proveedor | Modo | Descripción | API Key |
+|---|---|---|---|
+| `groq` (default) | Online | Whisper large-v3-turbo, rápido y preciso | `GROQ_API_KEY` |
+| `deepgram` | Online | Nova-3 streaming, baja latencia | `DEEPGRAM_API_KEY` |
+| `googlecloud` | Online | Google Cloud Speech-to-Text | Service Account JSON |
+| `parakeet` | **Local** | ONNX Parakeet-TDT, sin conexión, requiere GPU recomendada | No necesita |
+
+En `.env`:
 
 ```bash
-# Opciones: groq | deepgram | googlecloud
-STT_PROVIDER=groq
+STT_PROVIDER=parakeet
 ```
 
-### Google Cloud Speech-to-Text (recomendado para mejor precisión)
+### TTS (Text-to-Speech)
 
-1. Ve a [Google Cloud Console → Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
-2. Crea un service account con rol **Cloud Speech-to-Text API User**
-3. Genera una clave JSON y guárdala en tu proyecto, por ejemplo:
-   ```
-   ./credentials/gcp-speech.json
-   ```
-4. En `.env`:
-   ```bash
-   GOOGLE_APPLICATION_CREDENTIALS=./credentials/gcp-speech.json
-   STT_PROVIDER=googlecloud
-   ```
+| Proveedor | Streaming | Descripción | API Key |
+|---|---|---|---|
+| `edge` (default) | ✅ Sí | Microsoft Edge TTS, rápido, gratuito, muchas voces | No necesita |
+| `deepgram` | ✅ Sí | Deepgram Aura-2, voces naturales | `DEEPGRAM_API_KEY` |
+| `local` | ❌ No | Mock offline para pruebas | No necesita |
 
-> **Importante:** Nunca subas la carpeta `credentials/` a git. Ya está en `.gitignore`.
+En `.env`:
+
+```bash
+TTS_PROVIDER=edge
+TTS_MODEL=es-MX-JorgeNeural
+```
+
+Voces Edge disponibles en español:
+- `es-MX-JorgeNeural` (masculino, default)
+- `es-MX-DaliaNeural` (femenino)
+
+Voces Deepgram Aura-2:
+- `aura-2-celeste-es`, `aura-2-alejandra-es`, `aura-2-sofia-es` (femenino)
+- `aura-2-marcos-es`, `aura-2-octavio-es` (masculino)
+
+### LLM
+
+| Proveedor | Descripción |
+|---|---|
+| `groq` (default) | Llama 4 Scout 17B, rápida, gratis |
+| `openrouter` | OpenRouter con fallback a Groq si falla |
+
+En `.env`:
+
+```bash
+LLM_PROVIDER=groq
+LLM_MODEL=meta-llama/llama-4-scout-17b-16e-instruct
+```
+
+---
+
+## Anti-feedback (bucle de audio)
+
+El asistente incorpora un sistema anti-feedback para evitar que el micrófono capture la voz del TTS y entre en un bucle infinito:
+
+| Mecanismo | Descripción |
+|---|---|
+| **Muteo durante TTS** | Ignora chunks de micrófono mientras `AUDIO_STREAM_START` está activo |
+| **Cooldown adaptativo post-TTS** | Después de que el TTS termina, espera `max(3s, duración_TTS × 1.5)` antes de escuchar de nuevo (máx 8s). El eco/rebote de la bocina se disipa en ese tiempo |
+| **VAD streak** | En modo conversación, requiere 3 chunks consecutivos de VAD positivo antes de empezar a capturar. Filtra ruido ambiente y picos aislados |
+| **Flush de buffer en inicio de TTS** | Cuando el TTS empieza a reproducirse, se descarta cualquier audio capturado justo antes |
+| **Fin de conversación por tool resolutiva** | Si el LLM llamó `navigate_to`, `list_places`, etc., la conversación termina automáticamente (no se queda escuchando después de navegar) |
+| **Fin de conversación por transcripción vacía** | Si Parakeet devuelve texto vacío (silencio/ruido), se publica `CONVERSATION_END` para romper el bucle |
+
+Configuración en `.env`:
+
+```bash
+# Milisegundos de cooldown mínimo después del TTS (default: 3000)
+POST_TTS_COOLDOWN_MS=3000
+```
 
 ---
 
@@ -185,61 +284,98 @@ uv run python src/prospectiva/main.py --text
 
 ---
 
-## Configuración de TTS
-
-```bash
-# Opciones: deepgram | local
-TTS_PROVIDER=deepgram
-TTS_MODEL=aura-2-celeste-es
-```
-
-La voz por defecto es `aura-2-celeste-es`. Otras opciones en español:
-- `aura-2-alejandra-es`
-- `aura-2-sofia-es`
-- `aura-2-marcos-es`
-- `aura-2-octavio-es`
-
----
-
 ## Funcionalidades principales
 
-- **Wake word**: `"ronaldo"` detectada offline con Vosk
-- **STT**: Groq Whisper, Deepgram Nova-3 o Google Cloud Speech-to-Text
-- **TTS**: Deepgram Aura-2 en español
-- **Navegación**: comandos directos a edificios del campus
-- **Robot**: comandos de movimiento (`siéntate`, `baila`, `camina`, etc.)
-- **Conversación**: LLM con tool calling nativo sobre 15 herramientas MCP
-- **Modo conversación**: tras una respuesta, el asistente sigue escuchando sin repetir wake word
-- **Modo texto**: prueba todo sin micrófono
+- **Wake word**: `"ronaldo"` detectada offline con Vosk (coincidencias parciales permitidas para respuesta rápida)
+- **STT local**: Parakeet-TDT 0.6B (ONNX, NVIDIA NeMo), sin conexión a internet
+- **STT online**: Groq Whisper, Deepgram Nova-3, Google Cloud Speech-to-Text
+- **TTS streaming**: Edge TTS (gratuito) o Deepgram Aura-2, reproducción chunk-by-chunk
+- **LLM**: Groq Llama 4 + fallback OpenRouter si Groq falla
+- **Tool calling nativo**: 12 herramientas MCP (search_places, navigate_to, search_food, etc.)
+- **Navegación**: comandos directos a edificios del campus con cálculo de ruta
+- **Robot**: comandos de movimiento (`siéntate`, `baila`, `camina`, `detente`, etc.)
+- **Conversación**: modo que mantiene escucha activa sin repetir wake word
+- **Anti-feedback**: cooldown adaptativo + VAD streak + flush de buffer en TTS
+- **Modo texto**: prueba todo sin micrófono, útil para desarrollo
 
 ---
 
-## Estructura del proyecto
+## Arquitectura
 
 ```
 src/prospectiva/
-├── main.py                 # Punto de entrada y orquestación de procesos
+├── main.py                 # Punto de entrada, factory de providers, lanza procesos
 ├── bus/
-│   └── event_bus.py        # Bus de eventos entre procesos
+│   └── event_bus.py        # Bus de eventos entre procesos (multiprocessing)
 ├── modulos/
-│   ├── llm/                # Groq LLM
-│   ├── stt/                # STT providers (Groq, Deepgram, Google Cloud)
-│   ├── tts/                # TTS providers (Deepgram, Local mock)
-│   ├── muta/               # Audio input, VAD, wake word
-│   └── classifier/         # Clasificador de intents
+│   ├── llm/                # GroqLLM, OpenRouterLLM, FallbackLLM
+│   ├── stt/                # GroqSTT, DeepgramSTT, GoogleCloudSTT, ParakeetSTT
+│   ├── tts/                # DeepgramTTS, EdgeTTS, LocalTTS
+│   ├── muta/               # SoundDeviceAudio, SileroVAD, VoskWakeWord, PorcupineWakeWord
+│   └── classifier/         # Clasificador de intents (YAML config)
 ├── procesos/
-│   ├── audio.py            # Proceso de audio (micrófono)
+│   ├── audio.py            # Proceso de audio: wake word → VAD → SPEECH_COMPLETED
 │   ├── text_input.py       # Modo texto (stdin)
-│   ├── orquestador.py      # Orquestador central
-│   ├── playback.py         # Reproducción de audio
-│   └── movement.py         # Ejecución de movimientos
-└── utils/                  # MCP client, Route client, audio utils
+│   ├── orquestador.py      # Orquestador central: STT → LLM → tools → TTS
+│   ├── playback.py         # Reproducción de audio TTS streaming
+│   └── movement.py         # Ejecución de movimientos (archivos CSV de ruta)
+└── utils/
+    ├── mcp_client.py       # Cliente JSON-RPC para MCP server (puerto 8000)
+    ├── route_client.py     # Cliente REST para Route server (puerto 8001/8081)
+    ├── memory.py           # Memoria de conversación (multi-turno)
+    ├── tool_tracker.py     # Tracker de uso de herramientas MCP
+    └── mock_*.py           # Mock clients para modo --test
+```
+
+### Flujo de datos
+
+```
+Micrófono → VAD → Buffer → SPEECH_COMPLETED
+                                ↓
+[AudioProcess]              [Orquestador]
+                                ↓
+                           ParakeetSTT / GroqSTT / etc.
+                                ↓
+                           Classifier (intent)
+                           ├── NAVEGAR_*/COMANDO_* → acción directa + movimiento
+                           └── HABLAR → LLM + tool calling MCP
+                                ↓
+                           EdgeTTS / DeepgramTTS (streaming)
+                                ↓
+[AudioPlayback]           AUDIO_STREAM_START → CHUNK → CHUNK → END
+                                ↓
+                           Bocina (sounddevice)
 ```
 
 ---
 
-## Notas
+## Dependencias principales
 
-- El proyecto usa **multiprocessing**. En modo audio usa `spawn`; en modo texto usa `fork` para evitar problemas con stdin.
+| Paquete | Propósito |
+|---|---|
+| `onnxruntime` | Ejecución del modelo ONNX Parakeet (CPU/GPU) |
+| `numpy` | Procesamiento de audio |
+| `sounddevice` | Captura y reproducción de audio |
+| `silero-vad` | Detección de actividad de voz |
+| `vosk` | Wake word offline |
+| `pvporcupine` | Wake word alternativa (Picovoice) |
+| `scipy` | Resample de audio (fallback si no hay torchaudio) |
+| `groq` | Cliente Groq API (LLM + Whisper STT) |
+| `deepgram-sdk` | Cliente Deepgram API (STT + TTS) |
+| `edge-tts` | TTS gratuito con Microsoft Edge |
+| `httpx` | Cliente HTTP para MCP/Route API |
+| `python-dotenv` | Carga de variables de entorno |
+| `mcp` | SDK de Model Context Protocol |
+| `google-cloud-speech` | Google Cloud STT (opcional) |
+| `pydub` | Utilidades de audio |
+
+---
+
+## Notas técnicas
+
+- El proyecto usa **multiprocessing** con `spawn` (modo audio) o `fork` (modo texto).
 - El modo `--test` usa clientes MCP y Route mock para pruebas sin levantar servidores.
 - La carpeta `credentials/` está ignorada en git para proteger las claves de Google Cloud.
+- El `.env` tiene prioridad sobre variables de entorno del sistema (`load_dotenv(override=True)`).
+- La decodificación del modelo Parakeet usa RNNT greedy con state caching (no beam search).
+- El audio se captura en int16 a 16kHz y se convierte a float32 dividiendo por 32768 (sin normalización adicional).
