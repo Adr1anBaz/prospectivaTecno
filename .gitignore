@@ -20,3 +20,4 @@ graphify-out/cache/
 
 # Google Cloud service account credentials
 credentials/
+node_modules/
