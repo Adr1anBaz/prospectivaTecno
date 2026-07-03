@@ -1,0 +1,545 @@
+{
+  "model": "llama3.2:3b",
+  "runs_per_scenario": 5,
+  "total_runs": 40,
+  "total_ok": 40,
+  "wall_time_total_s": 468.39,
+  "scenarios": [
+    {
+      "id": "S1",
+      "name": "Primer mensaje (sin historial)",
+      "description": "Conversacion nueva, pregunta conceptual breve.",
+      "aggregate": {
+        "n_total": 5,
+        "n_ok": 5,
+        "n_failed": 0,
+        "errors": [],
+        "wall_time_s": {
+          "mean": 4.2685,
+          "median": 4.2675,
+          "min": 4.0544,
+          "max": 4.4621,
+          "stdev": 0.1593,
+          "n": 5
+        },
+        "provider_duration_s": {
+          "mean": 4.2615,
+          "median": 4.2619,
+          "min": 4.05,
+          "max": 4.4443,
+          "stdev": 0.1563,
+          "n": 5
+        },
+        "prompt_tokens": {
+          "mean": 74.0,
+          "median": 74,
+          "min": 74,
+          "max": 74,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "completion_tokens": {
+          "mean": 160.0,
+          "median": 160,
+          "min": 160,
+          "max": 160,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "total_tokens": {
+          "mean": 234.0,
+          "median": 234,
+          "min": 234,
+          "max": 234,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "tokens_per_second": {
+          "mean": 39.8074,
+          "median": 39.466,
+          "min": 38.8084,
+          "max": 41.5005,
+          "stdev": 1.0204,
+          "n": 5
+        },
+        "reply_len": {
+          "mean": 648.2,
+          "median": 656,
+          "min": 605,
+          "max": 667,
+          "stdev": 22.6398,
+          "n": 5
+        }
+      }
+    },
+    {
+      "id": "S2",
+      "name": "Tercer mensaje (historial corto)",
+      "description": "Sembrar 2 turnos previos y mandar el tercero (seed via POST reales).",
+      "aggregate": {
+        "n_total": 5,
+        "n_ok": 5,
+        "n_failed": 0,
+        "errors": [],
+        "wall_time_s": {
+          "mean": 4.7193,
+          "median": 4.6285,
+          "min": 4.3484,
+          "max": 5.2604,
+          "stdev": 0.3262,
+          "n": 5
+        },
+        "provider_duration_s": {
+          "mean": 4.7165,
+          "median": 4.6254,
+          "min": 4.3459,
+          "max": 5.258,
+          "stdev": 0.3264,
+          "n": 5
+        },
+        "prompt_tokens": {
+          "mean": 390.0,
+          "median": 393,
+          "min": 362,
+          "max": 431,
+          "stdev": 24.2487,
+          "n": 5
+        },
+        "completion_tokens": {
+          "mean": 160.0,
+          "median": 160,
+          "min": 160,
+          "max": 160,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "total_tokens": {
+          "mean": 550.0,
+          "median": 553,
+          "min": 522,
+          "max": 591,
+          "stdev": 24.2487,
+          "n": 5
+        },
+        "tokens_per_second": {
+          "mean": 36.1961,
+          "median": 37.2909,
+          "min": 32.1262,
+          "max": 39.4175,
+          "stdev": 2.6257,
+          "n": 5
+        },
+        "reply_len": {
+          "mean": 670.8,
+          "median": 689,
+          "min": 619,
+          "max": 711,
+          "stdev": 36.433,
+          "n": 5
+        }
+      }
+    },
+    {
+      "id": "S3",
+      "name": "Respuesta tecnica",
+      "description": "Pedir ejemplo de codigo con salida larga.",
+      "aggregate": {
+        "n_total": 5,
+        "n_ok": 5,
+        "n_failed": 0,
+        "errors": [],
+        "wall_time_s": {
+          "mean": 15.7892,
+          "median": 16.663,
+          "min": 14.1176,
+          "max": 16.7842,
+          "stdev": 1.1418,
+          "n": 5
+        },
+        "provider_duration_s": {
+          "mean": 15.7832,
+          "median": 16.659,
+          "min": 14.1131,
+          "max": 16.777,
+          "stdev": 1.1415,
+          "n": 5
+        },
+        "prompt_tokens": {
+          "mean": 80.0,
+          "median": 80,
+          "min": 80,
+          "max": 80,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "completion_tokens": {
+          "mean": 400.0,
+          "median": 400,
+          "min": 400,
+          "max": 400,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "total_tokens": {
+          "mean": 480.0,
+          "median": 480,
+          "min": 480,
+          "max": 480,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "tokens_per_second": {
+          "mean": 25.9507,
+          "median": 24.4058,
+          "min": 24.3304,
+          "max": 28.9626,
+          "stdev": 1.9781,
+          "n": 5
+        },
+        "reply_len": {
+          "mean": 1630.8,
+          "median": 1609,
+          "min": 1545,
+          "max": 1720,
+          "stdev": 69.1387,
+          "n": 5
+        }
+      }
+    },
+    {
+      "id": "S4",
+      "name": "Temperatura baja (0.2)",
+      "description": "Mismo prompt que S1, temperature=0.2.",
+      "aggregate": {
+        "n_total": 5,
+        "n_ok": 5,
+        "n_failed": 0,
+        "errors": [],
+        "wall_time_s": {
+          "mean": 5.6093,
+          "median": 5.5678,
+          "min": 5.2644,
+          "max": 6.043,
+          "stdev": 0.3104,
+          "n": 5
+        },
+        "provider_duration_s": {
+          "mean": 5.6057,
+          "median": 5.5629,
+          "min": 5.2613,
+          "max": 6.0388,
+          "stdev": 0.31,
+          "n": 5
+        },
+        "prompt_tokens": {
+          "mean": 74.0,
+          "median": 74,
+          "min": 74,
+          "max": 74,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "completion_tokens": {
+          "mean": 160.0,
+          "median": 160,
+          "min": 160,
+          "max": 160,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "total_tokens": {
+          "mean": 234.0,
+          "median": 234,
+          "min": 234,
+          "max": 234,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "tokens_per_second": {
+          "mean": 29.5658,
+          "median": 30.2663,
+          "min": 27.2098,
+          "max": 31.3546,
+          "stdev": 1.6945,
+          "n": 5
+        },
+        "reply_len": {
+          "mean": 639.6,
+          "median": 644,
+          "min": 625,
+          "max": 649,
+          "stdev": 8.4048,
+          "n": 5
+        }
+      }
+    },
+    {
+      "id": "S5",
+      "name": "Temperatura alta (1.0)",
+      "description": "Mismo prompt que S1, temperature=1.0.",
+      "aggregate": {
+        "n_total": 5,
+        "n_ok": 5,
+        "n_failed": 0,
+        "errors": [],
+        "wall_time_s": {
+          "mean": 4.8736,
+          "median": 4.8105,
+          "min": 4.573,
+          "max": 5.3566,
+          "stdev": 0.2695,
+          "n": 5
+        },
+        "provider_duration_s": {
+          "mean": 4.8702,
+          "median": 4.8068,
+          "min": 4.5698,
+          "max": 5.3536,
+          "stdev": 0.2696,
+          "n": 5
+        },
+        "prompt_tokens": {
+          "mean": 74.0,
+          "median": 74,
+          "min": 74,
+          "max": 74,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "completion_tokens": {
+          "mean": 160.0,
+          "median": 160,
+          "min": 160,
+          "max": 160,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "total_tokens": {
+          "mean": 234.0,
+          "median": 234,
+          "min": 234,
+          "max": 234,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "tokens_per_second": {
+          "mean": 33.9807,
+          "median": 34.3262,
+          "min": 30.9241,
+          "max": 36.1052,
+          "stdev": 1.7629,
+          "n": 5
+        },
+        "reply_len": {
+          "mean": 626.4,
+          "median": 627,
+          "min": 599,
+          "max": 645,
+          "stdev": 15.3049,
+          "n": 5
+        }
+      }
+    },
+    {
+      "id": "S6",
+      "name": "max_tokens corto (60)",
+      "description": "Mismo prompt que S1, salida limitada a 60 tokens.",
+      "aggregate": {
+        "n_total": 5,
+        "n_ok": 5,
+        "n_failed": 0,
+        "errors": [],
+        "wall_time_s": {
+          "mean": 1.7602,
+          "median": 1.7846,
+          "min": 1.6702,
+          "max": 1.8575,
+          "stdev": 0.0691,
+          "n": 5
+        },
+        "provider_duration_s": {
+          "mean": 1.7566,
+          "median": 1.7803,
+          "min": 1.6668,
+          "max": 1.8542,
+          "stdev": 0.0691,
+          "n": 5
+        },
+        "prompt_tokens": {
+          "mean": 74.0,
+          "median": 74,
+          "min": 74,
+          "max": 74,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "completion_tokens": {
+          "mean": 60.0,
+          "median": 60,
+          "min": 60,
+          "max": 60,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "total_tokens": {
+          "mean": 134.0,
+          "median": 134,
+          "min": 134,
+          "max": 134,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "tokens_per_second": {
+          "mean": 36.6621,
+          "median": 35.9339,
+          "min": 34.6363,
+          "max": 38.6442,
+          "stdev": 1.5481,
+          "n": 5
+        },
+        "reply_len": {
+          "mean": 230.0,
+          "median": 232,
+          "min": 223,
+          "max": 237,
+          "stdev": 5.2154,
+          "n": 5
+        }
+      }
+    },
+    {
+      "id": "S7",
+      "name": "max_tokens largo (300)",
+      "description": "Mismo prompt que S1, salida hasta 300 tokens.",
+      "aggregate": {
+        "n_total": 5,
+        "n_ok": 5,
+        "n_failed": 0,
+        "errors": [],
+        "wall_time_s": {
+          "mean": 6.451,
+          "median": 6.6334,
+          "min": 4.8188,
+          "max": 7.348,
+          "stdev": 0.8713,
+          "n": 5
+        },
+        "provider_duration_s": {
+          "mean": 6.4471,
+          "median": 6.6303,
+          "min": 4.8141,
+          "max": 7.3452,
+          "stdev": 0.8718,
+          "n": 5
+        },
+        "prompt_tokens": {
+          "mean": 74.0,
+          "median": 74,
+          "min": 74,
+          "max": 74,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "completion_tokens": {
+          "mean": 214.2,
+          "median": 225,
+          "min": 161,
+          "max": 244,
+          "stdev": 29.0751,
+          "n": 5
+        },
+        "total_tokens": {
+          "mean": 288.2,
+          "median": 299,
+          "min": 235,
+          "max": 318,
+          "stdev": 29.0751,
+          "n": 5
+        },
+        "tokens_per_second": {
+          "mean": 34.0906,
+          "median": 34.1217,
+          "min": 33.0743,
+          "max": 34.7313,
+          "stdev": 0.5741,
+          "n": 5
+        },
+        "reply_len": {
+          "mean": 855.2,
+          "median": 946,
+          "min": 606,
+          "max": 956,
+          "stdev": 134.2407,
+          "n": 5
+        }
+      }
+    },
+    {
+      "id": "S8",
+      "name": "Historial largo (10 turnos)",
+      "description": "Sembrar 9 turnos previos y mandar el decimo (seed via POST reales).",
+      "aggregate": {
+        "n_total": 5,
+        "n_ok": 5,
+        "n_failed": 0,
+        "errors": [],
+        "wall_time_s": {
+          "mean": 5.8099,
+          "median": 5.4363,
+          "min": 5.1091,
+          "max": 7.4835,
+          "stdev": 0.8786,
+          "n": 5
+        },
+        "provider_duration_s": {
+          "mean": 5.8059,
+          "median": 5.4341,
+          "min": 5.1058,
+          "max": 7.4767,
+          "stdev": 0.8773,
+          "n": 5
+        },
+        "prompt_tokens": {
+          "mean": 1263.0,
+          "median": 1261,
+          "min": 1246,
+          "max": 1291,
+          "stdev": 16.3585,
+          "n": 5
+        },
+        "completion_tokens": {
+          "mean": 160.0,
+          "median": 160,
+          "min": 160,
+          "max": 160,
+          "stdev": 0.0,
+          "n": 5
+        },
+        "total_tokens": {
+          "mean": 1423.0,
+          "median": 1421,
+          "min": 1406,
+          "max": 1451,
+          "stdev": 16.3585,
+          "n": 5
+        },
+        "tokens_per_second": {
+          "mean": 29.4757,
+          "median": 30.9511,
+          "min": 22.4696,
+          "max": 32.8535,
+          "stdev": 3.8188,
+          "n": 5
+        },
+        "reply_len": {
+          "mean": 633.8,
+          "median": 624,
+          "min": 604,
+          "max": 668,
+          "stdev": 27.1323,
+          "n": 5
+        }
+      }
+    }
+  ]
+}
