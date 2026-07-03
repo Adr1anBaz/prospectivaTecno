@@ -9,14 +9,14 @@ permalink: /
 # Prácticas - IA Generativa y Prospectiva Tecnológica
 {: .fs-9 }
 
-Colección de prácticas del curso de IA Generativa y Prospectiva Tecnológica
+Colección de prácticas del curso de IA Generativa y Prospectiva Tecnológica: exploración de LLMs, benchmarking, chatbots locales con contexto, copilotos especializados, integración con APIs externas y una arquitectura LLM + MQTT.
 {: .fs-6 .fw-300 }
 
 [Ver en GitHub](https://github.com/Adr1anBaz/prospectivaTecno){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
 
 ---
 
-## Información del Estudiante
+## Información del equipo
 
 | Campo | Detalle |
 |:------|:--------|
@@ -26,44 +26,61 @@ Colección de prácticas del curso de IA Generativa y Prospectiva Tecnológica
 
 ---
 
-## Prácticas Disponibles
+## Prácticas
 
-Este repositorio contiene las siguientes prácticas del curso:
+### [Práctica 1: Panorama de IA Generativa y LLM](./practica-1)
+Exploración práctica de modelos de lenguaje grande (LLM) con Ollama y Hugging Face. Instalación, descarga y ejecución de al menos 6 modelos con el mismo prompt, y comparativa documentada de su desempeño.
 
-### 📝 [Práctica 1: IA Generativa y LLM](./practica-1)
-Exploración práctica de modelos de lenguaje grande (LLMs) usando Ollama y Hugging Face. Comparativa de 6 modelos diferentes evaluando su desempeño.
-
-**Temas**: Ollama, LLMs, Hugging Face, Evaluación de Modelos
+**Temas**: Ollama, Hugging Face, LLMs, comparativa de modelos.
 
 ---
 
-### 🤖 [Práctica 2: Implementación de Sistemas de IA](./practica-2)
-Desarrollo de sistemas basados en IA aplicados a casos prácticos.
+### [Práctica 2: Selección de plataforma y benchmark de LLMs](./practica-2)
+Matriz de decisión de plataformas de despliegue (PC local CPU/GPU, API en la nube, servidor GPU, Jetson, microcontrolador + API) y benchmark de modelos locales (100 ciclos por modelo) con tiempos, tokens y tokens/s reales.
 
-**Temas**: Implementación, Desarrollo de Sistemas
-
----
-
-### 🔬 [Práctica 3: RAG con ChromaDB](./practica-3)
-Sistema de Retrieval-Augmented Generation (RAG) utilizando ChromaDB para gestión de embeddings y generación contextual.
-
-**Temas**: RAG, ChromaDB, Embeddings, Bases de Datos Vectoriales
+**Temas**: matriz de decisión, benchmark, latencia, tokens/s.
 
 ---
 
-### 🌐 [Práctica 4: Chatbot Híbrido con APIs Externas](./practica-4)
-Comparación de modelos LLM usando Ollama local, Google Gemini API y Groq API. Análisis de velocidad, calidad, tokens y privacidad entre proveedores.
+### [Práctica 3: Chatbot LLM local con contexto (SQLite)](./practica-3)
+Chatbot cliente-servidor (frontend HTML/CSS/JS + backend FastAPI + Ollama) con **contexto conversacional persistente en SQLite**, parámetros configurables y métricas de inferencia por respuesta.
 
-**Temas**: APIs Externas, Gemini, Groq, Ollama, Comparativa de LLMs
+**Temas**: FastAPI, Ollama, contexto conversacional, SQLite, métricas.
+
+---
+
+### [Práctica 4: Copilotos especializados con Ollama](./practica-4)
+Conversión del chatbot en un copiloto especializado mediante **perfiles de `system_prompt`** seleccionables y editables, con prompting estructurado y evaluación crítica genérico vs. especializado (calidad, formato, alucinaciones, latencia).
+
+**Temas**: prompt engineering, perfiles de copiloto, evaluación cualitativa.
+
+---
+
+### [Práctica 5: Chatbot híbrido con Ollama y APIs externas](./practica-5)
+Capa intermedia **multiproveedor** que compara un modelo local (Ollama) con modelos remotos (Google Gemini, Groq y OpenRouter). Selección de proveedor y modelo, métricas normalizadas y comparación de latencia, tokens y calidad con el mismo prompt.
+
+**Temas**: APIs externas, Gemini, Groq, OpenRouter, comparativa de proveedores.
+
+---
+
+### [Práctica 6: Evaluación de arquitectura LLM + MQTT](./practica-6)
+Clasificación de intención (`on` / `off` / `none`) sobre instrucciones en español, con validación de JSON y **publicación en MQTT** como salida simulada. Incluye métricas de clasificación (precision/recall/F1), de arquitectura (validez de JSON, tasa de publicación) y de operación (latencia, tokens, costo).
+
+**Temas**: clasificación de intención, JSON estructurado, MQTT, guardarraíles.
+
+---
+
+## Proyecto final
+
+**Robot-Guided Navigation Through Conversational AI**: navegación guiada por robot mediante IA conversacional. El planteamiento teórico se presenta en un pitch deck (`proyecto-final/slides`, "Blu — Slides").
 
 ---
 
 ## Navegación
 
-Utiliza el **menú lateral** para acceder a cada práctica. Cada página contiene la documentación completa de la práctica correspondiente.
+Usa el **menú lateral** para acceder a cada práctica. Cada página es autocontenida e incluye objetivo, arquitectura, resultados y análisis.
 
 ---
 
 {: .note }
-> 📚 Este sitio contiene todo el material práctico desarrollado durante el curso.
-> Cada práctica incluye instrucciones, código fuente, resultados y análisis detallado.
+> Este sitio reúne todo el material práctico del curso. Cada práctica incluye instrucciones, código fuente, resultados y análisis. El código vive en la carpeta `practicas/` del repositorio.
