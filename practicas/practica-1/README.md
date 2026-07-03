@@ -44,23 +44,20 @@ La documentación completa incluye:
 
 ```
 practica-1/
-├── .venv/                  # Entorno virtual independiente
-├── descargas/              # Capturas de descarga de modelos
-├── ejecuciones/            # Capturas de ejecución con prompts
-├── comparativa.md          # Tabla comparativa de modelos
-├── reflexion.md            # Análisis y reflexión
-├── scripts/                # Scripts auxiliares (opcional)
-├── docs/                   # 📄 Reporte web (GitHub Pages)
-│   ├── _config.yml         # Configuración Jekyll
-│   ├── index.md            # Página principal
-│   ├── instalacion.md      # Sección de instalación
-│   ├── modelos.md          # Modelos descargados
-│   ├── ejecuciones.md      # Resultados de ejecuciones
-│   ├── comparativa.md      # Tabla comparativa web
-│   ├── reflexion.md        # Reflexión web
-│   └── conclusiones.md     # Conclusiones web
-└── README.md               # Esta guía
+├── descargas/          # Capturas de descarga de modelos
+├── ejecuciones/        # Capturas de ejecución con prompts
+├── scripts/            # Scripts auxiliares
+├── docs/               # Reporte web (Jekyll) de esta práctica
+├── comparativa.md      # Tabla comparativa de modelos
+├── reflexion.md        # Análisis y reflexión
+├── GUIA_COMPLETA.md    # Guía extendida para completar la práctica
+├── TODO_EQUIPO.md      # Pendientes del equipo
+├── pyproject.toml      # Dependencias del entorno (scripts)
+├── .gitignore
+└── README.md           # Esta guía
 ```
+
+> El entorno virtual (`.venv/`) no se versiona; créalo localmente cuando ejecutes scripts.
 
 ## Instalación
 
