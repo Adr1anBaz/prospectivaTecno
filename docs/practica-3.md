@@ -219,11 +219,6 @@ historial de la conversación se envía a Ollama (contexto activo).
 
 ![Panel de métricas de la última respuesta](imgs/pr3/img2.png)
 
-> Pendientes de adjuntar por el equipo:
-> - Ollama con el modelo instalado (`ollama list`).
-> - Backend ejecutándose (`uvicorn` en el puerto 8000 / `/docs`).
-> - Prueba del endpoint `/chat` (curl o Swagger `/docs`).
-
 ---
 
 ## 📝 Notas finales
