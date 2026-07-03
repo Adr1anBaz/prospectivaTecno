@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/prospectivaTecno/blu-slides/',
+  base: '/prospectivaTecno/Robot-Guided-Navigation-Through-Conversational-AI/',
 })

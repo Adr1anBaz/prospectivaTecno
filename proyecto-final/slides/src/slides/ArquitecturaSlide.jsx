@@ -91,30 +91,6 @@ export default function ArquitecturaSlide() {
         ))}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        style={{
-          marginTop: 20,
-          borderRadius: 12,
-          overflow: 'hidden',
-          border: '1px solid var(--border)',
-          background: 'var(--surface)',
-          maxHeight: 200,
-        }}
-      >
-        <img
-          src={`${import.meta.env.BASE_URL}images/muestra.webp`}
-          alt="Robot en campus Ibero"
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'block',
-            objectFit: 'cover',
-          }}
-        />
-      </motion.div>
     </div>
   )
 }
