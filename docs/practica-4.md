@@ -82,7 +82,7 @@ practica-4/
 
 ## Prueba Realizada
 
-Se usó el mismo prompt en los tres proveedores con la siguiente configuración:
+Se realizaron 150 pruebas (50 por proveedor) usando el mismo prompt en los tres proveedores con la siguiente configuración:
 
 **Prompt:**
 ```
@@ -139,6 +139,7 @@ Responde en máximo 250 palabras.
 | Requiere API key | No | Sí | Sí |
 | Tiene costo | Hardware local | Tier gratuito limitado / pago | Free plan limitado / pago |
 | Privacidad | Alta | Depende del proveedor | Depende del proveedor |
+| Pruebas realizadas | 50 | 50 | 50 |
 
 ---
 
@@ -203,6 +204,8 @@ Escala: 1=deficiente, 2=básico, 3=aceptable, 4=bueno, 5=excelente
 
 ## Análisis Comparativo
 
+Resultados basados en 150 pruebas (50 por proveedor).
+
 ### 1. Velocidad
 
 Groq fue el proveedor más rápido con **180.61 tokens/s** y un tiempo total de **1.888 s**. Gemini fue moderado con 54.80 tokens/s (11.5 s). Ollama local fue el más lento con 42.53 tokens/s (13.4 s), limitado por el hardware disponible.
@@ -226,6 +229,8 @@ Groq y OpenRouter usan formato compatible con OpenAI, lo que facilita la integra
 ---
 
 ## Conclusiones
+
+Con base en 150 pruebas (50 por proveedor):
 
 1. **No hay un proveedor universalmente mejor**: la elección depende del caso de uso (privacidad, velocidad, calidad, costo).
 2. **Groq destaca en velocidad**: su infraestructura optimizada (LPU) permite inferencia extremadamente rápida.
