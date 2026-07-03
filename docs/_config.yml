@@ -63,7 +63,7 @@ back_to_top_text: "Volver arriba"
 
 # Include directories (fuerza inclusión de directorios estáticos)
 include:
-  - blu-slides
+  - Robot-Guided-Navigation-Through-Conversational-AI
   - .nojekyll
 
 # Exclude de la construcción
