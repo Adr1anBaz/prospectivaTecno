@@ -61,6 +61,11 @@ gh_edit_view_mode: "tree"
 back_to_top: true
 back_to_top_text: "Volver arriba"
 
+# Include directories (fuerza inclusión de directorios estáticos)
+include:
+  - blu-slides
+  - .nojekyll
+
 # Exclude de la construcción
 exclude:
   - node_modules/
@@ -71,6 +76,9 @@ exclude:
   - __pycache__/
   - "*.py"
   - scripts/
+  - "*.jsx"
+  - "*.json"
+  - src/
 
 # Plugins
 plugins:
