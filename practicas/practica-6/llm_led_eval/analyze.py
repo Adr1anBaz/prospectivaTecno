@@ -50,7 +50,9 @@ def main():
 
     COST_PER_1M_IN = 0.05
     COST_PER_1M_OUT = 0.08
-    cost = (total_in / 1_000_000) * COST_PER_1M_IN + (total_out / 1_000_000) * COST_PER_1M_OUT
+    cost_in = (total_in / 1_000_000) * COST_PER_1M_IN
+    cost_out = (total_out / 1_000_000) * COST_PER_1M_OUT
+    cost = cost_in + cost_out
 
     cm = confusion_matrix(y_true, y_pred, labels=LABELS)
 
@@ -78,7 +80,10 @@ def main():
     print(f"Latencia P99 (s):            {p99:.4f}")
     print(f"Tokens entrada promedio:     {avg_in:.1f}")
     print(f"Tokens salida promedio:      {avg_out:.1f}")
-    print(f"Costo estimado (USD, {n} runs): {cost:.6f}")
+    print(f"Costo estimado (USD, {n} runs):")
+    print(f"  Input  ({total_in:.0f} tok × $0.05/M):  ${cost_in:.6f}")
+    print(f"  Output ({total_out:.0f} tok × $0.08/M): ${cost_out:.6f}")
+    print(f"  Total:                                   ${cost:.6f}")
 
     fig, ax = plt.subplots(figsize=(6, 5))
     im = ax.imshow(cm, cmap="Blues")

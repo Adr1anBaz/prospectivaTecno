@@ -103,7 +103,9 @@ El backend es la **capa de seguridad**: el LLM nunca publica directamente. Prime
 | Latencia P99 | 7.69 s |
 | Tokens entrada promedio | 265.8 |
 | Tokens salida promedio | 54.7 |
-| Costo estimado (110 runs, Groq) | $0.0019 USD |
+| Costo estimado (110 runs, Groq) | **$0.0019 USD** |
+| &nbsp;&nbsp;&nbsp;└─ Input  (29,234 tok × $0.05/M) | $0.001462 |
+| &nbsp;&nbsp;&nbsp;└─ Output (6,012 tok × $0.08/M) | $0.000481 |
 
 ---
 
@@ -142,7 +144,9 @@ El backend es la **capa de seguridad**: el LLM nunca publica directamente. Prime
 | Latencia P95 | 7.54 s |
 | Tokens entrada promedio | 265.8 |
 | Tokens salida promedio | 54.7 |
-| Costo estimado total | $0.0019 USD |
+| Costo estimado total | **$0.0019 USD** |
+| &nbsp;&nbsp;&nbsp;└─ Input (29,234 tok × $0.05/M) | $0.001462 |
+| &nbsp;&nbsp;&nbsp;└─ Output (6,012 tok × $0.08/M) | $0.000481 |
 | Principal error observado | El modelo sobre-predice `off` (10 errores) cuando debería decir `none` ante preguntas generales o instrucciones negadas como "no enciendas el led". |
 | Mejora propuesta | Reforzar en el system prompt los casos `none` (preguntas generales, negaciones, instrucciones temporales), o bien few-shot con 2-3 ejemplos por clase. |
 
@@ -189,5 +193,5 @@ Resultados en `practica-6/graficas_resultados/`: `resultados.csv`, `supervision.
 - `llama3.2:3b` distingue muy bien la clase `on` (recall 100%) pero falla en `none` (recall 52.8%): tiende a inventar acciones cuando debería quedarse quieto.
 - El 8.3% de respuestas no fueron JSON válido: es el principal cuello de botella para la arquitectura.
 - La latencia es estable salvo los primeros prompts (carga del modelo). Después de ~10 ejecuciones, P50 ≈ 0.96 s.
-- El costo es despreciable a esta escala ($0.002 USD por 110 corridas).
+- El costo es despreciable a esta escala ($0.002 USD por 110 corridas: $0.0015 input + $0.0005 output).
 - Para conectar a hardware real haría falta reforzar `none` (few-shot, validación de negaciones) y agregar guardarraíles (umbral de confidence, rate-limit).
