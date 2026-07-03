@@ -1,0 +1,60 @@
+{
+  "model": "llama3.2:3b",
+  "params": {
+    "model": "llama3.2:3b",
+    "system_prompt": "",
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "num_predict": 180,
+    "num_ctx": 4096,
+    "repeat_penalty": 1.1
+  },
+  "n_runs": 24,
+  "by_profile": {
+    "generico": {
+      "runs": 12,
+      "eval_count": 2160,
+      "wall_time_s": 64.597,
+      "tokens_per_second": 433.2900000000001,
+      "avg_eval_count": 180.0,
+      "avg_wall_time_s": 5.383,
+      "avg_tokens_per_second": 36.11
+    },
+    "docente": {
+      "runs": 3,
+      "eval_count": 540,
+      "wall_time_s": 16.465999999999998,
+      "tokens_per_second": 107.73,
+      "avg_eval_count": 180.0,
+      "avg_wall_time_s": 5.489,
+      "avg_tokens_per_second": 35.91
+    },
+    "robotica": {
+      "runs": 3,
+      "eval_count": 540,
+      "wall_time_s": 16.725,
+      "tokens_per_second": 107.57,
+      "avg_eval_count": 180.0,
+      "avg_wall_time_s": 5.575,
+      "avg_tokens_per_second": 35.86
+    },
+    "programacion": {
+      "runs": 3,
+      "eval_count": 540,
+      "wall_time_s": 16.496000000000002,
+      "tokens_per_second": 107.81,
+      "avg_eval_count": 180.0,
+      "avg_wall_time_s": 5.499,
+      "avg_tokens_per_second": 35.94
+    },
+    "investigacion": {
+      "runs": 3,
+      "eval_count": 509,
+      "wall_time_s": 15.677,
+      "tokens_per_second": 107.30000000000001,
+      "avg_eval_count": 169.7,
+      "avg_wall_time_s": 5.226,
+      "avg_tokens_per_second": 35.77
+    }
+  }
+}

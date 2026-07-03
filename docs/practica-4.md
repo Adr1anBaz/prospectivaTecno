@@ -2,294 +2,195 @@
 layout: default
 title: Práctica 4
 nav_order: 5
-description: "Chatbot Híbrido con APIs Externas (Gemini, Groq y Ollama)"
+description: "Copilotos especializados con Ollama: perfiles de system prompt, prompting estructurado y evaluación"
 ---
 
-# Práctica 4: Chatbot Híbrido con APIs Externas
+# Práctica 4: Copilotos especializados con Ollama
 {: .fs-9 }
 
-Comparación de modelos LLM: Ollama local, Google Gemini API y Groq API usando un chatbot con perfiles de copiloto
+Conversión del chatbot local del Tema 3 en un copiloto especializado mediante perfiles de instrucción de sistema, parámetros configurables y evaluación crítica de respuestas.
 {: .fs-6 .fw-300 }
 
 [Ver en GitHub](https://github.com/Adr1anBaz/prospectivaTecno/tree/main/practicas/practica-4){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 }
 
 ---
 
-## Información General
-
-| Campo | Detalle |
-|:------|:--------|
-| **Alumnos** | Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo |
-| **Fecha** | Junio 2026 |
-| **Práctica** | #4 - Chatbot Híbrido con APIs Externas |
-
----
-
 ## Objetivo
 
-Modificar el chatbot/copiloto desarrollado en prácticas anteriores para que pueda conversar con un modelo local en Ollama y con al menos dos modelos remotos mediante APIs externas. El objetivo es comparar velocidad, costo, tamaño del modelo, tokens, privacidad, facilidad de integración y dependencia de internet.
+Modificar el chatbot cliente-servidor del Tema 3 para convertirlo en un copiloto especializado. El comportamiento del modelo se controla mediante un `system_prompt` persistente (identidad, rol, reglas, límites y formato) seleccionable por perfil desde el frontend, sin reentrenar el modelo. Se compara el comportamiento genérico contra el especializado y se evalúan calidad, formato, alucinaciones y latencia.
 
----
+## Arquitectura
 
-## Arquitectura del Sistema
+Se conserva la arquitectura de tres capas de la Práctica 3 y se añade la capa de perfiles de copiloto.
 
-```
-Usuario
-→ Frontend web (HTML/CSS/JS en puerto 5500)
-   - Selector de proveedor (Ollama, Gemini, Groq, OpenRouter)
-   - Selector de modelo dinámico
-   - Selector de perfil de copiloto
-   - Parámetros configurables (temperature, top_p, max_tokens)
-→ Backend Python (FastAPI en puerto 8000)
-   - Valida proveedor y perfil
-   - Construye mensajes con system prompt
-   - Enruta al proveedor seleccionado
-   - Normaliza métricas de respuesta
-→ Proveedor de inferencia:
-   - Ollama local (puerto 11434)
-   - Google Gemini API (remoto)
-   - Groq API (remoto)
-```
+| Capa | Tecnología | Función |
+|------|------------|---------|
+| Frontend | HTML, CSS, JavaScript | Selección de perfil, edición del `system_prompt`, parámetros y visualización de respuesta y métricas |
+| Backend | Python, FastAPI, Pydantic | Validación, resolución del perfil, construcción de `messages`, medición de métricas |
+| Persistencia | SQLite (SQLAlchemy) | Historial de conversación para mantener contexto entre turnos |
+| Inferencia | Ollama (`/api/chat`) | Ejecución del modelo local |
 
----
+El backend coloca el `system_prompt` del perfil como `messages[0]`, seguido del historial de la conversación y el mensaje del usuario.
 
-## Estructura del Proyecto
+## Perfiles de copiloto
 
-```
-practica-4/
-├── backend/
-│   ├── main.py              # API intermedia FastAPI
-│   ├── requirements.txt     # Dependencias Python
-│   ├── .env                 # API keys (no se sube a git)
-│   └── .env.example         # Plantilla de llaves
-└── frontend/
-    ├── index.html           # Interfaz del chatbot
-    ├── styles.css           # Estilos visuales
-    └── app.js               # Comunicación con backend
-```
+Se definieron cinco perfiles en el backend, expuestos vía `GET /profiles`. El frontend carga su plantilla y permite editarla antes de enviar.
 
----
+| Perfil (`id`) | Etiqueta | Enfoque |
+|---------------|----------|---------|
+| `generico` | Asistente genérico | Asistente académico general, sin especialización |
+| `docente` | Copiloto docente universitario | Actividades, rúbricas y objetivos; exige objetivo, duración, materiales, pasos y criterios |
+| `robotica` | Copiloto de robótica móvil | Sensores, actuadores y control; debe pedir datos eléctricos faltantes y advertir riesgos |
+| `programacion` | Copiloto de programación Python | Código comentado; ante un error: interpreta, propone causa y da corrección verificable |
+| `investigacion` | Copiloto de investigación académica | Preguntas y marcos teóricos; separa hechos/inferencias y prohíbe inventar citas |
 
-## Proveedores Utilizados
+## API
 
-| Proveedor | Modelo | Tipo | Ventaja |
-|-----------|--------|------|---------|
-| Ollama local | `llama3.2:3b` | Abierto/local | Control, privacidad, bajo costo |
-| Google Gemini API | `gemini-2.5-flash` | Cerrado/remoto | Calidad, capacidades avanzadas |
-| Groq API | `llama-3.3-70b-versatile` | Abierto/remoto | 70B parámetros, alta velocidad |
+| Método | Endpoint | Uso |
+|--------|----------|-----|
+| `GET` | `/profiles` | Lista perfiles y sus `system_prompt` |
+| `POST` | `/chat` | Envía mensaje; devuelve respuesta, perfil usado y métricas |
+| `GET` | `/conversations` | Lista conversaciones |
+| `GET` | `/conversations/{id}` | Historial de una conversación |
+| `DELETE` | `/conversations/{id}` | Elimina una conversación |
 
----
+La respuesta de `POST /chat` incluye `copilot_profile`, `copilot_label`, `system_prompt_used`, `reply` y el bloque `metrics`.
 
-## Prueba Realizada
+## Parámetros configurables
 
-Se realizaron 150 pruebas (50 por proveedor) usando el mismo prompt en los tres proveedores con la siguiente configuración:
+| Parámetro | Rango | Función |
+|-----------|-------|---------|
+| `model` | modelos instalados | Selección del LLM local |
+| `copilot_profile` | 5 perfiles | Identidad y rol del copiloto |
+| `system_prompt` | texto editable | Instrucción de sistema (`messages[0]`) |
+| `temperature` | 0.0 – 1.2 | Aleatoriedad |
+| `top_p` | 0.1 – 1.0 | Diversidad probabilística |
+| `num_predict` | 20 – 1000 | Longitud máxima de salida |
+| `num_ctx` | 2048 / 4096 / 8192 | Ventana de contexto |
+| `repeat_penalty` | 1.0 – 2.0 | Penalización de repeticiones |
 
-**Prompt:**
-```
-Explica qué es la odometría diferencial en un robot móvil de dos ruedas.
-Incluye:
-1. explicación conceptual;
-2. ecuaciones básicas;
-3. ejemplo para estudiantes de ingeniería;
-4. una limitación práctica.
-Responde en máximo 250 palabras.
-```
+## Metodología de pruebas
 
-**Configuración:**
+Se ejecutó una batería automatizada (`practicas/practica-4/test_prompting_battery.py`) contra el backend en `http://127.0.0.1:8000/chat`. Cada prompt de dominio se envió dos veces con parámetros idénticos: una con el perfil `generico` y otra con el perfil especializado correspondiente, para permitir la comparación directa. Cada corrida usó `conversation_id: null` (conversación nueva), de modo que no hubo contexto acumulado entre pruebas.
 
-| Parámetro | Valor |
-|-----------|-------|
-| `temperature` | 0.7 |
-| `top_p` | 0.9 |
-| `max_tokens` | 300 |
-| Perfil | Asistente genérico |
+- Modelo: `llama3.2:3b` (Ollama local).
+- Parámetros fijos: `temperature=0.7`, `top_p=0.9`, `num_predict=180`, `num_ctx=4096`, `repeat_penalty=1.1`.
+- 12 prompts de dominio (3 por perfil especializado) × 2 perfiles = 24 corridas.
+- Métricas registradas por corrida directamente del backend: tokens de salida (`eval_count`), latencia de backend (`wall_time_s`), tokens de entrada, tokens totales y tokens/s.
+- Las columnas cualitativas (cumple rol, cumple formato, alucina) se determinaron leyendo la respuesta real de cada corrida; no se generaron datos sintéticos.
 
----
+Los resultados crudos y el resumen se guardan en `docs/assets/practica-4/`.
 
-## Capturas de Métricas
+## Promedios por perfil
 
-### Ollama Local (llama3.2:3b)
+| Perfil | Corridas | Tokens salida (prom.) | Latencia s (prom.) | Tokens/s (prom.) |
+|--------|:--------:|:---------------------:|:------------------:|:----------------:|
+| `generico` | 12 | 180.0 | 5.383 | 36.11 |
+| `docente` | 3 | 180.0 | 5.489 | 35.91 |
+| `robotica` | 3 | 180.0 | 5.575 | 35.86 |
+| `programacion` | 3 | 180.0 | 5.499 | 35.94 |
+| `investigacion` | 3 | 169.7 | 5.226 | 35.77 |
 
-![Métricas Ollama Local](assets/practica-4/metricasLocal.png)
+La latencia y el rendimiento (tokens/s) son prácticamente iguales entre perfiles: el perfil no cambia el costo de inferencia, solo el contenido. La mayoría de respuestas alcanzaron el tope de `num_predict=180` tokens; la excepción fue una corrida de `investigacion` que terminó antes (149 tokens).
 
-### Gemini API (gemini-2.5-flash)
+## Tabla de pruebas
 
-![Métricas Gemini](assets/practica-4/metricas_gemini.png)
+Prompts (identificador usado en la tabla):
 
-### Groq API (llama-3.3-70b-versatile)
+- P1: Actividad de clase para introducir sensores (primer semestre de ingeniería)
+- P2: Rúbrica para evaluar un reporte de laboratorio de robótica
+- P3: Tres objetivos de aprendizaje para una unidad de control de motores
+- P4: Conexión de un sensor ultrasónico HC-SR04 a un microcontrolador
+- P5: Diferencia entre motor DC y servomotor para un robot móvil
+- P6: Precauciones al alimentar un driver de motores con batería LiPo
+- P7: Función en Python para calcular el promedio de una lista
+- P8: Explicar y corregir `IndexError: list index out of range`
+- P9: Leer un CSV en Python y sumar una columna
+- P10: Formular una pregunta de investigación (robots educativos en primaria)
+- P11: Elementos de un marco teórico (visión por computadora)
+- P12: Cita textual con autor y año (aprendizaje basado en proyectos)
 
-![Métricas Groq](assets/practica-4/metricasGrok.png)
+| Prompt | Perfil | Cumple rol | Cumple formato | Alucina | Tokens salida | Latencia (s) | Observación |
+|--------|--------|:----------:|:--------------:|:-------:|:-------------:|:------------:|-------------|
+| P1 | `generico` | n/a | Sí | No | 180 | 5.357 | Estructura la actividad (objetivo, nivel, duración, materiales, pasos) pese a no tener rol |
+| P1 | `docente` | Sí | Parcial | No | 180 | 5.387 | Añade objetivos múltiples y nivel explícito; se trunca antes de pasos y criterios por `num_predict` |
+| P2 | `generico` | n/a | Sí | No | 180 | 5.292 | Rúbrica con puntajes por sección |
+| P2 | `docente` | Sí | Sí | No | 180 | 5.507 | Incorpora objetivo y criterios de evaluación explícitos |
+| P3 | `generico` | n/a | Sí | No | 180 | 5.577 | Tres objetivos; ligera deriva hacia sensores en vez de motores |
+| P3 | `docente` | Sí | Sí | No | 180 | 5.572 | Añade nivel, duración, materiales y actividades |
+| P4 | `generico` | n/a | Sí | Leve | 180 | 5.305 | Lista pines y componentes; imprecisiones ("cables USB/serial", resistencias genéricas) |
+| P4 | `robotica` | Parcial | Sí | Sí | 180 | 5.462 | No solicitó datos faltantes como exige el perfil; términos erróneos ("vórtice rojo") |
+| P5 | `generico` | n/a | Sí | Leve | 180 | 5.384 | Expande DC como "Dínamo Continuo" (incorrecto) |
+| P5 | `robotica` | Sí | Sí | Leve | 180 | 5.565 | Tono técnico correcto; expande DC como "Dínamo Cónica" (incorrecto) |
+| P6 | `generico` | n/a | Sí | Leve | 180 | 5.415 | Precauciones razonables; equipara LiPo a "iones de litio" |
+| P6 | `robotica` | Sí | Sí | Sí | 180 | 5.698 | Incluye advertencias de incendio (correcto); expande LiPo como "Lithio Polivinilo" (incorrecto) |
+| P7 | `generico` | n/a | Sí | No | 180 | 5.530 | Función correcta con docstring |
+| P7 | `programacion` | Sí | Sí | No | 180 | 5.647 | Función correcta, comentada paso a paso |
+| P8 | `generico` | n/a | Sí | No | 180 | 5.434 | Explicación correcta del error con ejemplo |
+| P8 | `programacion` | Sí | Sí | No | 180 | 5.372 | Sigue la estructura del perfil: interpreta, causa probable y corrección verificable |
+| P9 | `generico` | n/a | Sí | Leve | 180 | 5.288 | Usa `cumsum()` (suma acumulada) en lugar de `sum()` (total) |
+| P9 | `programacion` | Sí | Sí | No | 180 | 5.477 | Usa `try/except` y valida la existencia de la columna |
+| P10 | `generico` | n/a | Sí | No | 180 | 5.333 | Propone preguntas de investigación pertinentes |
+| P10 | `investigacion` | Sí | Sí | No | 180 | 5.439 | Preguntas estructuradas con justificación |
+| P11 | `generico` | n/a | Sí | No | 180 | 5.351 | Lista elementos del marco teórico |
+| P11 | `investigacion` | Sí | Sí | No | 180 | 5.558 | Elementos organizados y ampliados por sección |
+| P12 | `generico` | n/a | Sí | Sí | 180 | 5.331 | Inventa autores, año y publicación inexistentes |
+| P12 | `investigacion` | Parcial | Sí | Sí | 149 | 4.680 | Inventa cita y referencia; incumple su regla explícita de no inventar citas |
 
----
+Nota: "n/a" indica que el perfil genérico no define un rol especializado. "Parcial" en formato indica respuestas truncadas por `num_predict=180` antes de completar toda la plantilla exigida.
 
-## Tabla de Métricas Comparativas
+## Comparación genérico vs. especializado
 
-| Variable | Ollama local | Gemini API | Groq API |
-|----------|-------------:|-----------:|---------:|
-| Proveedor | Ollama | Google | Groq |
-| Modelo | `llama3.2:3b` | `gemini-2.5-flash` | `llama-3.3-70b-versatile` |
-| Tipo | Abierto/local | Cerrado/remoto | Abierto/remoto |
-| Parámetros | 3B aprox. | No divulgado | 70B |
-| Tokens entrada | 142 | 103 | 152 |
-| Tokens salida | 403 | 631 | 341 |
-| Tokens totales | 545 | 2587 | 493 |
-| Tiempo total | 13.464 s | 11.515 s | 1.888 s |
-| Tokens/s | 42.53 | 54.80 | 180.61 |
-| Requiere internet | No | Sí | Sí |
-| Requiere API key | No | Sí | Sí |
-| Tiene costo | Hardware local | Tier gratuito limitado / pago | Free plan limitado / pago |
-| Privacidad | Alta | Depende del proveedor | Depende del proveedor |
-| Pruebas realizadas | 50 | 50 | 50 |
+- El perfil especializado no mejora la velocidad ni cambia significativamente la longitud (véase promedios), pero sí el contenido: incorpora las convenciones del dominio definidas en su `system_prompt`.
+- `docente` agrega sistemáticamente objetivo, nivel, duración, materiales y criterios de evaluación (P1–P3), frente a respuestas correctas pero menos estructuradas del genérico.
+- `programacion` aporta la mayor diferencia de calidad: en P8 sigue la secuencia interpretar → causa probable → corrección verificable, y en P9 valida la columna con `try/except`, mientras el genérico usó una operación equivocada (`cumsum`).
+- `robotica` adopta el tono técnico y las advertencias de seguridad, pero no cumplió la regla de solicitar datos faltantes (P4) y arrastró imprecisiones de siglas (P5, P6).
+- En P12 la especialización no evitó la alucinación: ambos perfiles fabricaron citas, incluido `investigacion`, cuyo `system_prompt` lo prohíbe expresamente.
 
----
+## Capturas
 
-## Respuestas Obtenidas
+Interfaz con el panel de configuración (modelo, perfil de copiloto, botón "Cargar plantilla", `system_prompt` editable y parámetros) y la conversación con el perfil docente.
 
-### Respuesta de Ollama Local (llama3.2:3b)
+![Interfaz de copilotos especializados con perfil docente](imgs/pr4/img1.png)
 
-> La odometría diferencial es un algoritmo utilizado en robots móviles para calcular la posición y el movimiento del vehículo a partir de los sensores de velocidad y dirección.
->
-> **Ecuaciones básicas:**
-> 1. Velocidad en dirección x = (rotación derecha - rotación izquierda) / 2
-> 2. Velocidad en dirección y = (rotación derecha + rotación izquierda) / 2
-> 3. Posición en x = posición anterior en x + velocidad en x * tiempo
-> 4. Posición en y = posición anterior en y + velocidad en y * tiempo
->
-> **Limitación:** La odometría diferencial supone que el robot gira a la misma velocidad en ambas direcciones, lo que no siempre es posible. Cuando un robot se detiene o cambia de dirección, puede dar lugar a errores significativos.
+Selector de perfil desplegado con los cinco perfiles disponibles.
 
-### Respuesta de Gemini API (gemini-2.5-flash)
+![Selector de perfil de copiloto con los cinco perfiles](imgs/pr4/img2.png)
 
-> La odometría diferencial es una técnica para estimar la posición y orientación de un robot móvil con dos ruedas motrices e independientes, utilizando datos de sus encoders.
->
-> **Ecuaciones básicas:**
-> - Distancia rueda izquierda: `dL_dist = encoder_L * radio_rueda`
-> - Distancia rueda derecha: `dR_dist = encoder_R * radio_rueda`
-> - Cambio de orientación: `dθ = (dR_dist - dL_dist) / ancho_robot`
-> - Distancia del centro: `d_centro = (dR_dist + dL_dist) / 2`
->
-> **Ejemplo:** Un robot (ancho=0.5m, radio=0.1m) gira la rueda izquierda 1 rad y la derecha 2 rad. dL_dist = 0.1m, dR_dist = 0.2m, dθ = 0.2 rad, d_centro = 0.15m.
->
-> **Limitación:** La principal es la acumulación de errores. Pequeños deslizamientos de las ruedas, imprecisiones en los encoders y superficies irregulares causan un "drift" en la posición estimada que se magnifica con el tiempo.
+## Reflexión técnica
 
-### Respuesta de Groq API (llama-3.3-70b-versatile)
+1. **¿Qué perfil fue más útil y por qué?** El de programación. En sus tres pruebas mantuvo el rol y el formato exigidos (código comentado; secuencia error → causa probable → corrección verificable) y no presentó alucinaciones. El perfil docente también fue consistente al imponer una estructura pedagógica completa.
 
-> La odometría diferencial es un método para calcular la posición y orientación de un robot móvil de dos ruedas basado en la medición de la distancia recorrida por cada rueda y la diferencia entre ellas.
->
-> **Ecuaciones básicas:**
-> - Desplazamiento lineal: `x = (d_r + d_l) / 2`
-> - Desplazamiento angular: `θ = (d_r - d_l) / b`
->
-> **Ejemplo:** Un robot con ruedas de 10 cm de diámetro y 20 cm de distancia entre ellas. Si la rueda derecha recorre 50 cm y la izquierda 40 cm: x = 45 cm, θ = 0.5 rad.
->
-> **Limitación:** La fricción y el deslizamiento de las ruedas pueden provocar errores en la estimación de la posición y orientación del robot.
+2. **¿Qué diferencias observaste entre prompt genérico y `system_prompt` especializado?** La diferencia es cualitativa, no de costo. El genérico produce respuestas plausibles y bien formateadas, pero sin las convenciones del dominio. El especializado añade estructura (docente), procedimiento de depuración (programación) y advertencias de seguridad (robótica). Tokens y latencia son casi idénticos entre ambos.
 
----
+3. **¿Qué instrucciones redujeron ambigüedad?** Las que fijan un formato explícito: "incluye objetivo, duración, materiales, pasos y criterios" (docente) y "primero interpreta el mensaje, luego causa probable y finalmente corrección verificable" (programación). Su efecto es directamente observable en las corridas de P8, P4 (rúbrica) y P2.
 
-## Evaluación Cualitativa
+4. **¿Qué instrucciones hicieron la respuesta demasiado rígida?** La plantilla fija del perfil docente. En P3 ("redacta tres objetivos") el modelo agregó duración y materiales no solicitados; con `num_predict=180`, esa rigidez consume tokens antes de completar lo pedido, generando respuestas truncadas.
 
-| Criterio | Ollama local | Gemini API | Groq API |
-|----------|:------------:|:----------:|:--------:|
-| Claridad conceptual | 3 | 5 | 4 |
-| Precisión técnica | 2 | 5 | 4 |
-| Uso correcto de ecuaciones | 2 | 5 | 4 |
-| Calidad del ejemplo | 2 | 5 | 4 |
-| Nivel adecuado para ingeniería | 3 | 5 | 4 |
-| Identificación de limitaciones | 3 | 5 | 3 |
-| Alucinaciones o errores | 2 | 5 | 4 |
-| Utilidad final | 2 | 5 | 4 |
+5. **¿El modelo inventó información? ¿En qué caso?** Sí. En P12 (cita textual) tanto el perfil genérico como el de investigación fabricaron autores, año y publicación inexistentes, a pesar de que el perfil de investigación prohíbe explícitamente inventar citas. También se observaron imprecisiones técnicas menores en la expansión de siglas (DC en P5, LiPo en P6). El `system_prompt` reduce, pero no elimina, las alucinaciones en un modelo de 3B parámetros.
 
-Escala: 1=deficiente, 2=básico, 3=aceptable, 4=bueno, 5=excelente
+6. **¿Qué guardrails agregarías?** Validación en el backend que marque como "sin verificar" toda respuesta que afirme citas o referencias; detección de patrones de referencia bibliográfica; rechazo cortés de consultas fuera de dominio; y, para robótica, forzar la solicitud de datos faltantes (voltaje, corriente, modelo, diagrama) antes de emitir instrucciones eléctricas, dado que el modelo no respetó esa regla de forma fiable.
 
----
-
-## Análisis Comparativo
-
-Resultados basados en 150 pruebas (50 por proveedor).
-
-### 1. Velocidad
-
-Groq fue el proveedor más rápido con **180.61 tokens/s** y un tiempo total de **1.888 s**. Gemini fue moderado con 54.80 tokens/s (11.5 s). Ollama local fue el más lento con 42.53 tokens/s (13.4 s), limitado por el hardware disponible.
-
-### 2. Calidad de Respuesta
-
-Gemini (gemini-2.5-flash) generó la respuesta más completa y precisa técnicamente, incluyendo ecuaciones detalladas, un ejemplo numérico claro y una explicación profunda de las limitaciones. Groq (llama-3.3-70b) dio una respuesta concisa y correcta. Ollama local (llama3.2:3b) fue la más débil, con ecuaciones simplificadas y algunas imprecisiones.
-
-### 3. Relación Tamaño vs. Calidad
-
-El modelo más grande (70B en Groq) no superó al modelo cerrado de Gemini en calidad, aunque fue significativamente más rápido. El modelo local de 3B fue notablemente inferior en precisión técnica, lo que confirma que el tamaño del modelo impacta directamente la calidad de las respuestas.
-
-### 4. Privacidad vs. Rendimiento
-
-Ollama local ofrece la máxima privacidad (datos no salen del equipo) pero con menor rendimiento y calidad. Las APIs externas ofrecen mejor rendimiento a costa de enviar los prompts a servidores de terceros.
-
-### 5. Facilidad de Integración
-
-Groq y OpenRouter usan formato compatible con OpenAI, lo que facilita la integración. Gemini requiere su propio SDK (`google-genai`). Ollama tiene una API local simple pero requiere instalación del modelo.
-
----
+7. **¿Cómo conectarías este copiloto con documentos propios en un sistema RAG?** Indexando los documentos (manuales, apuntes, artículos) en una base vectorial; en cada consulta se recuperan los fragmentos más relevantes y se anexan como contexto en `messages` junto al `system_prompt` del perfil, instruyendo al modelo a citar únicamente esas fuentes recuperadas y a responder "no encontrado en las fuentes" cuando no haya evidencia. Esto ataca directamente la alucinación de citas observada en P12.
 
 ## Conclusiones
 
-Con base en 150 pruebas (50 por proveedor):
+La especialización mediante `system_prompt` adapta el comportamiento del modelo local a un dominio sin reentrenarlo y con costo de inferencia equivalente. Su efecto es claro en estructura y adherencia al rol (docente, programación), moderado cuando el modelo no respeta reglas condicionales (robótica) e insuficiente frente a la fabricación de datos verificables (citas). Un copiloto confiable requiere combinar instrucciones de sistema claras con validación en el backend, límites de seguridad, evaluación humana, métricas de desempeño y, para conocimiento factual, recuperación aumentada (RAG).
 
-1. **No hay un proveedor universalmente mejor**: la elección depende del caso de uso (privacidad, velocidad, calidad, costo).
-2. **Groq destaca en velocidad**: su infraestructura optimizada (LPU) permite inferencia extremadamente rápida.
-3. **Gemini destaca en calidad**: para tareas que requieren precisión técnica, los modelos cerrados de frontera siguen siendo superiores.
-4. **Ollama local es viable para desarrollo y privacidad**: aunque su rendimiento es menor, no depende de internet ni tiene costos por token.
-5. **La arquitectura híbrida es la más flexible**: permite elegir el proveedor adecuado según el contexto de cada consulta.
+## Reproducir la batería
 
----
-
-## Instalación y Uso
-
-### Requisitos
-
-1. Python 3.8+
-2. Ollama instalado con modelo `llama3.2:3b`
-3. API keys de Gemini y Groq
-
-### Backend
+Con Ollama y el backend en ejecución:
 
 ```bash
-cd backend
-python -m venv .venv
-source .venv/bin/activate  # macOS/Linux
+# Backend (terminal 1)
+cd practicas/practica-4/backend
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-
-# Configurar .env con las API keys
-cp .env.example .env
-# Editar .env con las llaves reales
-
 uvicorn main:app --reload --port 8000
+
+# Batería (terminal 2)
+python practicas/practica-4/test_prompting_battery.py
 ```
 
-### Frontend
-
-```bash
-cd frontend
-python -m http.server 5500
-```
-
-Abrir: `http://localhost:5500`
-
----
-
-## Tecnologías Utilizadas
-
-| Componente | Tecnología |
-|------------|------------|
-| Backend | FastAPI, Pydantic, python-dotenv |
-| APIs externas | google-genai, openai (SDK compatible) |
-| Frontend | HTML5, CSS3, JavaScript ES6+ |
-| LLM local | Ollama + llama3.2:3b |
-| LLM remoto | Gemini 2.5 Flash, Llama 3.3 70B (Groq) |
-
----
-
-**Fecha de elaboración:** Junio 2026  
-**Autores:** Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo  
-**Curso:** IA Generativa y Prospectiva Tecnológica
-
-{: .note }
-> Este chatbot híbrido permite comparar modelos locales y remotos en una misma interfaz.
-> Las API keys nunca se exponen en el frontend y se gestionan mediante variables de entorno.
+Los archivos `metrics_raw_<timestamp>.json` y `metrics_summary_<timestamp>.json` se generan en `docs/assets/practica-4/`.
