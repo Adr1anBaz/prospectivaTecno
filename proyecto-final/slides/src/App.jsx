@@ -3,21 +3,29 @@ import { motion, AnimatePresence } from 'framer-motion'
 import TitleSlide from './slides/TitleSlide'
 import ObjetivoSlide from './slides/ObjetivoSlide'
 import ArquitecturaSlide from './slides/ArquitecturaSlide'
-import RobotSlide from './slides/RobotSlide'
+import PipelineSlide from './slides/PipelineSlide'
 import AgenteSlide from './slides/AgenteSlide'
+import RobotSlide from './slides/RobotSlide'
+import AntiFeedbackSlide from './slides/AntiFeedbackSlide'
+import MetricasSlide from './slides/MetricasSlide'
+import PerformanceSlide from './slides/PerformanceSlide'
 import NavegacionSlide from './slides/NavegacionSlide'
 import DesafiosSlide from './slides/DesafiosSlide'
-import EstadoSlide from './slides/EstadoSlide'
+import ConclusionesSlide from './slides/ConclusionesSlide'
 
 const slides = [
   TitleSlide,
   ObjetivoSlide,
   ArquitecturaSlide,
-  RobotSlide,
+  PipelineSlide,
   AgenteSlide,
+  RobotSlide,
+  AntiFeedbackSlide,
+  MetricasSlide,
+  PerformanceSlide,
   NavegacionSlide,
   DesafiosSlide,
-  EstadoSlide,
+  ConclusionesSlide,
 ]
 
 export default function App() {

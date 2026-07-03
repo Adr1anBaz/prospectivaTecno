@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
 
-const queries = [
-  '"Llévame a la cafetería con el desayuno más barato"',
-  '"Llévame a donde haya buena señal de internet"',
-  '"Llévame a la cafetería que no tenga tantas personas ahorita"',
+const goals = [
+  { icon: '🎙️', label: 'Comprensión de voz', desc: 'Transcripción mediante Whisper (Groq) y detección de activación con Vosk offline' },
+  { icon: '🧠', label: 'Clasificación híbrida', desc: 'Intenciones de navegación por regex (YAML) + razonamiento semántico con LLM (Llama 4 Scout)' },
+  { icon: '🗺️', label: 'Consulta estructurada', desc: 'Datos del campus vía MCP — lugares, servicios, horarios, inventario' },
+  { icon: '🤖', label: 'Control robótico', desc: 'Órdenes al Unitree Go2 mediante ROS2 Humble + WebRTC con archivos JSON compartidos' },
 ]
 
 export default function ObjetivoSlide() {
@@ -16,7 +17,7 @@ export default function ObjetivoSlide() {
           fontFamily: "'Instrument Serif', serif",
           fontSize: 'clamp(2.4rem, 5vw, 3.5rem)',
           fontWeight: 400,
-          marginBottom: 16,
+          marginBottom: 12,
         }}
       >
         Objetivo
@@ -25,67 +26,41 @@ export default function ObjetivoSlide() {
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.15 }}
         style={{
           color: 'var(--text-dim)',
-          fontSize: '1.1rem',
-          marginBottom: 48,
+          fontSize: '1rem',
+          marginBottom: 40,
           fontWeight: 300,
+          maxWidth: 700,
+          lineHeight: 1.6,
         }}
       >
-        Un agente capaz de guiar usuarios por la universidad
-        respondiendo peticiones en lenguaje natural
+        Traducir instrucciones en lenguaje natural a comandos de navegación física
+        sobre un robot cuadrúpedo, integrando procesamiento de voz, razonamiento
+        con LLM y control motor en una arquitectura de procesos desacoplados.
       </motion.p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {queries.map((q, i) => (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        {goals.map((g, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 + i * 0.15 }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 + i * 0.1 }}
             style={{
-              padding: '20px 28px',
+              padding: '20px 24px',
               background: 'var(--surface)',
               border: '1px solid var(--border)',
               borderRadius: 12,
-              fontSize: '1.05rem',
-              fontStyle: 'italic',
-              color: 'var(--text-dim)',
-              borderLeft: '3px solid var(--blue)',
             }}
           >
-            {q}
+            <div style={{ fontSize: 24, marginBottom: 8 }}>{g.icon}</div>
+            <h4 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: 6, color: 'var(--blue)' }}>{g.label}</h4>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>{g.desc}</p>
           </motion.div>
         ))}
       </div>
-
-      <div style={{ height: 10 }}></div>
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        style={{
-          marginTop: 30,
-          borderRadius: 16,
-          overflow: 'hidden',
-          border: '1px solid var(--border)',
-          background: 'var(--surface)',
-          height: 'auto',
-        }}
-      >
-        <img
-          src={`${import.meta.env.BASE_URL}images/muestra.webp`}
-          alt="Muestra del agente"
-          style={{
-            width: '100%',
-            height: 'auto',
-            display: 'block',
-            objectFit: 'contain',
-          }}
-        />
-      </motion.div>
     </div>
   )
 }

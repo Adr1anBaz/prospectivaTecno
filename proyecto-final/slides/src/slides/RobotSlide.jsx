@@ -7,7 +7,7 @@ export default function RobotSlide() {
       maxWidth: 1100,
       display: 'grid',
       gridTemplateColumns: '1fr 1fr',
-      gap: 60,
+      gap: 48,
       alignItems: 'center',
     }}>
       {/* Image */}
@@ -42,51 +42,81 @@ export default function RobotSlide() {
       >
         <h2 style={{
           fontFamily: "'Instrument Serif', serif",
-          fontSize: '2.8rem',
+          fontSize: '2.4rem',
           fontWeight: 400,
-          marginBottom: 12,
+          marginBottom: 8,
         }}>
-          El Robot
+          Control Robótico
         </h2>
         <p style={{
           color: 'var(--blue)',
-          fontSize: '1rem',
-          marginBottom: 36,
+          fontSize: '0.9rem',
+          marginBottom: 32,
           fontWeight: 500,
         }}>
-          Unitree Go2 Pro
+          Unitree Go2 Air — 3 nodos ROS2 + WebRTC
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div>
-            <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 8 }}>
-              Por qué este robot
+          {/* Controller */}
+          <div style={{
+            padding: 14,
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            borderLeft: '3px solid var(--blue)',
+          }}>
+            <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--blue)', marginBottom: 4 }}>
+              Controller Node
             </h4>
-            <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem', lineHeight: 1.6 }}>
-              Atrae al público — lo graban, preguntan, se acercan
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
+              WebRTC activo, reenvío de comandos, publicación de telemetría (odometría + IMU)
             </p>
           </div>
 
-          <div>
-            <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 8 }}>
-              Control
+          {/* Actions */}
+          <div style={{
+            padding: 14,
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            borderLeft: '3px solid #E6A85B',
+          }}>
+            <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#E6A85B', marginBottom: 4 }}>
+              Actions Node
             </h4>
-            <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem', lineHeight: 1.6 }}>
-              Vía Python usando la biblioteca WebRTC del robot
-              <br />
-              <span style={{ color: 'var(--text-muted)' }}>No open-source, pero controlable programáticamente</span>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
+              Rutinas discretas preprogramadas: sentarse, pararse, detenerse, saludo, baile
             </p>
           </div>
 
-          <div>
-            <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 8 }}>
-              Navegación
+          {/* Navigation */}
+          <div style={{
+            padding: 14,
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            borderLeft: '3px solid #6BCB8A',
+          }}>
+            <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6BCB8A', marginBottom: 4 }}>
+              Navigation Node
             </h4>
-            <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem', lineHeight: 1.6 }}>
-              ROS2/SLAM no viable en el tiempo disponible
-              <br />
-              <span style={{ color: 'var(--blue)' }}>Solución → rutas pregrabadas modulares</span>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
+              Secuencias espaciales → velocidades lineales/angulares. Ejecución temporal si no hay odometría.
             </p>
+          </div>
+
+          {/* Shared files */}
+          <div style={{
+            padding: 10,
+            background: 'var(--bg)',
+            border: '1px dashed var(--border)',
+            borderRadius: 6,
+            fontSize: '0.78rem',
+            color: 'var(--text-muted)',
+            textAlign: 'center',
+          }}>
+            JSON compartido: agente escribe → ROS2 lee → feedback de vuelta
           </div>
         </div>
       </motion.div>
