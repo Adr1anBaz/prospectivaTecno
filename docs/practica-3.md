@@ -206,12 +206,23 @@ Para modificar `N`, editar la constante `RUNS_PER_SCENARIO` en el script.
 
 ## Capturas (entregable del reporte)
 
+**Frontend funcionando.** Interfaz con el panel de configuración de parámetros
+(`model`, `temperature`, `top_p`, `num_predict`, `num_ctx`, `repeat_penalty`) y la
+conversación con el modelo `llama3.2:3b`.
+
+![Frontend del chatbot con panel de configuración y conversación](imgs/pr3/img1.png)
+
+**Métricas visibles.** Panel "Métricas de la última respuesta" con tiempo del backend,
+tiempo de Ollama, carga del modelo, tokens de entrada/salida/totales, tiempo de
+generación y velocidad (tokens/s). El valor `Tokens entrada = 182` refleja que el
+historial de la conversación se envía a Ollama (contexto activo).
+
+![Panel de métricas de la última respuesta](imgs/pr3/img2.png)
+
 > Pendientes de adjuntar por el equipo:
 > - Ollama con el modelo instalado (`ollama list`).
 > - Backend ejecutándose (`uvicorn` en el puerto 8000 / `/docs`).
 > - Prueba del endpoint `/chat` (curl o Swagger `/docs`).
-> - Frontend funcionando (conversación con contexto).
-> - Panel de métricas visibles tras una respuesta.
 
 ---
 
