@@ -4,7 +4,7 @@ title: "Práctica 2: Selección de plataforma y benchmark de LLMs"s
 nav_order: 2
 ---
 
-**Integrantes:** Sebastián Enguilo, Fernando Pérez  
+**Integrantes:** Adrián Bazaldua, Sebastián Enguilo, Fernando Pérez  
 **Fecha:** 2026-06-04
 
 ---
