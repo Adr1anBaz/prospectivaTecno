@@ -1,20 +1,25 @@
 import { motion } from 'framer-motion'
 
-const layers = [
+const pillars = [
   {
-    title: 'Procesamiento de Lenguaje',
-    items: ['AudioProcess (captura, VAD, wake word)', 'Orquestador (clasificador + LLM)', 'AudioPlayback (TTS streaming)'],
-    color: 'var(--blue)',
+    title: 'Interacción por Voz',
+    items: ['Captura de audio y detección de activación', 'Reconocimiento de voz (STT)', 'Síntesis de voz (TTS)'],
+    icon: '🎤',
   },
   {
-    title: 'Orquestación Robótica',
-    items: ['Event Bus (multiprocessing.Queue)', 'MCP Client (consultas a BD campus)', 'Generación de instrucciones JSON'],
-    color: '#E6A85B',
+    title: 'Razonamiento con IA',
+    items: ['Clasificador híbrido (reglas + LLM)', 'Modelo de Lenguaje (LLM) conversacional', 'Conexión a datos estructurados vía MCP'],
+    icon: '🧠',
   },
   {
-    title: 'Comunicación Física',
-    items: ['ROS2 Humble (controller + actions + nav)', 'WebRTC DataChannel', 'Ejecución en Unitree Go2 Air'],
-    color: '#6BCB8A',
+    title: 'Robótica Móvil',
+    items: ['Robot cuadrúpedo como plataforma de guía', 'Control por ROS2 + WebRTC', 'Ejecución de rutas de navegación'],
+    icon: '🤖',
+  },
+  {
+    title: 'Arquitectura Desacoplada',
+    items: ['Procesos independientes comunicados por bus', 'Separación de capas (lenguaje, orquestación, control)', 'Componentes intercambiables'],
+    icon: '🔗',
   },
 ]
 
@@ -26,12 +31,12 @@ export default function ArquitecturaSlide() {
         animate={{ opacity: 1, y: 0 }}
         style={{
           fontFamily: "'Instrument Serif', serif",
-          fontSize: 'clamp(2.4rem, 5vw, 3.5rem)',
+          fontSize: 'clamp(2.4rem, 5vw, 3.2rem)',
           fontWeight: 400,
-          marginBottom: 12,
+          marginBottom: 8,
         }}
       >
-        Arquitectura
+        Visión del Sistema
       </motion.h2>
 
       <motion.p
@@ -41,117 +46,50 @@ export default function ArquitecturaSlide() {
         style={{
           color: 'var(--text-dim)',
           fontSize: '0.9rem',
-          marginBottom: 36,
+          marginBottom: 40,
           fontWeight: 300,
+          maxWidth: 650,
+          lineHeight: 1.6,
         }}
       >
-        Procesos desacoplados comunicados por Event Bus — 3 capas jerárquicas
+        Un sistema capaz de guiar personas dentro de un campus universitario
+        mediante conversación natural, combinando cuatro pilares tecnológicos.
       </motion.p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 0, position: 'relative' }}>
-        {layers.map((layer, i) => (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+        {pillars.map((p, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 + i * 0.15 }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 + i * 0.12 }}
             style={{
-              display: 'grid',
-              gridTemplateColumns: '180px 1fr',
-              gap: 20,
-              padding: '18px 24px',
+              padding: 24,
               background: 'var(--surface)',
-              border: `1px solid ${layer.color}33`,
-              borderLeft: `3px solid ${layer.color}`,
-              borderRadius: i === 0 ? '12px 12px 0 0' : i === layers.length - 1 ? '0 0 12px 12px' : 0,
-              marginTop: i > 0 ? -1 : 0,
+              border: '1px solid var(--border)',
+              borderRadius: 12,
             }}
           >
-            <div>
-              <div style={{
-                fontSize: '0.65rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                color: layer.color,
-                fontWeight: 600,
-                marginBottom: 4,
-              }}>
-                Capa {i + 1}
-              </div>
-              <div style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text)' }}>
-                {layer.title}
-              </div>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {layer.items.map((item, j) => (
-                <div key={j} style={{
-                  fontSize: '0.82rem',
+            <div style={{ fontSize: 28, marginBottom: 12 }}>{p.icon}</div>
+            <h4 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: 12, color: 'var(--blue)' }}>
+              {p.title}
+            </h4>
+            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {p.items.map((item, j) => (
+                <li key={j} style={{
+                  fontSize: '0.8rem',
                   color: 'var(--text-dim)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
+                  paddingLeft: 12,
+                  borderLeft: '1px solid var(--border)',
+                  lineHeight: 1.5,
                 }}>
-                  <span style={{ color: layer.color, fontSize: '0.5rem' }}>◆</span>
                   {item}
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           </motion.div>
         ))}
-
-        {/* Event Bus badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.8, type: 'spring' }}
-          style={{
-            position: 'absolute',
-            right: -20,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            background: 'var(--bg)',
-            border: '1px solid var(--blue)',
-            borderRadius: 20,
-            padding: '8px 16px',
-            fontSize: '0.7rem',
-            color: 'var(--blue)',
-            fontWeight: 600,
-            letterSpacing: '0.05em',
-          }}
-        >
-          EVENT BUS
-        </motion.div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9 }}
-        style={{
-          marginTop: 20,
-          display: 'flex',
-          gap: 16,
-          justifyContent: 'center',
-        }}
-      >
-        {[
-          { label: 'STT remoto (Groq Whisper)', color: 'var(--blue)' },
-          { label: 'LLM remoto (Groq Llama 4)', color: 'var(--blue)' },
-          { label: 'TTS remoto (Edge / Deepgram)', color: 'var(--blue)' },
-        ].map((s, i) => (
-          <div key={i} style={{
-            fontSize: '0.65rem',
-            color: 'var(--text-muted)',
-            background: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: 6,
-            padding: '4px 10px',
-            letterSpacing: '0.03em',
-          }}>
-            {s.label}
-          </div>
-        ))}
-      </motion.div>
     </div>
   )
 }

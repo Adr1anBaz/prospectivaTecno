@@ -1,10 +1,22 @@
 import { motion } from 'framer-motion'
 
-const goals = [
-  { icon: '🎙️', label: 'Comprensión de voz', desc: 'Transcripción mediante Whisper (Groq) y detección de activación con Vosk offline' },
-  { icon: '🧠', label: 'Clasificación híbrida', desc: 'Intenciones de navegación por regex (YAML) + razonamiento semántico con LLM (Llama 4 Scout)' },
-  { icon: '🗺️', label: 'Consulta estructurada', desc: 'Datos del campus vía MCP — lugares, servicios, horarios, inventario' },
-  { icon: '🤖', label: 'Control robótico', desc: 'Órdenes al Unitree Go2 mediante ROS2 Humble + WebRTC con archivos JSON compartidos' },
+const problems = [
+  {
+    title: 'Orientación en campus',
+    desc: 'Visitantes, estudiantes de nuevo ingreso y personal externo enfrentan dificultades para ubicar edificios, laboratorios, cafeterías y oficinas administrativas.',
+  },
+  {
+    title: 'Señalética estática',
+    desc: 'Los mapas y letreros fijos no se actualizan en tiempo real ni contemplan cierres temporales, horarios o disponibilidad de servicios.',
+  },
+  {
+    title: 'Recurso humano limitado',
+    desc: 'El personal de recepción y orientación tiene capacidad restringida, especialmente en horas piso o en eventos masivos.',
+  },
+  {
+    title: 'Sin canal conversacional',
+    desc: 'No existe un medio natural (voz, lenguaje cotidiano) para solicitar indicaciones, hacer preguntas de contexto o recibir asistencia paso a paso.',
+  },
 ]
 
 export default function ObjetivoSlide() {
@@ -15,12 +27,12 @@ export default function ObjetivoSlide() {
         animate={{ opacity: 1, y: 0 }}
         style={{
           fontFamily: "'Instrument Serif', serif",
-          fontSize: 'clamp(2.4rem, 5vw, 3.5rem)',
+          fontSize: 'clamp(2.4rem, 5vw, 3.2rem)',
           fontWeight: 400,
-          marginBottom: 12,
+          marginBottom: 8,
         }}
       >
-        Objetivo
+        El Problema
       </motion.h2>
 
       <motion.p
@@ -29,35 +41,36 @@ export default function ObjetivoSlide() {
         transition={{ delay: 0.15 }}
         style={{
           color: 'var(--text-dim)',
-          fontSize: '1rem',
+          fontSize: '0.9rem',
           marginBottom: 40,
           fontWeight: 300,
-          maxWidth: 700,
-          lineHeight: 1.6,
         }}
       >
-        Traducir instrucciones en lenguaje natural a comandos de navegación física
-        sobre un robot cuadrúpedo, integrando procesamiento de voz, razonamiento
-        con LLM y control motor en una arquitectura de procesos desacoplados.
+        ¿Cómo ayudar a una persona a encontrar su destino en un campus universitario
+        sin depender de mapas físicos o personal de recepción?
       </motion.p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-        {goals.map((g, i) => (
+        {problems.map((p, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 + i * 0.1 }}
+            transition={{ delay: 0.2 + i * 0.1 }}
             style={{
               padding: '20px 24px',
               background: 'var(--surface)',
               border: '1px solid var(--border)',
               borderRadius: 12,
+              borderLeft: '3px solid var(--blue)',
             }}
           >
-            <div style={{ fontSize: 24, marginBottom: 8 }}>{g.icon}</div>
-            <h4 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: 6, color: 'var(--blue)' }}>{g.label}</h4>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>{g.desc}</p>
+            <h4 style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: 8, color: 'var(--blue)' }}>
+              {p.title}
+            </h4>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.6 }}>
+              {p.desc}
+            </p>
           </motion.div>
         ))}
       </div>

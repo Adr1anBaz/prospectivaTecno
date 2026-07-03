@@ -10,7 +10,6 @@ export default function RobotSlide() {
       gap: 48,
       alignItems: 'center',
     }}>
-      {/* Image */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -34,7 +33,6 @@ export default function RobotSlide() {
         />
       </motion.div>
 
-      {/* Info */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
@@ -46,19 +44,18 @@ export default function RobotSlide() {
           fontWeight: 400,
           marginBottom: 8,
         }}>
-          Control Robótico
+          Plataforma Robótica
         </h2>
         <p style={{
           color: 'var(--blue)',
           fontSize: '0.9rem',
-          marginBottom: 32,
+          marginBottom: 28,
           fontWeight: 500,
         }}>
-          Unitree Go2 Air — 3 nodos ROS2 + WebRTC
+          Robot cuadrúpedo como guía físico
         </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* Controller */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{
             padding: 14,
             background: 'var(--surface)',
@@ -67,14 +64,14 @@ export default function RobotSlide() {
             borderLeft: '3px solid var(--blue)',
           }}>
             <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--blue)', marginBottom: 4 }}>
-              Controller Node
+              ¿Por qué un robot?
             </h4>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
-              WebRTC activo, reenvío de comandos, publicación de telemetría (odometría + IMU)
+              Un agente físico genera confianza, atrae atención y puede guiar activamente
+              a una persona, no solo indicar una ruta en un mapa.
             </p>
           </div>
 
-          {/* Actions */}
           <div style={{
             padding: 14,
             background: 'var(--surface)',
@@ -83,14 +80,14 @@ export default function RobotSlide() {
             borderLeft: '3px solid #E6A85B',
           }}>
             <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#E6A85B', marginBottom: 4 }}>
-              Actions Node
+              Control Propuesto
             </h4>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
-              Rutinas discretas preprogramadas: sentarse, pararse, detenerse, saludo, baile
+              Comunicación vía WebRTC para comandos en tiempo real.
+              ROS2 como middleware para orquestación de movimientos y sensores.
             </p>
           </div>
 
-          {/* Navigation */}
           <div style={{
             padding: 14,
             background: 'var(--surface)',
@@ -99,24 +96,12 @@ export default function RobotSlide() {
             borderLeft: '3px solid #6BCB8A',
           }}>
             <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6BCB8A', marginBottom: 4 }}>
-              Navigation Node
+              Capacidades Deseadas
             </h4>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
-              Secuencias espaciales → velocidades lineales/angulares. Ejecución temporal si no hay odometría.
+              Desplazamiento autónomo entre puntos del campus, ejecución de rutas
+              pregrabadas, y comandos de presencia (sentarse, saludar, guiar).
             </p>
-          </div>
-
-          {/* Shared files */}
-          <div style={{
-            padding: 10,
-            background: 'var(--bg)',
-            border: '1px dashed var(--border)',
-            borderRadius: 6,
-            fontSize: '0.78rem',
-            color: 'var(--text-muted)',
-            textAlign: 'center',
-          }}>
-            JSON compartido: agente escribe → ROS2 lee → feedback de vuelta
           </div>
         </div>
       </motion.div>

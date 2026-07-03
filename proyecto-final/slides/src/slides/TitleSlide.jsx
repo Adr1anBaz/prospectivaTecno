@@ -4,19 +4,19 @@ export default function TitleSlide() {
   return (
     <div style={{ textAlign: 'center', padding: '0 80px', maxWidth: 1000 }}>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.5 }}
         style={{
-          fontSize: 'clamp(0.7rem, 1vw, 0.85rem)',
+          fontSize: 'clamp(0.65rem, 0.9vw, 0.8rem)',
           color: 'var(--blue)',
-          letterSpacing: '0.15em',
+          letterSpacing: '0.2em',
           textTransform: 'uppercase',
-          marginBottom: 24,
+          marginBottom: 32,
           fontWeight: 500,
         }}
       >
-        IEEE Conference Paper
+        Proyecto de Investigación
       </motion.div>
 
       <motion.h1
@@ -25,14 +25,18 @@ export default function TitleSlide() {
         transition={{ duration: 0.6, delay: 0.1 }}
         style={{
           fontFamily: "'Instrument Serif', serif",
-          fontSize: 'clamp(2.8rem, 6vw, 4.5rem)',
+          fontSize: 'clamp(3rem, 7vw, 5.5rem)',
           fontWeight: 400,
           color: 'var(--blue)',
           letterSpacing: '-0.02em',
-          lineHeight: 1.15,
+          lineHeight: 1.1,
         }}
       >
-        Walking the Talk
+          Guía Autónoma
+        <br />
+        <span style={{ color: 'var(--text)', fontSize: '0.7em' }}>
+          con Agentes Conversacionales
+        </span>
       </motion.h1>
 
       <motion.p
@@ -40,16 +44,17 @@ export default function TitleSlide() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.6 }}
         style={{
-          marginTop: 16,
-          fontSize: 'clamp(1rem, 1.8vw, 1.3rem)',
+          marginTop: 28,
+          fontSize: 'clamp(0.95rem, 1.5vw, 1.15rem)',
           color: 'var(--text-dim)',
           fontWeight: 300,
-          maxWidth: 700,
+          maxWidth: 600,
           marginInline: 'auto',
-          lineHeight: 1.5,
+          lineHeight: 1.6,
         }}
       >
-        Robot-Guided Navigation Through Conversational AI on University Campuses
+        Navegación inteligente en campus universitarios mediante
+        interacción por voz, modelos de lenguaje y robótica móvil
       </motion.p>
 
       <motion.div
@@ -57,32 +62,16 @@ export default function TitleSlide() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.6 }}
         style={{
-          marginTop: 48,
-          fontSize: 'clamp(0.75rem, 1vw, 0.85rem)',
+          marginTop: 56,
+          fontSize: 'clamp(0.7rem, 0.9vw, 0.8rem)',
           color: 'var(--text-muted)',
-          lineHeight: 1.7,
+          lineHeight: 1.8,
         }}
       >
-        <div>Adrián Bazaldua, Sebastián Enguilo, Fernando Pérez</div>
-        <div>Joel Arango, Huber Girón</div>
-        <div style={{ marginTop: 8, color: 'var(--text-dim)' }}>
-          Universidad Iberoamericana — Depto. de Ingeniería
+        <div>Adrián Bazaldua · Sebastián Enguilo · Fernando Pérez</div>
+        <div style={{ color: 'var(--text-dim)' }}>
+          Universidad Iberoamericana — Departamento de Ingeniería
         </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9, duration: 0.6 }}
-        style={{
-          marginTop: 48,
-          fontSize: 13,
-          color: 'var(--text-muted)',
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-        }}
-      >
-        Unitree Go2 + Groq LLM + ROS2
       </motion.div>
     </div>
   )
