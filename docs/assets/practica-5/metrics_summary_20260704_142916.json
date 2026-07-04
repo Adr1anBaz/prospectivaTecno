@@ -11,23 +11,58 @@
   },
   "n_reps": 3,
   "n_runs_total": 9,
-  "n_runs_ok": 6,
-  "n_runs_failed": 3,
-  "battery_elapsed_s": 13.49,
+  "n_runs_ok": 9,
+  "n_runs_failed": 0,
+  "battery_elapsed_s": 34.58,
   "by_provider": {
+    "Ollama local": {
+      "provider": "ollama",
+      "model": "llama3.2:3b",
+      "runs": 3,
+      "wall_time_s": [
+        7.7371,
+        7.5033,
+        7.6326
+      ],
+      "tokens_per_second": [
+        42.82,
+        41.14,
+        40.44
+      ],
+      "prompt_tokens": [
+        213,
+        213,
+        213
+      ],
+      "completion_tokens": [
+        300,
+        300,
+        300
+      ],
+      "total_tokens": [
+        513,
+        513,
+        513
+      ],
+      "avg_wall_time_s": 7.624,
+      "avg_tokens_per_second": 41.47,
+      "avg_prompt_tokens": 213.0,
+      "avg_completion_tokens": 300.0,
+      "avg_total_tokens": 513.0
+    },
     "Gemini (OpenRouter)": {
       "provider": "openrouter",
       "model": "google/gemini-2.5-flash-lite",
       "runs": 3,
       "wall_time_s": [
-        3.0819,
-        1.5815,
-        1.6719
+        1.7556,
+        1.6375,
+        1.8364
       ],
       "tokens_per_second": [
-        97.34,
-        189.69,
-        179.44
+        170.88,
+        183.2,
+        163.36
       ],
       "prompt_tokens": [
         151,
@@ -44,8 +79,8 @@
         451,
         451
       ],
-      "avg_wall_time_s": 2.112,
-      "avg_tokens_per_second": 155.49,
+      "avg_wall_time_s": 1.743,
+      "avg_tokens_per_second": 172.48,
       "avg_prompt_tokens": 151.0,
       "avg_completion_tokens": 300.0,
       "avg_total_tokens": 451.0
@@ -55,14 +90,14 @@
       "model": "llama-3.3-70b-versatile",
       "runs": 3,
       "wall_time_s": [
-        2.0901,
-        1.4535,
-        1.5119
+        1.9619,
+        1.384,
+        1.2046
       ],
       "tokens_per_second": [
-        143.53,
-        206.4,
-        198.42
+        152.91,
+        214.6,
+        249.04
       ],
       "prompt_tokens": [
         223,
@@ -71,19 +106,19 @@
       ],
       "completion_tokens": [
         300,
-        300,
+        297,
         300
       ],
       "total_tokens": [
         523,
-        523,
+        520,
         523
       ],
-      "avg_wall_time_s": 1.685,
-      "avg_tokens_per_second": 182.78,
+      "avg_wall_time_s": 1.517,
+      "avg_tokens_per_second": 205.52,
       "avg_prompt_tokens": 223.0,
-      "avg_completion_tokens": 300.0,
-      "avg_total_tokens": 523.0
+      "avg_completion_tokens": 299.0,
+      "avg_total_tokens": 522.0
     }
   }
 }
