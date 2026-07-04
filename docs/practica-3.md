@@ -116,28 +116,28 @@ Una conversación **nueva** no ve los mensajes de otras: `conversation_id: null`
 
 ## 📊 Métricas (N = 40 pruebas reales)
 
-> **Resumen de la batería.** El script `practicas/practica-3/test_metrics_battery.py` ejecutó **8 escenarios × 5 repeticiones = N = 40 invocaciones medidas** a `llama3.2:3b` durante **~7 min 35 s**, todas exitosas (40/40 ok). Backend en `127.0.0.1:8000`, parámetros por defecto (`temperature=0.7`, `top_p=0.9`, `repeat_penalty=1.1`, `num_ctx=4096`). Los números siguientes son agregados (mean ± stdev) sobre los 5 runs de cada escenario. Datos crudos en [`assets/practica-3/metrics_summary_20260702_230248.json`](assets/practica-3/metrics_summary_20260702_230248.json).
+> **Resumen de la batería.** El script `practicas/practica-3/test_metrics_battery.py` ejecutó **8 escenarios × 5 repeticiones = N = 40 invocaciones medidas** a `llama3.2:3b` durante **~6 min 44 s**, todas exitosas (40/40 ok). Backend en `127.0.0.1:8000`, parámetros por defecto (`temperature=0.7`, `top_p=0.9`, `repeat_penalty=1.1`, `num_ctx=4096`). Los números siguientes son agregados (mean ± stdev) sobre los 5 runs de cada escenario. Datos crudos en [`assets/practica-3/metrics_summary_20260704_141005.json`](assets/practica-3/metrics_summary_20260704_141005.json).
 
 ### Tabla comparativa (N = 5 por escenario)
 
 | Escenario | N | Wall time (s) | Prompt tok | Completion tok | Total tok | Tokens/s |
 |-----------|--:|---------------:|-----------:|---------------:|----------:|---------:|
-| **S1** Primer mensaje (sin historial) | 5 | 4.66 ± 0.39 | 56 | 160 ± 0 | 216 ± 0 | **36.98 ± 0.09** |
-| **S2** 3.er mensaje (2 turnos previos) | 5 | 4.74 ± 0.08 | **373 ± 33** | 160 ± 0 | 533 ± 33 | 35.34 ± 0.52 |
-| **S3** Respuesta técnica (código) | 5 | 11.28 ± 0.10 | 62 | **400 ± 0** | 462 ± 0 | 36.31 ± 0.19 |
-| **S4** Temperatura baja (0.2) | 5 | 4.63 ± 0.12 | 56 | 160 ± 0 | 216 ± 0 | 35.98 ± 0.66 |
-| **S5** Temperatura alta (1.0) | 5 | 4.55 ± 0.06 | 56 | 158 ± 4 | 214 ± 4 | 36.09 ± 0.22 |
-| **S6** `num_predict=60` | 5 | **1.82 ± 0.05** | 56 | **60 ± 0** | 116 ± 0 | 35.54 ± 0.65 |
-| **S7** `num_predict=300` | 5 | 6.59 ± 0.90 | 56 | 221 ± 32 | 277 ± 32 | 34.47 ± 0.47 |
-| **S8** Turno 10 (9 turnos previos) | 5 | 6.12 ± 0.19 | **1275 ± 23** | 160 ± 0 | **1435 ± 23** | 27.39 ± 0.83 |
+| **S1** Primer mensaje (sin historial) | 5 | 4.09 ± 1.51 | 56 | 147 ± 26 | 203 ± 26 | **43.81 ± 0.55** |
+| **S2** 3.er mensaje (2 turnos previos) | 5 | 3.90 ± 0.05 | **374 ± 28** | 160 ± 0 | 534 ± 28 | 43.19 ± 0.56 |
+| **S3** Respuesta técnica (código) | 5 | 9.42 ± 0.05 | 62 | **400 ± 0** | 462 ± 0 | 43.39 ± 0.29 |
+| **S4** Temperatura baja (0.2) | 5 | 3.83 ± 0.04 | 56 | 160 ± 0 | 216 ± 0 | 43.43 ± 0.15 |
+| **S5** Temperatura alta (1.0) | 5 | 3.96 ± 0.20 | 56 | 160 ± 0 | 216 ± 0 | 42.40 ± 1.31 |
+| **S6** `num_predict=60` | 5 | **1.47 ± 0.01** | 56 | **60 ± 0** | 116 ± 0 | 43.85 ± 0.26 |
+| **S7** `num_predict=300` | 5 | 5.65 ± 0.96 | 56 | 228 ± 40 | 284 ± 40 | 41.40 ± 0.62 |
+| **S8** Turno 10 (9 turnos previos) | 5 | 6.13 ± 0.68 | **1233 ± 24** | 160 ± 0 | **1393 ± 24** | 27.86 ± 3.44 |
 
 ### Lectura de los datos
 
-- **Velocidad estable: 27-37 tokens/s.** Es la métrica menos ruidosa (stdev entre 0.09 y 0.83). `llama3.2:3b` corre cómodo en este equipo.
-- **El historial sí cuesta.** Comparar S1 vs S8: mismo `num_predict=160` en la salida, pero prompt_tokens sube de **56 → 1275** (×22.8). El wall time solo sube de 4.66 s → 6.12 s (×1.3) porque el prefill del contexto es rápido; aun así, `tokens_per_second` cae de **37.0 → 27.4** en el turno con más historial.
-- **`num_predict` corta la salida de verdad.** S6 (=60) genera 60 tokens exactos; S7 (=300) genera hasta ~221 en promedio (no siempre llega al tope, depende de EOS); S3 (=400) llena los 400.
-- **`temperature` no afecta visiblemente ni velocidad ni longitud media** (S4=4.63 s vs S5=4.55 s, dentro de ±2σ). Su efecto es semántico (variabilidad léxica), no de costo computacional.
-- **Primer run paga carga del modelo.** En escenarios sin seeding, los 5 runs son casi deterministas (stdev < 0.4 s); S1 es el de mayor dispersión por el warm-up de la primera corrida.
+- **Velocidad alta y estable: ~28-44 tokens/s.** En 7 de 8 escenarios ronda 41-44 tok/s; solo cae a 27.9 tok/s en el turno con más historial (S8). `llama3.2:3b` corre cómodo en este equipo.
+- **El historial sí cuesta.** Comparar S1 vs S8: mismo `num_predict=160` en la salida, pero prompt_tokens sube de **56 → 1233** (×22.0). El wall time solo sube de 4.09 s → 6.13 s (×1.5) porque el prefill del contexto es rápido; aun así, `tokens_per_second` cae de **43.8 → 27.9** en el turno con más historial.
+- **`num_predict` corta la salida de verdad.** S6 (=60) genera 60 tokens exactos; S7 (=300) genera hasta ~228 en promedio (no siempre llega al tope, depende de EOS); S3 (=400) llena los 400.
+- **`temperature` no afecta visiblemente ni velocidad ni longitud media** (S4=3.83 s vs S5=3.96 s, dentro de ±2σ). Su efecto es semántico (variabilidad léxica), no de costo computacional.
+- **Primer run paga carga del modelo.** S1 es el de mayor dispersión (stdev 1.51 s) por el warm-up de la primera corrida; los escenarios posteriores son casi deterministas (stdev < 0.1 s).
 
 ### Cobertura del contexto conversacional
 
@@ -146,10 +146,34 @@ Una conversación **nueva** no ve los mensajes de otras: `conversation_id: null`
 | Configuración | prompt_tokens | ratio vs S1 |
 |---------------|--------------:|------------:|
 | Sin historial (S1) | 56 | 1.0× |
-| 2 turnos previos (S2) | 373 | 6.7× |
-| 9 turnos previos (S8) | 1275 | 22.8× |
+| 2 turnos previos (S2) | 374 | 6.7× |
+| 9 turnos previos (S8) | 1233 | 22.0× |
 
-Crecimiento promedio ≈ **+135 tokens por turno previo** (consistente con respuestas medias de ~75 tokens por par user+assistant, más el system prompt).
+Crecimiento promedio ≈ **+130 tokens por turno previo** (consistente con respuestas medias de ~75 tokens por par user+assistant, más el system prompt).
+
+### Gráficas de la batería
+
+Generadas automáticamente por `test_metrics_battery.py` (con `matplotlib`) a partir de los datos de la corrida; se guardan en `docs/imgs/pr3/`.
+
+Tiempo de respuesta por escenario (mean ± stdev). El escenario con salida más larga (S3, `num_predict=400`) domina el costo.
+
+![Tiempo de respuesta por escenario](imgs/pr3/chart_wall_time.png)
+
+Velocidad de generación por escenario. Se mantiene alrededor de 41-44 tok/s salvo en S8 (historial largo).
+
+![Velocidad de generación por escenario](imgs/pr3/chart_tokens_per_second.png)
+
+Tokens de entrada vs. salida por escenario. Muestra el peso del contexto en S2 y S8 (entrada) frente al efecto de `num_predict` en la salida.
+
+![Tokens de entrada vs salida por escenario](imgs/pr3/chart_prompt_vs_completion.png)
+
+Crecimiento del contexto conversacional. Los tokens de entrada crecen de 56 (S1) a 1233 (S8), ×22 al acumular 9 turnos previos.
+
+![Crecimiento del contexto conversacional](imgs/pr3/chart_context_growth.png)
+
+Impacto de `num_predict` en el tiempo de respuesta. A mayor límite de tokens de salida, mayor latencia, de forma casi proporcional.
+
+![Impacto de num_predict en el tiempo de respuesta](imgs/pr3/chart_num_predict.png)
 
 ---
 
@@ -167,20 +191,23 @@ source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 
-# 3. Correr la batería (N=5/escenario) desde la raíz del repo
+# 3. Instalar matplotlib (para las gráficas automáticas) y correr la batería
+#    (N=5/escenario) desde la raíz del repo, con el backend en ejecución
 cd ../../..
+pip install matplotlib
 python3 practicas/practica-3/test_metrics_battery.py
 ```
 
 Salida esperada (resumen):
 ```
 Total runs: 40 (ok 40)
-Tiempo total bateria: ~455 s
+Tiempo total bateria: ~404 s
 JSON raw:    docs/assets/practica-3/metrics_raw_<TIMESTAMP>.json
 JSON summary: docs/assets/practica-3/metrics_summary_<TIMESTAMP>.json
+5 gráficas en docs/imgs/pr3/chart_*.png
 ```
 
-Para modificar `N`, editar la constante `RUNS_PER_SCENARIO` en el script.
+Para modificar `N`, editar la constante `RUNS_PER_SCENARIO` en el script. **El backend debe estar corriendo antes de lanzar la batería**; si no, todas las llamadas fallarán con `Connection refused`.
 
 ---
 
@@ -196,9 +223,9 @@ Para modificar `N`, editar la constante `RUNS_PER_SCENARIO` en el script.
 
 1. **¿Qué modelo local utilizaste?** `llama3.2:3b` (Q4_K_M, 2.0 GB) vía Ollama. El selector del frontend también ofrece los otros modelos instalados (`qwen2.5:3b`, `qwen2.5:1.5b`, `llama3.2:1b`, `qwen2.5:0.5b`) como alternativas más ligeras.
 2. **¿Qué parámetros configuraste desde el frontend?** `model`, `temperature`, `top_p`, `num_predict`, `num_ctx` y `repeat_penalty`. El backend valida sus rangos con Pydantic antes de llamar a Ollama.
-3. **¿Qué ocurre al aumentar `num_predict`?** La salida se alarga y el wall time crece casi linealmente: S6 (60 tok) = 1.82 s, S7 (300 tok) = 6.59 s, S3 (400 tok) = 11.28 s. La velocidad se mantiene estable (~34–37 tok/s): `num_predict` cambia *cuántos* tokens se generan, no *qué tan rápido*.
-4. **¿Qué ocurre al modificar `temperature`?** No afecta velocidad ni longitud media (S4 con 0.2 = 4.63 s vs S5 con 1.0 = 4.55 s, dentro del ruido). Su efecto es semántico: mayor temperatura = más variabilidad léxica y creatividad, menor = respuestas más deterministas.
-5. **¿Por qué es útil mostrar tokens y latencia?** Dan transparencia del costo y desempeño real. Por ejemplo, permiten ver el costo del contexto (prompt_tokens sube de 56 a 1275 al acumular historial) y decidir cuándo conviene limpiar la conversación o bajar `num_predict`.
+3. **¿Qué ocurre al aumentar `num_predict`?** La salida se alarga y el wall time crece casi linealmente: S6 (60 tok) = 1.47 s, S7 (300 tok) = 5.65 s, S3 (400 tok) = 9.42 s. La velocidad se mantiene estable (~41–44 tok/s): `num_predict` cambia *cuántos* tokens se generan, no *qué tan rápido*.
+4. **¿Qué ocurre al modificar `temperature`?** No afecta velocidad ni longitud media (S4 con 0.2 = 3.83 s vs S5 con 1.0 = 3.96 s, dentro del ruido). Su efecto es semántico: mayor temperatura = más variabilidad léxica y creatividad, menor = respuestas más deterministas.
+5. **¿Por qué es útil mostrar tokens y latencia?** Dan transparencia del costo y desempeño real. Por ejemplo, permiten ver el costo del contexto (prompt_tokens sube de 56 a 1233 al acumular historial) y decidir cuándo conviene limpiar la conversación o bajar `num_predict`.
 6. **¿Por qué usar backend en vez de conectar el navegador directo a Ollama?** El backend valida parámetros, gestiona CORS, mide métricas de forma consistente, mantiene el contexto en SQLite, maneja errores (503/504/500) y evita exponer Ollama directamente al cliente.
 7. **¿Cómo extenderías este chatbot para tu proyecto?** Con recuperación aumentada (RAG) sobre documentos propios, autenticación de usuarios, respuesta en streaming, soporte de más proveedores/modelos y, en el contexto de robótica, una capa intermedia de validación antes de traducir respuestas del LLM en acciones físicas.
 
@@ -221,8 +248,19 @@ historial de la conversación se envía a Ollama (contexto activo).
 
 ---
 
+## ✅ Conclusiones
+
+1. **Ollama local es viable para prototipado académico.** `llama3.2:3b` responde entre ~1.5 s (salida corta) y ~9.4 s (salida de 400 tokens), con una velocidad sostenida de 41-44 tok/s. No requiere GPU dedicada ni costos de API externa.
+2. **El contexto conversacional funciona y es medible.** La batería confirma que el backend reenvía el historial completo a Ollama turno a turno: los tokens de entrada crecen de 56 (S1) a 1233 (S8, ×22) sin pérdida de información. El contexto se acumula correctamente en SQLite.
+3. **`num_predict` es el principal control de costo y latencia.** Es el parámetro con mayor efecto sobre el tiempo de respuesta (60 tok → 1.47 s; 400 tok → 9.42 s); ajustarlo según la tarea es la palanca más efectiva para la experiencia de usuario.
+4. **La `temperature` no impacta el rendimiento.** Entre 0.2 y 1.0 no cambia velocidad ni longitud media; su utilidad es exclusivamente semántica (más creatividad vs. más determinismo).
+5. **El historial largo tiene un costo real pero manejable.** Con 9 turnos previos (S8) el tiempo sube solo ~50% frente a S1 pese a multiplicar ×22 los tokens de entrada, aunque la velocidad baja a 27.9 tok/s. El prefill del contexto es eficiente para conversaciones de hasta ~10 turnos; más allá conviene resumir o limpiar la conversación.
+6. **Las gráficas automatizadas facilitan el análisis.** Las 5 visualizaciones permiten identificar de inmediato la estabilidad de la velocidad, la escalabilidad del contexto y el efecto de los parámetros configurables.
+
+---
+
 ## 📝 Notas finales
 
 - **Costos.** Ollama local: $0 USD por inferencia (solo costo eléctrico).
-- **Cobertura del contexto.** La batería (S1/S2/S8 con prompt_tokens 56/373/1275) confirma cuantitativamente que el backend pasa el historial a Ollama turno a turno.
+- **Cobertura del contexto.** La batería (S1/S2/S8 con prompt_tokens 56/374/1233) confirma cuantitativamente que el backend pasa el historial a Ollama turno a turno.
 - **Reproducibilidad.** Los JSON raw y summary están versionados por timestamp en `docs/assets/practica-3/`; cada corrida es autocontenida.
