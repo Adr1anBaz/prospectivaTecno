@@ -2,7 +2,7 @@
 layout: default
 title: Práctica 2
 nav_order: 3
-description: "Selección de plataforma y benchmark de LLMs"
+description: "Selección de plataforma y benchmark de LLMs — Portafolio de Evidencias · Prospectiva de Tecnología · Verano 2026"
 ---
 
 # Práctica 2: Selección de Plataforma y Benchmark de LLMs
@@ -13,15 +13,19 @@ Evaluación comparativa de modelos LLM y análisis de plataformas de despliegue
 
 [Ver en GitHub](https://github.com/Adr1anBaz/prospectivaTecno/tree/main/practicas/practica-2){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 }
 
+> 📁 **Portafolio de Evidencias** — Prospectiva de Tecnología · Verano 2026
+
 ---
 
 ## 📋 Información General
 
 | Campo | Detalle |
 |:------|:--------|
-| **Integrantes** | Sebastián Enguilo, Fernando Pérez |
+| **Integrantes** | Adrián Bazaldua, Sebastián Enguilo, Fernando Pérez |
+| **Materia** | Prospectiva de Tecnología — IA Generativa y LLMs |
 | **Fecha** | 4 de junio de 2026 |
 | **Práctica** | #2 - Benchmark y Selección de Plataforma |
+| **Portafolio** | Evidencias de Prácticas |
 
 ---
 
@@ -57,6 +61,18 @@ Se fijó un límite estricto de generación con `num_predict: 50`.
 | **tinyllama:1.1b-chat-v1-q8_0** | 2.618 (±0.471) | 2.483 | 7.286 | 52 | 50 | 129.40 | Evaluado localmente |
 | **llama3.2:3b** | 4.437 (±0.795) | 4.104 | 12.214 | 42 | 50 | 28.45 | Evaluado localmente |
 | **qwen2.5:7b** | 6.492 (±1.081) | 5.902 | 17.096 | 46 | 50 | 13.24 | Evaluado localmente |
+
+### Análisis de Latencia y Desempeño
+
+A continuación se presenta la gráfica estadística de tipo Boxplot que compara la dispersión de los tiempos de respuesta entre los modelos:
+
+![Comparativa de Latencia de Modelos](assets/practica-2/comparativa_latencia_modelos.png)
+
+#### Evidencia del Resumen del Benchmark en Terminal
+![Captura de pantalla de la terminal: Comparación de Modelos](assets/practica-2/comparacion_modelos.png)
+
+> **Archivo de Datos Crudos de la simulación:**
+> 📥 [Descargar archivo de datos del Benchmark (CSV)](assets/practica-2/benchmark_modelos_detallado.csv)
 
 ## Análisis de Resultados
 
@@ -104,6 +120,18 @@ Utilizando el modelo **Qwen 2.5 7B**, se evaluaron 3 configuraciones distintas d
 | **Config_1_Determinista** | 7.171 | 1.032 | 6.648 | 17.248 | 60.0 | 0.0 |
 | **Config_2_Balanceada** | 7.110 | 0.164 | 6.717 | 7.423 | 60.0 | 0.0 |
 | **Config_3_Creativa** | 7.051 | 0.196 | 6.566 | 7.354 | 60.0 | 0.0 |
+
+### Impacto en Latencia y Longitud de Tokens
+
+El siguiente set de gráficas limpias compara los perfiles de distribución de tiempos de inferencia y la cantidad de tokens generados en la respuesta según los hiperparámetros:
+
+![Influencia de Parámetros Limpias](assets/practica-2/graficas_variacion_parametros_limpias.png)
+
+#### Evidencia de Métricas de Variación en Terminal
+![Captura de pantalla de la terminal: Variación de Modelos](assets/practica-2/variacion_modelos.png)
+
+> **Archivo de Datos Crudos de las configuraciones:**
+> 📥 [Descargar Reporte de Tiempos y Variaciones de Parámetros (CSV)](assets/practica-2/variacion_parametros_qwen.csv)
 
 ---
 
@@ -178,8 +206,9 @@ La configuración óptima depende del caso de uso específico.
 ---
 
 **Fecha de elaboración:** 4 de junio de 2026  
-**Autores:** Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo
+**Autores:** Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo  
+**Curso:** Prospectiva de Tecnología — IA Generativa y LLMs · Verano 2026
 
 {: .note }
-> 📊 Este reporte incluye benchmarks de 100 ciclos por modelo.
-> Los datos completos están disponibles en archivos CSV en el repositorio.
+> 📊 Este reporte forma parte del Portafolio de Evidencias de la materia Prospectiva de Tecnología (Verano 2026).
+> Incluye benchmarks de 100 ciclos por modelo. Los datos completos están disponibles en archivos CSV en el repositorio.

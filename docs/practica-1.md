@@ -2,7 +2,7 @@
 layout: default
 title: Práctica 1
 nav_order: 2
-description: "Panorama de IA Generativa y LLM"
+description: "Panorama de IA Generativa y LLM — Portafolio de Evidencias · Prospectiva de Tecnología · Verano 2026"
 ---
 
 # Práctica 1: Panorama de IA Generativa y LLM
@@ -13,6 +13,8 @@ Exploración práctica de modelos de lenguaje grande (LLMs) usando Ollama y Hugg
 
 [Ver en GitHub](https://github.com/Adr1anBaz/prospectivaTecno/tree/main/practicas/practica-1){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 }
 
+> 📁 **Portafolio de Evidencias** — Prospectiva de Tecnología · Verano 2026
+
 ---
 
 ## 📋 Información General
@@ -20,9 +22,10 @@ Exploración práctica de modelos de lenguaje grande (LLMs) usando Ollama y Hugg
 | Campo | Detalle |
 |:------|:--------|
 | **Alumnos** | Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo |
-| **Materia** | IA Generativa y LLMs |
-| **Fecha** | Junio 2026 |
+| **Materia** | Prospectiva de Tecnología — IA Generativa y LLMs |
+| **Fecha** | Junio 2026 (Verano) |
 | **Práctica** | #1 - Panorama de IA Generativa y LLM |
+| **Portafolio** | Evidencias de Prácticas |
 
 ---
 
@@ -113,6 +116,26 @@ El principal reto técnico radicó en el tiempo de descarga debido al peso de lo
 
 Los 6 modelos fueron evaluados con este prompt. Los modelos más grandes (Qwen 2.5 7B y Phi-4) generaron respuestas más estructuradas y académicamente rigurosas, mientras que TinyLlama mostró limitaciones en coherencia y mezcla de idiomas.
 
+### Evidencias de Ejecución
+
+#### 1. Llama 3.2 (3B)
+![Resultado Llama 3.2 - Prompt 1](assets/practica-1/1.png)
+
+#### 2. Gemma 2 (2B)
+![Resultado Gemma 2 - Prompt 1](assets/practica-1/1b.png)
+
+#### 3. Qwen 2.5 (7B)
+![Resultado Qwen 2.5 - Prompt 1](assets/practica-1/1c.png)
+
+#### 4. Mistral (7B)
+![Resultado Mistral - Prompt 1](assets/practica-1/1d.png)
+
+#### 5. Phi-4 (14B)
+![Resultado Phi-4 - Prompt 1](assets/practica-1/1e.png)
+
+#### 6. TinyLlama (1.1B)
+![Resultado TinyLlama - Prompt 1](assets/practica-1/1f.png)
+
 ---
 
 ## Prompt 2: Embeddings
@@ -122,6 +145,26 @@ Los 6 modelos fueron evaluados con este prompt. Los modelos más grandes (Qwen 2
 ### Resultados Observados
 
 Qwen 2.5 y Llama 3.2 ofrecieron ejemplos técnicamente precisos con código y explicaciones claras. Mistral y Phi-4 también destacaron con explicaciones bien estructuradas.
+
+### Evidencias de Ejecución
+
+#### 1. Llama 3.2 (3B)
+![Resultado Llama 3.2 - Prompt 2](assets/practica-1/2.png)
+
+#### 2. Gemma 2 (2B)
+![Resultado Gemma 2 - Prompt 2](assets/practica-1/2b.png)
+
+#### 3. Qwen 2.5 (7B)
+![Resultado Qwen 2.5 - Prompt 2](assets/practica-1/2c.png)
+
+#### 4. Mistral (7B)
+![Resultado Mistral - Prompt 2](assets/practica-1/2d.png)
+
+#### 5. Phi-4 (14B)
+![Resultado Phi-4 - Prompt 2](assets/practica-1/2e.png)
+
+#### 6. TinyLlama (1.1B)
+![Resultado TinyLlama - Prompt 2](assets/practica-1/2f.png)
 
 ---
 
@@ -133,6 +176,26 @@ Qwen 2.5 y Llama 3.2 ofrecieron ejemplos técnicamente precisos con código y ex
 
 Todos los modelos identificaron correctamente los riesgos principales: alucinaciones, falta de fuentes verificables y sesgos. Los modelos más grandes proporcionaron ejemplos más concretos y contextualizados.
 
+### Evidencias de Ejecución
+
+#### 1. Llama 3.2 (3B)
+![Resultado Llama 3.2 - Prompt 3](assets/practica-1/3.png)
+
+#### 2. Gemma 2 (2B)
+![Resultado Gemma 2 - Prompt 3](assets/practica-1/3b.png)
+
+#### 3. Qwen 2.5 (7B)
+![Resultado Qwen 2.5 - Prompt 3](assets/practica-1/3c.png)
+
+#### 4. Mistral (7B)
+![Resultado Mistral - Prompt 3](assets/practica-1/3d.png)
+
+#### 5. Phi-4 (14B)
+![Resultado Phi-4 - Prompt 3](assets/practica-1/3e.png)
+
+#### 6. TinyLlama (1.1B)
+![Resultado TinyLlama - Prompt 3](assets/practica-1/3f.png)
+
 ---
 
 ## Prompt 4: Uso Técnico
@@ -142,6 +205,26 @@ Todos los modelos identificaron correctamente los riesgos principales: alucinaci
 ### Resultados Observados
 
 Qwen 2.5 y Phi-4 destacaron con ejemplos de código funcional y explicaciones detalladas. Gemma 2 sorprendió positivamente con sugerencias prácticas a pesar de su tamaño reducido.
+
+### Evidencias de Ejecución
+
+#### 1. Llama 3.2 (3B)
+![Resultado Llama 3.2 - Prompt 4](assets/practica-1/4.png)
+
+#### 2. Gemma 2 (2B)
+![Resultado Gemma 2 - Prompt 4](assets/practica-1/4b.png)
+
+#### 3. Qwen 2.5 (7B)
+![Resultado Qwen 2.5 - Prompt 4](assets/practica-1/4c.png)
+
+#### 4. Mistral (7B)
+![Resultado Mistral - Prompt 4](assets/practica-1/4d.png)
+
+#### 5. Phi-4 (14B)
+![Resultado Phi-4 - Prompt 4](assets/practica-1/4e.png)
+
+#### 6. TinyLlama (1.1B)
+![Resultado TinyLlama - Prompt 4](assets/practica-1/4f.png)
 
 ---
 
@@ -284,8 +367,8 @@ En última instancia, el panorama de la IA generativa local abre un horizonte al
 
 **Fecha de elaboración:** 1 de junio de 2026  
 **Autores:** Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo  
-**Curso:** IA Generativa y LLMs - Verano 2026
+**Curso:** Prospectiva de Tecnología — IA Generativa y LLMs · Verano 2026
 
 {: .note }
-> 📝 Este reporte fue generado como parte de la Práctica 1 del curso.
+> 📝 Este reporte forma parte del Portafolio de Evidencias de la materia Prospectiva de Tecnología (Verano 2026).
 > Todos los modelos fueron ejecutados localmente usando Ollama.
