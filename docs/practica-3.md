@@ -15,7 +15,7 @@ Sistema de chatbot web con gestión de contexto conversacional usando Ollama, Fa
 
 ---
 
-## 📋 Información General
+##  Información General
 
 | Campo | Detalle |
 |:------|:--------|
@@ -28,7 +28,7 @@ Sistema de chatbot web con gestión de contexto conversacional usando Ollama, Fa
 
 ---
 
-## 🎯 Características
+##  Características
 
 - Contexto conversacional persistente por conversación (SQLite)
 - API REST: crear / listar / obtener / eliminar conversaciones
@@ -38,7 +38,7 @@ Sistema de chatbot web con gestión de contexto conversacional usando Ollama, Fa
 
 ---
 
-## 📐 Arquitectura
+##  Arquitectura
 
 ```
 Usuario → Frontend (HTML/JS, puerto 5500)
@@ -53,7 +53,7 @@ El navegador **nunca** habla directo con Ollama: el backend valida, mide y estru
 
 ---
 
-## 🗂️ Estructura
+##  Estructura
 
 ```
 practicas/practica-3/
@@ -74,7 +74,7 @@ Los JSON crudos y el resumen de la batería se guardan en `docs/assets/practica-
 
 ---
 
-## 🔌 API esencial
+##  API esencial
 
 | Método | Endpoint | Uso |
 |--------|----------|-----|
@@ -93,7 +93,7 @@ Respuesta: `{ conversation_id, model, reply, metrics: { wall_time_s, total_token
 
 ---
 
-## 🧠 Cómo funciona el contexto
+##  Cómo funciona el contexto
 
 Cada request crea o reutiliza una `conversation_id`. El backend:
 
@@ -105,16 +105,16 @@ Cada request crea o reutiliza una `conversation_id`. El backend:
 **Demo (4 turnos en una misma conversación):**
 ```
 1. "Me llamo Adrián y estudio ingeniería"         → "¡Hola Adrián! ..."
-2. "¿Cómo me llamo?"                               → "Te llamas Adrián" ✅
+2. "¿Cómo me llamo?"                               → "Te llamas Adrián" 
 3. "¿Qué lenguajes debería aprender?"               → "Python, C, JavaScript..."
-4. "¿Cuál de esos es mejor para comenzar?"         → recomendación contextual ✅
+4. "¿Cuál de esos es mejor para comenzar?"         → recomendación contextual 
 ```
 
 Una conversación **nueva** no ve los mensajes de otras: `conversation_id: null` siempre inicia desde cero.
 
 ---
 
-## 📊 Métricas (N = 40 pruebas reales)
+##  Métricas (N = 40 pruebas reales)
 
 > **Resumen de la batería.** El script `practicas/practica-3/test_metrics_battery.py` ejecutó **8 escenarios × 5 repeticiones = N = 40 invocaciones medidas** a `llama3.2:3b` durante **~6 min 44 s**, todas exitosas (40/40 ok). Backend en `127.0.0.1:8000`, parámetros por defecto (`temperature=0.7`, `top_p=0.9`, `repeat_penalty=1.1`, `num_ctx=4096`). Los números siguientes son agregados (mean ± stdev) sobre los 5 runs de cada escenario. Datos crudos en [`assets/practica-3/metrics_summary_20260704_141005.json`](assets/practica-3/metrics_summary_20260704_141005.json).
 
@@ -177,7 +177,7 @@ Impacto de `num_predict` en el tiempo de respuesta. A mayor límite de tokens de
 
 ---
 
-## 🛠️ Cómo reproducir la batería
+##  Cómo reproducir la batería
 
 ```bash
 # 1. Arrancar Ollama con el modelo
@@ -211,7 +211,7 @@ Para modificar `N`, editar la constante `RUNS_PER_SCENARIO` en el script. **El b
 
 ---
 
-## 🧰 Stack
+##  Stack
 
 - **Backend:** FastAPI · SQLAlchemy · SQLite · Pydantic · Uvicorn · Requests
 - **Frontend:** HTML5 · CSS3 (grid + flexbox) · JavaScript (fetch API) · estado en memoria (`conversation_id`)
@@ -248,7 +248,7 @@ historial de la conversación se envía a Ollama (contexto activo).
 
 ---
 
-## ✅ Conclusiones
+##  Conclusiones
 
 1. **Ollama local es viable para prototipado académico.** `llama3.2:3b` responde entre ~1.5 s (salida corta) y ~9.4 s (salida de 400 tokens), con una velocidad sostenida de 41-44 tok/s. No requiere GPU dedicada ni costos de API externa.
 2. **El contexto conversacional funciona y es medible.** La batería confirma que el backend reenvía el historial completo a Ollama turno a turno: los tokens de entrada crecen de 56 (S1) a 1233 (S8, ×22) sin pérdida de información. El contexto se acumula correctamente en SQLite.
@@ -259,7 +259,7 @@ historial de la conversación se envía a Ollama (contexto activo).
 
 ---
 
-## 📝 Notas finales
+##  Notas finales
 
 - **Costos.** Ollama local: $0 USD por inferencia (solo costo eléctrico).
 - **Cobertura del contexto.** La batería (S1/S2/S8 con prompt_tokens 56/374/1233) confirma cuantitativamente que el backend pasa el historial a Ollama turno a turno.

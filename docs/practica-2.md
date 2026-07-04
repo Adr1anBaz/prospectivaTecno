@@ -13,11 +13,11 @@ Evaluación comparativa de modelos LLM y análisis de plataformas de despliegue
 
 [Ver en GitHub](https://github.com/Adr1anBaz/prospectivaTecno/tree/main/practicas/practica-2){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 }
 
-> 📁 **Portafolio de Evidencias** — Prospectiva de Tecnología · Verano 2026
+>  **Portafolio de Evidencias** — Prospectiva de Tecnología · Verano 2026
 
 ---
 
-## 📋 Información General
+##  Información General
 
 | Campo | Detalle |
 |:------|:--------|
@@ -72,7 +72,7 @@ A continuación se presenta la gráfica estadística de tipo Boxplot que compara
 ![Captura de pantalla de la terminal: Comparación de Modelos](assets/practica-2/comparacion_modelos.png)
 
 > **Archivo de Datos Crudos de la simulación:**
-> 📥 [Descargar archivo de datos del Benchmark (CSV)](assets/practica-2/benchmark_modelos_detallado.csv)
+>  [Descargar archivo de datos del Benchmark (CSV)](assets/practica-2/benchmark_modelos_detallado.csv)
 
 ## Análisis de Resultados
 
@@ -131,7 +131,7 @@ El siguiente set de gráficas limpias compara los perfiles de distribución de t
 ![Captura de pantalla de la terminal: Variación de Modelos](assets/practica-2/variacion_modelos.png)
 
 > **Archivo de Datos Crudos de las configuraciones:**
-> 📥 [Descargar Reporte de Tiempos y Variaciones de Parámetros (CSV)](assets/practica-2/variacion_parametros_qwen.csv)
+>  [Descargar Reporte de Tiempos y Variaciones de Parámetros (CSV)](assets/practica-2/variacion_parametros_qwen.csv)
 
 ---
 
@@ -210,5 +210,5 @@ La configuración óptima depende del caso de uso específico.
 **Curso:** Prospectiva de Tecnología — IA Generativa y LLMs · Verano 2026
 
 {: .note }
-> 📊 Este reporte forma parte del Portafolio de Evidencias de la materia Prospectiva de Tecnología (Verano 2026).
+>  Este reporte forma parte del Portafolio de Evidencias de la materia Prospectiva de Tecnología (Verano 2026).
 > Incluye benchmarks de 100 ciclos por modelo. Los datos completos están disponibles en archivos CSV en el repositorio.

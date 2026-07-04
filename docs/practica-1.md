@@ -13,11 +13,11 @@ Exploración práctica de modelos de lenguaje grande (LLMs) usando Ollama y Hugg
 
 [Ver en GitHub](https://github.com/Adr1anBaz/prospectivaTecno/tree/main/practicas/practica-1){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 }
 
-> 📁 **Portafolio de Evidencias** — Prospectiva de Tecnología · Verano 2026
+>  **Portafolio de Evidencias** — Prospectiva de Tecnología · Verano 2026
 
 ---
 
-## 📋 Información General
+##  Información General
 
 | Campo | Detalle |
 |:------|:--------|
@@ -29,13 +29,13 @@ Exploración práctica de modelos de lenguaje grande (LLMs) usando Ollama y Hugg
 
 ---
 
-## 🎯 Objetivo
+##  Objetivo
 
 Explicar la diferencia entre IA, aprendizaje automático, IA generativa, embeddings, transformers y LLM, además de ganar experiencia práctica instalando y usando Ollama y consultando información en Hugging Face.
 
 ---
 
-## 🤖 Modelos Evaluados
+##  Modelos Evaluados
 
 Se evaluaron 6 modelos de lenguaje grande:
 
@@ -370,5 +370,5 @@ En última instancia, el panorama de la IA generativa local abre un horizonte al
 **Curso:** Prospectiva de Tecnología — IA Generativa y LLMs · Verano 2026
 
 {: .note }
-> 📝 Este reporte forma parte del Portafolio de Evidencias de la materia Prospectiva de Tecnología (Verano 2026).
+>  Este reporte forma parte del Portafolio de Evidencias de la materia Prospectiva de Tecnología (Verano 2026).
 > Todos los modelos fueron ejecutados localmente usando Ollama.

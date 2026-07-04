@@ -24,21 +24,21 @@ Explicar la diferencia entre IA, aprendizaje automático, IA generativa, embeddi
 | phi4 | 14B | Microsoft Phi-4 |
 | tinyllama | 1.1B | Tiny Llama |
 
-## 📄 Reporte Web
+##  Reporte Web
 
 El reporte de esta práctica está disponible como página web usando GitHub Pages:
 
-🌐 **[Ver Reporte en Línea](https://adr1anbaz.github.io/prospectivaTecno/)** (una vez publicado)
+ **[Ver Reporte en Línea](https://adr1anbaz.github.io/prospectivaTecno/)** (una vez publicado)
 
 La documentación completa incluye:
-- ✅ Instalación de Ollama
-- ✅ Descarga de modelos con capturas
-- ✅ Ejecuciones comparativas
-- ✅ Tabla comparativa detallada
-- ✅ Reflexión personal
-- ✅ Conclusiones
+-  Instalación de Ollama
+-  Descarga de modelos con capturas
+-  Ejecuciones comparativas
+-  Tabla comparativa detallada
+-  Reflexión personal
+-  Conclusiones
 
-📂 [Ver código fuente del reporte](./docs/)
+ [Ver código fuente del reporte](./docs/)
 
 ## Estructura de la Práctica
 
@@ -137,12 +137,12 @@ Repite para cada modelo y guarda capturas en `ejecuciones/`.
 
 Para cada modelo, busca su tarjeta (model card) en [Hugging Face](https://huggingface.co/models) y documenta:
 
-- 👨‍💻 Desarrollador
-- 🏷️ Tipo de modelo (decoder-only, encoder-decoder, etc.)
-- 📜 Licencia
-- 🔢 Número de parámetros
-- 🌐 Lenguajes soportados
-- 💻 Requisitos técnicos (RAM, GPU, etc.)
+-  Desarrollador
+-  Tipo de modelo (decoder-only, encoder-decoder, etc.)
+-  Licencia
+-  Número de parámetros
+-  Lenguajes soportados
+-  Requisitos técnicos (RAM, GPU, etc.)
 
 ### Paso 5: Crear Tabla Comparativa
 
@@ -166,11 +166,11 @@ Responde las siguientes preguntas en `reflexion.md`:
 
 ## Entregables
 
-1. ✅ Capturas de pantalla de descargas (6 modelos mínimo)
-2. ✅ Capturas de ejecución con el mismo prompt (6 modelos)
-3. ✅ Captura de `ollama list` mostrando todos los modelos
-4. ✅ Tabla comparativa completa (comparativa.md)
-5. ✅ Documento de reflexión (reflexion.md)
+1.  Capturas de pantalla de descargas (6 modelos mínimo)
+2.  Capturas de ejecución con el mismo prompt (6 modelos)
+3.  Captura de `ollama list` mostrando todos los modelos
+4.  Tabla comparativa completa (comparativa.md)
+5.  Documento de reflexión (reflexion.md)
 
 ## Recursos Adicionales
 

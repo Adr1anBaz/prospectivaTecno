@@ -15,7 +15,7 @@ Clasificación de intención (on / off / none) sobre instrucciones en español, 
 
 ---
 
-## 📋 Información General
+##  Información General
 
 | Campo | Detalle |
 |:------|:--------|
@@ -26,7 +26,7 @@ Clasificación de intención (on / off / none) sobre instrucciones en español, 
 
 ---
 
-## 🎯 Objetivo
+##  Objetivo
 
 Evaluar el comportamiento completo de una arquitectura LLM aplicada:
 
@@ -39,7 +39,7 @@ No hay hardware físico ni ESP32: el mensaje MQTT publicado es la salida simulad
 
 ---
 
-## 🧱 Arquitectura
+##  Arquitectura
 
 ```
 Usuario / script
@@ -61,7 +61,7 @@ El backend es la **capa de seguridad**: el LLM nunca publica directamente. Prime
 
 ---
 
-## 📊 Dataset
+##  Dataset
 
 30 prompts en español etiquetados a mano (10 por clase), extraídos y ampliados de los ejemplos de la sección 2 de las instrucciones. Cada prompt se selecciona al azar en cada ejecución cíclica.
 
@@ -73,7 +73,7 @@ El backend es la **capa de seguridad**: el LLM nunca publica directamente. Prime
 
 ---
 
-## 📈 Resultados (110 ejecuciones cíclicas)
+##  Resultados (110 ejecuciones cíclicas)
 
 ### Métricas de clasificación
 
@@ -109,7 +109,7 @@ El backend es la **capa de seguridad**: el LLM nunca publica directamente. Prime
 
 ---
 
-## 🖼️ Gráficas
+##  Gráficas
 
 ### Matriz de confusión
 
@@ -129,7 +129,7 @@ El backend es la **capa de seguridad**: el LLM nunca publica directamente. Prime
 
 ---
 
-## 📝 Reporte (plantilla sección 18.4)
+##  Reporte (plantilla sección 18.4)
 
 | Elemento | Resultado |
 |:---------|:----------|
@@ -152,7 +152,7 @@ El backend es la **capa de seguridad**: el LLM nunca publica directamente. Prime
 
 ---
 
-## 🔍 Análisis (preguntas sección 18.5)
+##  Análisis (preguntas sección 18.5)
 
 1. **¿Qué clase tuvo mayor número de errores?** `none` con 17 errores (de 36), seguido por `off` con 8 errores (de 30).
 2. **¿El modelo confundió instrucciones ambiguas con comandos reales?** Sí, principalmente. "qué es MQTT" o "no enciendas el led" fueron clasificadas como `off` en varios intentos.
@@ -167,7 +167,7 @@ El backend es la **capa de seguridad**: el LLM nunca publica directamente. Prime
 
 ---
 
-## 🚀 Cómo reproducir
+##  Cómo reproducir
 
 ```bash
 cd practicas/practica-6/llm_led_eval
@@ -188,7 +188,7 @@ Resultados en `practica-6/graficas_resultados/`: `resultados.csv`, `supervision.
 
 ---
 
-## 💡 Conclusiones
+##  Conclusiones
 
 - `llama3.2:3b` distingue muy bien la clase `on` (recall 100%) pero falla en `none` (recall 52.8%): tiende a inventar acciones cuando debería quedarse quieto.
 - El 8.3% de respuestas no fueron JSON válido: es el principal cuello de botella para la arquitectura.
