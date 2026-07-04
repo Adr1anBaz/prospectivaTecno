@@ -1,0 +1,89 @@
+{
+  "prompt": "Explica qué es la odometría diferencial en un robot móvil de dos ruedas.\nIncluye:\n1. explicación conceptual;\n2. ecuaciones básicas;\n3. ejemplo para estudiantes de ingeniería;\n4. una limitación práctica.\nResponde en máximo 250 palabras.",
+  "params": {
+    "copilot_profile": "robotica",
+    "system_prompt": "",
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens": 300,
+    "num_ctx": 4096,
+    "repeat_penalty": 1.1
+  },
+  "n_reps": 3,
+  "n_runs_total": 9,
+  "n_runs_ok": 6,
+  "n_runs_failed": 3,
+  "battery_elapsed_s": 13.49,
+  "by_provider": {
+    "Gemini (OpenRouter)": {
+      "provider": "openrouter",
+      "model": "google/gemini-2.5-flash-lite",
+      "runs": 3,
+      "wall_time_s": [
+        3.0819,
+        1.5815,
+        1.6719
+      ],
+      "tokens_per_second": [
+        97.34,
+        189.69,
+        179.44
+      ],
+      "prompt_tokens": [
+        151,
+        151,
+        151
+      ],
+      "completion_tokens": [
+        300,
+        300,
+        300
+      ],
+      "total_tokens": [
+        451,
+        451,
+        451
+      ],
+      "avg_wall_time_s": 2.112,
+      "avg_tokens_per_second": 155.49,
+      "avg_prompt_tokens": 151.0,
+      "avg_completion_tokens": 300.0,
+      "avg_total_tokens": 451.0
+    },
+    "Groq API": {
+      "provider": "groq",
+      "model": "llama-3.3-70b-versatile",
+      "runs": 3,
+      "wall_time_s": [
+        2.0901,
+        1.4535,
+        1.5119
+      ],
+      "tokens_per_second": [
+        143.53,
+        206.4,
+        198.42
+      ],
+      "prompt_tokens": [
+        223,
+        223,
+        223
+      ],
+      "completion_tokens": [
+        300,
+        300,
+        300
+      ],
+      "total_tokens": [
+        523,
+        523,
+        523
+      ],
+      "avg_wall_time_s": 1.685,
+      "avg_tokens_per_second": 182.78,
+      "avg_prompt_tokens": 223.0,
+      "avg_completion_tokens": 300.0,
+      "avg_total_tokens": 523.0
+    }
+  }
+}

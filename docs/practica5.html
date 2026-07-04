@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Práctica 5 — Chatbot Híbrido con Ollama y APIs Externas</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --accent: #1a73e8;
+      --text: #202124;
+      --muted: #5f6368;
+      --border: #dadce0;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    header {
+      background: linear-gradient(135deg, #0d47a1 0%, #1a73e8 100%);
+      color: #fff;
+      padding: 2.5rem 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+    header h1 { font-size: 2rem; margin-bottom: 0.3rem; }
+    header p { opacity: 0.9; font-size: 1.05rem; }
+    header .meta {
+      margin-top: 1rem;
+      display: flex; flex-wrap: wrap; gap: 1.5rem;
+      font-size: 0.9rem; opacity: 0.85;
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.8rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 3px solid var(--accent);
+      display: inline-block;
+    }
+    h3 {
+      font-size: 1.1rem;
+      margin: 1.2rem 0 0.6rem;
+      color: var(--accent);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin: 0.8rem 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.6rem;
+      text-align: center;
+    }
+    th {
+      background: #e8f0fe;
+      font-weight: 600;
+    }
+    tr:nth-child(even) td { background: #f8f9ff; }
+    .img-box {
+      margin: 1rem 0;
+      text-align: center;
+    }
+    .img-box img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .img-box figcaption {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+    .img-box.placeholder {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 2rem;
+      background: #f1f3f4;
+      color: var(--muted);
+    }
+    ul, ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+    li { margin-bottom: 0.3rem; }
+    code {
+      background: #f1f3f4;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      margin: 0.8rem 0;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 700px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.5rem; }
+      section { padding: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Práctica 5: Chatbot Híbrido con Ollama y APIs Externas</h1>
+    <p>Extensión del chatbot para conversar con modelos locales (Ollama) y remotos (Groq, OpenRouter) mediante APIs externas</p>
+    <div class="meta">
+      <span><strong>Alumnos:</strong> Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo</span>
+      <span><strong>Fecha:</strong> Julio 2026</span>
+      <span><strong>Backend:</strong> FastAPI en <code>127.0.0.1:8000</code></span>
+    </div>
+  </header>
+
+  <!-- ─── Resultados de la batería ─── -->
+  <section>
+    <h2>Resultados de la batería de pruebas</h2>
+    <p>
+      Se envió el mismo prompt a los tres proveedores con parámetros idénticos,
+      ejecutando <strong>3 repeticiones por proveedor</strong> (9 corridas en total)
+      mediante <code>test_hybrid_battery.py</code>.
+    </p>
+
+    <h3>Prompt utilizado</h3>
+    <pre>Explica qué es la odometría diferencial en un robot móvil de dos ruedas.
+Incluye:
+1. explicación conceptual;
+2. ecuaciones básicas;
+3. ejemplo para estudiantes de ingeniería;
+4. una limitación práctica.
+Responde en máximo 250 palabras.</pre>
+
+    <h3>Parámetros comunes</h3>
+    <table>
+      <tr><th>Parámetro</th><th>Valor</th></tr>
+      <tr><td>Perfil</td><td>robótica</td></tr>
+      <tr><td>temperature</td><td>0.7</td></tr>
+      <tr><td>top_p</td><td>0.9</td></tr>
+      <tr><td>max_tokens</td><td>300</td></tr>
+      <tr><td>Repeticiones</td><td>3</td></tr>
+    </table>
+
+    <h3>Tabla de resultados (promedios)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Proveedor</th>
+          <th>Modelo</th>
+          <th>Tok. entrada</th>
+          <th>Tok. salida</th>
+          <th>Tok. totales</th>
+          <th>Tiempo (s)</th>
+          <th>Tokens/s</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Ollama local</strong></td>
+          <td>llama3.2:3b</td>
+          <td>213.0</td>
+          <td>300.0</td>
+          <td>513.0</td>
+          <td><strong>8.993</strong></td>
+          <td><strong>35.97</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Gemini (OpenRouter)</strong></td>
+          <td>google/gemini-2.5-flash-lite</td>
+          <td>151.0</td>
+          <td>300.0</td>
+          <td>451.0</td>
+          <td><strong>2.097</strong></td>
+          <td><strong>146.28</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Groq API</strong></td>
+          <td>llama-3.3-70b-versatile</td>
+          <td>223.0</td>
+          <td>299.3</td>
+          <td>522.3</td>
+          <td><strong>1.570</strong></td>
+          <td><strong>199.27</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      En las tres pruebas la generación alcanzó el límite <code>max_tokens=300</code>.
+      Los tiempos de Ollama incluyen ejecución local; los de proveedores remotos
+      incluyen latencia de red.
+    </p>
+  </section>
+
+  <!-- ─── Gráficas ─── -->
+  <section>
+    <h2>Gráficas de la batería de pruebas</h2>
+    <p>
+      Las siguientes gráficas se generaron automáticamente al ejecutar la batería
+      y comparan el desempeño de los tres proveedores.
+    </p>
+
+    <div class="grid-2">
+      <figure class="img-box">
+        <img src="imgs/pr5/chart_wall_time.png" alt="Tiempo de respuesta por proveedor" />
+        <figcaption><strong>Figura 1.</strong> Tiempo de respuesta promedio por proveedor.</figcaption>
+      </figure>
+
+      <figure class="img-box">
+        <img src="imgs/pr5/chart_tokens_per_second.png" alt="Velocidad de generación por proveedor" />
+        <figcaption><strong>Figura 2.</strong> Velocidad de generación (tokens/s) por proveedor.</figcaption>
+      </figure>
+    </div>
+
+    <div class="grid-2">
+      <figure class="img-box">
+        <img src="imgs/pr5/chart_prompt_vs_completion.png" alt="Tokens de entrada vs salida por proveedor" />
+        <figcaption><strong>Figura 3.</strong> Tokens de entrada vs salida por proveedor.</figcaption>
+      </figure>
+
+      <figure class="img-box">
+        <img src="imgs/pr5/chart_latency_vs_speed.png" alt="Comparativa general latencia vs velocidad" />
+        <figcaption><strong>Figura 4.</strong> Comparativa general: latencia (barras) vs velocidad (línea).</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ─── Capturas de pantalla ─── -->
+  <section>
+    <h2>Capturas de pantalla del funcionamiento</h2>
+    <p>
+      Las siguientes imágenes evidencian la ejecución real del sistema,
+      incluyendo la terminal con la batería de pruebas y los dashboards
+      de uso de tokens de los proveedores externos.
+    </p>
+
+    <figure class="img-box">
+      <img src="imgs/pr5/Prueba%201.png" alt="Terminal — Batería de pruebas (parte 1)" />
+      <figcaption><strong>Figura 5.</strong> Terminal ejecutando <code>test_hybrid_battery.py</code> — banner de inicio, progreso de las corridas con métricas por proveedor (Groq, OpenRouter, Ollama) y primeras estadísticas.</figcaption>
+    </figure>
+
+    <figure class="img-box">
+      <img src="imgs/pr5/Prueba%202.png" alt="Terminal — Batería de pruebas (parte 2)" />
+      <figcaption><strong>Figura 6.</strong> Continuación de la batería — resumen agregado con ranking 🥇🥈🥉, desglose estadístico por métrica (μ, min, max, σ) y cierre con tiempos totales.</figcaption>
+    </figure>
+
+    <div class="grid-2">
+      <figure class="img-box">
+        <img src="imgs/pr5/Groq.png" alt="Dashboard de uso — Groq" />
+        <figcaption><strong>Figura 7.</strong> Panel de uso de Groq: tokens consumidos, tasa de solicitudes y costo estimado durante la batería de pruebas.</figcaption>
+      </figure>
+
+      <figure class="img-box">
+        <img src="imgs/pr5/Openrouter.png" alt="Dashboard de uso — OpenRouter" />
+        <figcaption><strong>Figura 8.</strong> Panel de uso de OpenRouter: tokens de entrada/salida, créditos consumidos y actividad por modelo.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ─── Análisis de resultados ─── -->
+  <section>
+    <h2>Análisis de resultados</h2>
+
+    <h3>Velocidad: APIs externas superan ampliamente al modelo local</h3>
+    <p>
+      Groq lidera con <strong>199.27 tok/s</strong> (1.57 s), seguido de
+      Gemini vía OpenRouter con <strong>146.28 tok/s</strong> (2.10 s).
+      Ollama local es entre 4 y 6 veces más lento con <strong>35.97 tok/s</strong>
+      (8.99 s), debido a que corre sobre CPU/local sin aceleración por hardware
+      especializado.
+    </p>
+
+    <h3>Calidad de respuesta: el modelo grande marca la diferencia</h3>
+    <p>
+      Groq (70B) dio la respuesta más completa con ecuaciones correctas, ejemplo
+      numérico totalmente resuelto y limitación práctica incluida. Gemini
+      (OpenRouter) también fue correcto pero se truncó antes de la limitación.
+      Ollama local (3B) tuvo errores conceptuales en las ecuaciones y tampoco
+      completó los 4 puntos solicitados.
+    </p>
+
+    <h3>Tokens de entrada: varían según el proveedor</h3>
+    <p>
+      Gemini reportó menos tokens de entrada (151) que Ollama (213) y Groq (223),
+      posiblemente por diferencias en el tokenizador. Los tokens de salida fueron
+      prácticamente idénticos (~300) porque los tres alcanzaron el límite
+      <code>max_tokens</code>.
+    </p>
+
+    <h3>Privacidad vs desempeño</h3>
+    <p>
+      Ollama local no requiere internet ni API key, pero sacrifica velocidad y
+      calidad. Las APIs externas son más rápidas y precisas, pero requieren
+      conexión, llave de API y envío de datos a terceros.
+    </p>
+  </section>
+
+  <!-- ─── Conclusiones ─── -->
+  <section>
+    <h2>Conclusiones</h2>
+
+    <ol>
+      <li>
+        <strong>La capa de abstracción multiproveedor funciona correctamente.</strong>
+        El backend enruta peticiones a Ollama, Groq y OpenRouter desde un mismo
+        endpoint <code>/chat</code>, normaliza las métricas y permite cambiar de
+        proveedor sin modificar el frontend.
+      </li>
+      <li>
+        <strong>Groq ofrece la mejor relación velocidad-calidad.</strong>
+        Con 199.27 tok/s y respuestas técnicamente completas, el modelo
+        <code>llama-3.3-70b-versatile</code> fue el más rápido y preciso,
+        aunque requiere API key y conexión a internet.
+      </li>
+      <li>
+        <strong>OpenRouter es una alternativa sólida con buena latencia.</strong>
+        Gemini vía OpenRouter alcanzó 146.28 tok/s con respuestas correctas,
+        aunque se truncó antes de cubrir todos los puntos solicitados.
+      </li>
+      <li>
+        <strong>Ollama local es viable para tareas sencillas y prototipado.</strong>
+        Con 35.97 tok/s y sin costos ni dependencias externas, es adecuado
+        para desarrollo offline, aunque su calidad es inferior a los modelos
+        remotos.
+      </li>
+      <li>
+        <strong>El tokenizador varía entre proveedores.</strong>
+        El mismo prompt produjo 151 tokens de entrada en Gemini, 213 en Ollama
+        y 223 en Groq, lo que afecta el costo real por consulta.
+      </li>
+      <li>
+        <strong>Las APIs externas son sensibles a latencia de red.</strong>
+        Aunque los tiempos incluyen red, Groq y OpenRouter respondieron en
+        1.5–2.1 segundos, aceptables para aplicaciones interactivas.
+      </li>
+      <li>
+        <strong>El diseño híbrido mitiga riesgos de dependencia externa.</strong>
+        Mantener Ollama como respaldo permite seguir operando ante cortes de
+        internet, cambios de precio o indisponibilidad de APIs.
+      </li>
+    </ol>
+  </section>
+
+  <!-- ─── Cómo reproducir ─── -->
+  <section>
+    <h2>Cómo reproducir esta batería</h2>
+    <pre>
+# 1. Instalar dependencias
+pip install matplotlib
+
+# 2. Configurar API keys
+cd practicas/practica-5/backend
+cp .env.example .env
+# Editar .env con GROQ_API_KEY y OPENROUTER_API_KEY
+
+# 3. Arrancar backend
+cd practicas/practica-5/backend
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+
+# 4. Ejecutar batería de pruebas (otra terminal)
+cd /ruta/al/repo
+python3 practicas/practica-5/test_hybrid_battery.py</pre>
+    <p>
+      El script imprime el resumen en terminal, guarda los JSON en
+      <code>docs/assets/practica-5/</code> y las gráficas en
+      <code>docs/imgs/pr5/chart_*.png</code>.
+    </p>
+
+    <h3>Prueba individual con curl</h3>
+    <pre>curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Explica qué es la odometría diferencial.",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "copilot_profile": "robotica",
+    "temperature": 0.7,
+    "max_tokens": 300
+  }'</pre>
+  </section>
+
+</div>
+</body>
+</html>
