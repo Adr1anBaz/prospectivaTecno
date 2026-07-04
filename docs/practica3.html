@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Práctica 3 — Chatbot LLM Local con Contexto</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --accent: #1a73e8;
+      --text: #202124;
+      --muted: #5f6368;
+      --border: #dadce0;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    header {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+      color: #fff;
+      padding: 2.5rem 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+    header h1 { font-size: 2rem; margin-bottom: 0.3rem; }
+    header p { opacity: 0.9; font-size: 1.05rem; }
+    header .meta {
+      margin-top: 1rem;
+      display: flex; flex-wrap: wrap; gap: 1.5rem;
+      font-size: 0.9rem; opacity: 0.85;
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.8rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 3px solid var(--accent);
+      display: inline-block;
+    }
+    h3 {
+      font-size: 1.1rem;
+      margin: 1.2rem 0 0.6rem;
+      color: var(--accent);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin: 0.8rem 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.6rem;
+      text-align: center;
+    }
+    th {
+      background: #e8f0fe;
+      font-weight: 600;
+    }
+    tr:nth-child(even) td { background: #f8f9ff; }
+    .img-box {
+      margin: 1rem 0;
+      text-align: center;
+    }
+    .img-box img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .img-box figcaption {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+    .img-box.placeholder {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 2rem;
+      background: #f1f3f4;
+      color: var(--muted);
+    }
+    ul, ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+    li { margin-bottom: 0.3rem; }
+    code {
+      background: #f1f3f4;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      margin: 0.8rem 0;
+    }
+    .highlight { background: #fffde7; padding: 0 0.2rem; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 700px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.5rem; }
+      section { padding: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Práctica 3: Chatbot LLM Local con Contexto</h1>
+    <p>Sistema de chatbot web con gestión de contexto conversacional usando Ollama, FastAPI y SQLite</p>
+    <div class="meta">
+      <span><strong>Alumnos:</strong> Adrián Bazaldua, Fernando Pérez, Sebastián Enguilo</span>
+      <span><strong>Fecha:</strong> Julio 2026</span>
+      <span><strong>Modelo:</strong> llama3.2:3b (Q4_K_M, 2.0 GB) vía Ollama local</span>
+    </div>
+  </header>
+
+  <!-- ─── Resultados de la batería ─── -->
+  <section>
+    <h2>Resultados de la batería de pruebas</h2>
+    <p>
+      El script <code>test_metrics_battery.py</code> ejecutó <strong>8 escenarios × 5 repeticiones = N = 40 invocaciones</strong>
+      a <code>llama3.2:3b</code>. Todas exitosas (40/40 ok). Parámetros por defecto:
+      <code>temperature=0.7</code>, <code>top_p=0.9</code>, <code>repeat_penalty=1.1</code>, <code>num_ctx=4096</code>.
+    </p>
+
+    <h3>Tabla comparativa (N = 5 por escenario)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Escenario</th>
+          <th>Wall time (s)</th>
+          <th>Prompt tok</th>
+          <th>Completion tok</th>
+          <th>Total tok</th>
+          <th>Tokens/s</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>S1</strong> Primer mensaje</td>
+          <td>4.66 ± 0.39</td>
+          <td>56</td>
+          <td>160 ± 0</td>
+          <td>216 ± 0</td>
+          <td><strong>36.98 ± 0.09</strong></td>
+        </tr>
+        <tr>
+          <td><strong>S2</strong> 3.er mensaje (2 turnos)</td>
+          <td>4.74 ± 0.08</td>
+          <td><strong>373 ± 33</strong></td>
+          <td>160 ± 0</td>
+          <td>533 ± 33</td>
+          <td>35.34 ± 0.52</td>
+        </tr>
+        <tr>
+          <td><strong>S3</strong> Respuesta técnica (código)</td>
+          <td>11.28 ± 0.10</td>
+          <td>62</td>
+          <td><strong>400 ± 0</strong></td>
+          <td>462 ± 0</td>
+          <td>36.31 ± 0.19</td>
+        </tr>
+        <tr>
+          <td><strong>S4</strong> Temperatura baja (0.2)</td>
+          <td>4.63 ± 0.12</td>
+          <td>56</td>
+          <td>160 ± 0</td>
+          <td>216 ± 0</td>
+          <td>35.98 ± 0.66</td>
+        </tr>
+        <tr>
+          <td><strong>S5</strong> Temperatura alta (1.0)</td>
+          <td>4.55 ± 0.06</td>
+          <td>56</td>
+          <td>158 ± 4</td>
+          <td>214 ± 4</td>
+          <td>36.09 ± 0.22</td>
+        </tr>
+        <tr>
+          <td><strong>S6</strong> num_predict=60</td>
+          <td><strong>1.82 ± 0.05</strong></td>
+          <td>56</td>
+          <td><strong>60 ± 0</strong></td>
+          <td>116 ± 0</td>
+          <td>35.54 ± 0.65</td>
+        </tr>
+        <tr>
+          <td><strong>S7</strong> num_predict=300</td>
+          <td>6.59 ± 0.90</td>
+          <td>56</td>
+          <td>221 ± 32</td>
+          <td>277 ± 32</td>
+          <td>34.47 ± 0.47</td>
+        </tr>
+        <tr>
+          <td><strong>S8</strong> Turno 10 (9 turnos)</td>
+          <td>6.12 ± 0.19</td>
+          <td><strong>1275 ± 23</strong></td>
+          <td>160 ± 0</td>
+          <td><strong>1435 ± 23</strong></td>
+          <td>27.39 ± 0.83</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ─── Gráficas ─── -->
+  <section>
+    <h2>Gráficas de la batería de pruebas</h2>
+    <p>
+      Las siguientes gráficas se generaron automáticamente al ejecutar la batería.
+      Muestran visualmente el comportamiento del modelo en los 8 escenarios.
+    </p>
+
+    <div class="grid-2">
+      <figure class="img-box">
+        <img src="imgs/pr3/chart_wall_time.png" alt="Tiempo de respuesta por escenario" />
+        <figcaption><strong>Figura 1.</strong> Tiempo de respuesta promedio por escenario (mean ± stdev).</figcaption>
+      </figure>
+
+      <figure class="img-box">
+        <img src="imgs/pr3/chart_tokens_per_second.png" alt="Velocidad de generación por escenario" />
+        <figcaption><strong>Figura 2.</strong> Velocidad de generación (tokens/s) por escenario.</figcaption>
+      </figure>
+    </div>
+
+    <figure class="img-box">
+      <img src="imgs/pr3/chart_prompt_vs_completion.png" alt="Tokens de entrada vs salida" />
+      <figcaption><strong>Figura 3.</strong> Comparativa de tokens de entrada (prompt) vs salida (completion) por escenario.</figcaption>
+    </figure>
+
+    <div class="grid-2">
+      <figure class="img-box">
+        <img src="imgs/pr3/chart_context_growth.png" alt="Crecimiento del contexto conversacional" />
+        <figcaption><strong>Figura 4.</strong> Crecimiento del contexto a medida que aumentan los turnos de historial.</figcaption>
+      </figure>
+
+      <figure class="img-box">
+        <img src="imgs/pr3/chart_num_predict.png" alt="Impacto de num_predict en tiempo de respuesta" />
+        <figcaption><strong>Figura 5.</strong> Efecto del parámetro num_predict sobre el tiempo de respuesta.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ─── Capturas de pantalla (el usuario las tomará) ─── -->
+  <section>
+    <h2>Capturas de pantalla del funcionamiento</h2>
+    <p>
+      Las siguientes imágenes muestran el frontend en funcionamiento y las métricas
+      que prueba el contexto conversacional. <em>Coloca aquí tus screenshots</em>
+      después de ejecutar la batería y tomar las capturas.
+    </p>
+
+    <div class="grid-2">
+      <figure class="img-box placeholder" id="ss-frontend">
+        <strong>🖼️ Captura 1: Frontend funcionando</strong><br />
+        <span style="font-size:0.85rem">
+          Muestra la interfaz del chatbot con el panel de configuración
+          (<code>model</code>, <code>temperature</code>, <code>top_p</code>,
+          <code>num_predict</code>, <code>num_ctx</code>, <code>repeat_penalty</code>)
+          y la conversación activa con el modelo.
+        </span>
+        <br /><br />
+        <span style="font-size:0.75rem;color:#999">
+          → Después de tomar la captura, guárdala como <code>docs/imgs/pr3/screenshot_frontend.png</code>
+          y reemplaza el contenido de esta figura.
+        </span>
+      </figure>
+
+      <figure class="img-box placeholder" id="ss-metrics">
+        <strong>🖼️ Captura 2: Panel de métricas</strong><br />
+        <span style="font-size:0.85rem">
+          Muestra el panel "Métricas de la última respuesta" con tiempo del backend,
+          tiempo de Ollama, tokens de entrada/salida/totales, y velocidad (tokens/s).
+          El valor de <code>Tokens entrada</code> debe reflejar el historial acumulado.
+        </span>
+        <br /><br />
+        <span style="font-size:0.75rem;color:#999">
+          → Después de tomar la captura, guárdala como <code>docs/imgs/pr3/screenshot_metrics.png</code>
+          y reemplaza el contenido de esta figura.
+        </span>
+      </figure>
+    </div>
+
+    <div class="grid-2">
+      <figure class="img-box placeholder" id="ss-battery">
+        <strong>🖼️ Captura 3: Salida de la batería de pruebas</strong><br />
+        <span style="font-size:0.85rem">
+          Muestra la terminal con la ejecución de <code>test_metrics_battery.py</code>,
+          incluyendo el resumen de los 8 escenarios con wall time y tokens/s.
+        </span>
+        <br /><br />
+        <span style="font-size:0.75rem;color:#999">
+          → Guárdala como <code>docs/imgs/pr3/screenshot_battery.png</code>
+          y reemplaza esta figura.
+        </span>
+      </figure>
+
+      <figure class="img-box placeholder" id="ss-charts">
+        <strong>🖼️ Captura 4: Gráficas generadas</strong><br />
+        <span style="font-size:0.85rem">
+          Muestra las 5 gráficas generadas automáticamente en
+          <code>docs/imgs/pr3/chart_*.png</code>.
+        </span>
+        <br /><br />
+        <span style="font-size:0.75rem;color:#999">
+          → Puedes hacer un collage o mostrar una de las gráficas como sample.
+          Guárdala como <code>docs/imgs/pr3/screenshot_charts.png</code>.
+        </span>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ─── Análisis de resultados ─── -->
+  <section>
+    <h2>Análisis de resultados</h2>
+
+    <h3>Velocidad estable: 27–37 tokens/s</h3>
+    <p>
+      Es la métrica menos ruidosa (stdev entre 0.09 y 0.83). <code>llama3.2:3b</code>
+      corre cómodo en este equipo. Incluso con historial largo (S8, 1275 tokens de
+      entrada) la velocidad se mantiene en ~27.4 tok/s.
+    </p>
+
+    <h3>El historial sí cuesta</h3>
+    <p>
+      Comparando S1 vs S8: mismo <code>num_predict=160</code> en la salida, pero
+      <code>prompt_tokens</code> sube de <strong>56 → 1275</strong> (×22.8).
+      El wall time solo sube de 4.66 s → 6.12 s (×1.3) porque el prefill del
+      contexto es rápido; aún así, <code>tokens_per_second</code> cae de
+      <strong>37.0 → 27.4</strong>.
+    </p>
+
+    <h3>num_predict controla la salida real</h3>
+    <p>
+      S6 (=60) genera exactamente 60 tokens. S7 (=300) genera ~221 en promedio
+      (no siempre llega al tope, depende del token EOS). S3 (=400) llena los 400
+      tokens completos. El wall time escala casi linealmente con la cantidad de
+      tokens generados: 1.82 s (60 tok) → 6.59 s (221 tok) → 11.28 s (400 tok).
+    </p>
+
+    <h3>Temperatura: efecto semántico, no computacional</h3>
+    <p>
+      S4 (temp=0.2) = 4.63 s vs S5 (temp=1.0) = 4.55 s, dentro de ±2σ.
+      La temperatura no afecta velocidad ni longitud media. Su efecto es
+      exclusivamente sobre la variabilidad léxica de las respuestas.
+    </p>
+
+    <h3>Crecimiento del contexto conversacional</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Configuración</th>
+          <th>prompt_tokens</th>
+          <th>Ratio vs S1</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Sin historial (S1)</td><td>56</td><td>1.0×</td></tr>
+        <tr><td>2 turnos previos (S2)</td><td>373</td><td>6.7×</td></tr>
+        <tr><td>9 turnos previos (S8)</td><td>1275</td><td>22.8×</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Crecimiento promedio ≈ <strong>+135 tokens por turno previo</strong>,
+      consistente con respuestas de ~75 tokens por par user+assistant más el
+      system prompt.
+    </p>
+  </section>
+
+  <!-- ─── Conclusiones ─── -->
+  <section>
+    <h2>Conclusiones</h2>
+
+    <ol>
+      <li>
+        <strong>Ollama local es viable para prototipado académico.</strong>
+        El modelo <code>llama3.2:3b</code> responde en ~4–11 segundos según la
+        longitud de la salida, con una velocidad sostenida de 27–37 tokens/s.
+        No requiere GPU dedicada ni costos de API externa.
+      </li>
+      <li>
+        <strong>El contexto conversacional funciona correctamente.</strong>
+        La batería confirma que el backend pasa el historial completo a Ollama
+        turno a turno: <code>prompt_tokens</code> crece de 56 (S1) a 1275 (S8),
+        demostrando que el sistema acumula y reenvía el contexto sin pérdida de
+        información.
+      </li>
+      <li>
+        <strong>num_predict es el principal control de costo/latencia.</strong>
+        Reducir <code>num_predict</code> de 160 a 60 baja el tiempo de respuesta
+        de 4.66 s a 1.82 s (×2.6 más rápido). Es el parámetro más efectivo para
+        ajustar la experiencia del usuario según la tarea.
+      </li>
+      <li>
+        <strong>La temperatura no impacta el rendimiento.</strong>
+        Modificar <code>temperature</code> entre 0.2 y 1.0 no altera la velocidad
+        ni la longitud de las respuestas. Su utilidad es exclusivamente semántica:
+        mayor temperatura da respuestas más creativas; menor, más deterministas.
+      </li>
+      <li>
+        <strong>El historial largo tiene un costo medible pero manejable.</strong>
+        Con 9 turnos previos (S8), el tiempo de respuesta sube solo 31% respecto
+        a S1 (6.12 s vs 4.66 s), aunque los tokens de entrada se multiplican ×23.
+        Esto sugiere que el prefill del contexto en <code>llama3.2:3b</code> es
+        eficiente para conversaciones de hasta 10 turnos.
+      </li>
+      <li>
+        <strong>Las gráficas automatizadas facilitan el análisis.</strong>
+        El script genera 5 visualizaciones que permiten identificar patrones de
+        forma inmediata: estabilidad de velocidad, escalabilidad del contexto y
+        efecto de los parámetros configurables.
+      </li>
+    </ol>
+  </section>
+
+  <!-- ─── Cómo reproducir ─── -->
+  <section>
+    <h2>Cómo reproducir esta batería</h2>
+    <pre>
+# 1. Instalar dependencias extra (matplotlib para gráficas)
+pip install matplotlib
+
+# 2. Asegurar que Ollama tenga el modelo
+ollama pull llama3.2:3b
+ollama serve &
+
+# 3. Arrancar el backend
+cd practicas/practica-3/backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+
+# 4. En otra terminal, ejecutar la batería desde la raíz del repo
+cd /ruta/al/repo
+python3 practicas/practica-3/test_metrics_battery.py</pre>
+    <p>
+      Al finalizar, el script imprime el resumen en terminal, guarda los JSON
+      en <code>docs/assets/practica-3/</code> y las gráficas en
+      <code>docs/imgs/pr3/chart_*.png</code>.
+    </p>
+  </section>
+
+</div>
+</body>
+</html>

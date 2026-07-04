@@ -23,14 +23,23 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
+try:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    HAS_MPL = True
+except ImportError:
+    HAS_MPL = False
 
 BACKEND_URL = "http://127.0.0.1:8000/chat"
 RUNS_PER_SCENARIO = 5
 TIMEOUT_S = 180
 MODEL = "llama3.2:3b"
 RUN_TAG = time.strftime("%Y%m%d_%H%M%S")
-OUT_DIR = Path("/Users/adrianbazaldua/Desktop/work/verano/prosp-poc/docs/assets/practica-3")
+OUT_DIR = Path(__file__).resolve().parent.parent.parent / "docs" / "assets" / "practica-3"
+CHART_DIR = Path(__file__).resolve().parent.parent.parent / "docs" / "imgs" / "pr3"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
+CHART_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # Este backend usa num_predict (no max_tokens).
@@ -326,6 +335,152 @@ def print_summary(results: List[Dict[str, Any]]) -> None:
     print("=" * 72)
 
 
+def generate_charts(summary: Dict[str, Any]) -> None:
+    if not HAS_MPL:
+        print("  [charts] matplotlib no disponible — omitiendo gráficas")
+        return
+
+    scenarios = summary["scenarios"]
+    ids = [s["id"] for s in scenarios]
+    names = [s["name"] for s in scenarios]
+    labels = [f"{s['id']}\n{s['name'].split('(')[0].strip()[:20]}" for s in scenarios]
+
+    def agg(sc, field):
+        return sc["aggregate"].get(field, {})
+
+    def mean(sc, field):
+        m = agg(sc, field)
+        return m.get("mean", 0) if m else 0
+
+    def stdev(sc, field):
+        m = agg(sc, field)
+        return m.get("stdev", 0) if m else 0
+
+    plt.rcParams.update({
+        "figure.facecolor": "white",
+        "axes.facecolor": "white",
+        "font.size": 11,
+        "axes.titlesize": 14,
+        "axes.labelsize": 12,
+    })
+
+    # ── Chart 1: Wall time ──
+    fig, ax = plt.subplots(figsize=(10, 5))
+    x = range(len(scenarios))
+    means_wt = [mean(s, "wall_time_s") for s in scenarios]
+    stds_wt = [stdev(s, "wall_time_s") for s in scenarios]
+    bars = ax.bar(x, means_wt, yerr=stds_wt, capsize=5, color="steelblue", edgecolor="navy")
+    ax.set_xticks(list(x))
+    ax.set_xticklabels(ids, fontsize=10)
+    ax.set_ylabel("Tiempo (s)")
+    ax.set_title("Tiempo de Respuesta por Escenario (mean ± stdev)")
+    ax.grid(axis="y", alpha=0.3)
+    for bar, val in zip(bars, means_wt):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.1,
+                f"{val:.2f}s", ha="center", va="bottom", fontsize=8)
+    fig.tight_layout()
+    p1 = CHART_DIR / "chart_wall_time.png"
+    fig.savefig(p1, dpi=200)
+    plt.close(fig)
+    print(f"  [charts] {p1}")
+
+    # ── Chart 2: Tokens/s ──
+    fig, ax = plt.subplots(figsize=(10, 5))
+    means_tps = [mean(s, "tokens_per_second") for s in scenarios]
+    stds_tps = [stdev(s, "tokens_per_second") for s in scenarios]
+    bars = ax.bar(x, means_tps, yerr=stds_tps, capsize=5, color="seagreen", edgecolor="darkgreen")
+    ax.set_xticks(list(x))
+    ax.set_xticklabels(ids, fontsize=10)
+    ax.set_ylabel("Tokens/s")
+    ax.set_title("Velocidad de Generación por Escenario (mean ± stdev)")
+    ax.grid(axis="y", alpha=0.3)
+    for bar, val in zip(bars, means_tps):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.1,
+                f"{val:.1f}", ha="center", va="bottom", fontsize=8)
+    fig.tight_layout()
+    p2 = CHART_DIR / "chart_tokens_per_second.png"
+    fig.savefig(p2, dpi=200)
+    plt.close(fig)
+    print(f"  [charts] {p2}")
+
+    # ── Chart 3: Prompt vs Completion tokens ──
+    fig, ax = plt.subplots(figsize=(10, 5))
+    w = 0.35
+    prompt_m = [mean(s, "prompt_tokens") for s in scenarios]
+    complet_m = [mean(s, "completion_tokens") for s in scenarios]
+    bars1 = ax.bar([i - w / 2 for i in x], prompt_m, w, label="Prompt (entrada)", color="coral", edgecolor="darkred")
+    bars2 = ax.bar([i + w / 2 for i in x], complet_m, w, label="Completion (salida)", color="goldenrod", edgecolor="darkgoldenrod")
+    ax.set_xticks(list(x))
+    ax.set_xticklabels(ids, fontsize=10)
+    ax.set_ylabel("Tokens")
+    ax.set_title("Tokens de Entrada vs Salida por Escenario")
+    ax.legend(fontsize=9)
+    ax.grid(axis="y", alpha=0.3)
+    for bar in bars1:
+        h = bar.get_height()
+        if h > 0:
+            ax.text(bar.get_x() + bar.get_width() / 2, h + 5, f"{int(h)}", ha="center", va="bottom", fontsize=7)
+    fig.tight_layout()
+    p3 = CHART_DIR / "chart_prompt_vs_completion.png"
+    fig.savefig(p3, dpi=200)
+    plt.close(fig)
+    print(f"  [charts] {p3}")
+
+    # ── Chart 4: Context growth (S1, S2, S8) ──
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ctx_ids = ["S1\n(sin historial)", "S2\n(2 turnos)", "S8\n(9 turnos)"]
+    ctx_data = [mean(s, "prompt_tokens") for s in scenarios if s["id"] in ("S1", "S2", "S8")]
+    ctx_x = list(range(len(ctx_data)))
+    ax.plot(ctx_x, ctx_data, "o-", color="darkviolet", linewidth=2.5, markersize=10)
+    ax.set_xticks(ctx_x)
+    ax.set_xticklabels(ctx_ids, fontsize=10)
+    ax.set_ylabel("Tokens de entrada (prompt)")
+    ax.set_title("Crecimiento del Contexto Conversacional")
+    ax.grid(axis="y", alpha=0.3)
+    for i, val in enumerate(ctx_data):
+        ax.annotate(f"{int(val)} tok\n(x{val / ctx_data[0]:.1f})", (i, val),
+                    textcoords="offset points", xytext=(0, 12),
+                    ha="center", fontsize=9, color="darkviolet", fontweight="bold")
+    fig.tight_layout()
+    p4 = CHART_DIR / "chart_context_growth.png"
+    fig.savefig(p4, dpi=200)
+    plt.close(fig)
+    print(f"  [charts] {p4}")
+
+    # ── Chart 5: num_predict vs wall time ──
+    fig, ax = plt.subplots(figsize=(8, 5))
+    np_labels = {
+        "S6": ("num_predict=60", 60),
+        "S1": ("num_predict=160", 160),
+        "S7": ("num_predict=300", 300),
+        "S3": ("num_predict=400", 400),
+    }
+    np_scenarios = [s for s in scenarios if s["id"] in np_labels]
+    np_names = [np_labels[s["id"]][0] for s in np_scenarios]
+    np_vals = [np_labels[s["id"]][1] for s in np_scenarios]
+    np_wt = [mean(s, "wall_time_s") for s in np_scenarios]
+    np_std = [stdev(s, "wall_time_s") for s in np_scenarios]
+    bars = ax.bar(range(len(np_scenarios)), np_wt, yerr=np_std, capsize=5,
+                  color=["lightcoral", "steelblue", "mediumseagreen", "darkorange"],
+                  edgecolor="black")
+    ax.set_xticks(range(len(np_scenarios)))
+    ax.set_xticklabels([f"{n}\n({v} tok)" for n, v in zip(np_names, np_vals)], fontsize=9)
+    ax.set_ylabel("Tiempo (s)")
+    ax.set_xlabel("Configuración de num_predict")
+    ax.set_title("Impacto de num_predict en Tiempo de Respuesta")
+    ax.grid(axis="y", alpha=0.3)
+    for bar, val in zip(bars, np_wt):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.1,
+                f"{val:.2f}s", ha="center", va="bottom", fontsize=9)
+    fig.tight_layout()
+    p5 = CHART_DIR / "chart_num_predict.png"
+    fig.savefig(p5, dpi=200)
+    plt.close(fig)
+    print(f"  [charts] {p5}")
+
+    print(f"  [charts] Todas las gráficas guardadas en {CHART_DIR}")
+
+
 def main() -> int:
     scenarios = build_scenarios()
     print(f"Backend: {BACKEND_URL}")
@@ -381,6 +536,8 @@ def main() -> int:
     print(f"Tiempo total bateria: {elapsed:.1f} s")
     print(f"JSON raw:   {raw_path}")
     print(f"JSON summary: {summary_path}")
+
+    generate_charts(summary)
 
     return 0 if total_ok == total_runs else 1
 
