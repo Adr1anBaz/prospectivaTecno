@@ -1,0 +1,32 @@
+[
+  {
+    "profile": "generico",
+    "profile_label": "Asistente genérico",
+    "system_prompt_used": "Eres un asistente académico claro, preciso y útil para estudiantes universitarios. Responde de forma ordenada, honesta y con lenguaje comprensible.",
+    "prompt": "Explicame que es la odometria diferencial y dame un ejemplo para estudiantes de primer semestre.",
+    "model": "llama3.2:3b",
+    "reply": "La odometria diferencial es una técnica estadística utilizada en el análisis de datos cuantitativos, especialmente en la medicina, la biología y las ciencias sociales.\n\n**Definición:**\n\nLa odometria diferencial se refiere al proceso de comparación de dos o más medidas de distancias, velocidades o otros fenómenos físicos para determinar si hay una diferencia significativa entre ellas. La técnica se basa en la idea de que las observaciones individuales pueden contener errores o variabilidad, lo que puede afectar la precisión de los resultados.\n\n**Objetivo:**\n\nEl objetivo principal de la odometria diferencial es evaluar si existen diferencias significativas entre dos grupos o condiciones, y determinar cuál grupo o condición está asociada con un resultado específico o patrón de comportamiento.\n\n**Ejemplo para estudiantes de primer semestre:**\n\nSupongamos que como estudiante de psicología, estás investigando la relación entre el nivel de estrés y la cantidad de sueño en una muestra de 100 estudiantes universitarios. Has recopilado datos sobre la cantidad de horas de sueño medido durante una semana y la escala de estrés del Síndrome de Estrés Acuto (SEA).\n\n**Datos:**\n\n| Estudiante | Hora de sueño (h) | Escala de SEA |\n| --- | --- | --- |\n| 1 | 6,2 | 3 |\n| 2 | 7,5 | 4 |\n| 3 | 6,8 | 2 |\n| ... | ... | ... |\n\n**Odometria diferencial:**\n\nPara realizar la odometria diferencial, debes comparar las medidas de hora de sueño y la escala de SEA entre los grupos. En este caso, podrías dividir a los estudiantes en dos",
+    "reply_len_chars": 1524,
+    "prompt_eval_count": 87,
+    "eval_count": 400,
+    "total_tokens": 487,
+    "wall_time_s": 10.912,
+    "tokens_per_second": 42.84,
+    "label": "Asistente generico"
+  },
+  {
+    "profile": "robotica",
+    "profile_label": "Copiloto de robótica móvil",
+    "system_prompt_used": "Eres un copiloto de robótica móvil educativa. Ayudas a estudiantes universitarios a comprender sensores, actuadores, cinemática, control, comunicación y programación de robots. Respondes con lenguaje técnico claro, ejemplos prácticos y advertencias de seguridad. Cuando la pregunta involucre conexiones eléctricas, motores, baterías o drivers, debes pedir datos faltantes como voltaje, corriente, modelo de componente y diagrama de conexión antes de dar instrucciones específicas.",
+    "prompt": "Explicame que es la odometria diferencial y dame un ejemplo para estudiantes de primer semestre.",
+    "model": "llama3.2:3b",
+    "reply": "Excelente tema!\n\nLa odometría diferencial es un concepto fundamental en la cinemática de robots, especialmente relevantes en control y navegación.\n\n**¿Qué es la odometría?**\n\nLa odometría es el sistema que mide la distancia recorrida por un robot. En general, los robots con odometría pueden medir su posición y velocidad a través de sensores específicos, como radares o cámaras.\n\n**¿Qué es la odometría diferencial?**\n\nLa odometría diferencial es una variante del sistema de odometría que mide la diferencia en la velocidad angular entre dos ejes del robot. En otras palabras, mide la velocidad a la que el robot gira alrededor de su eje y la velocidad con la que se mueve hacia adelante o atrás.\n\nLa odometría diferencial es útil porque permite al robot corregir su rumbo y ajustar su movimiento para seguir un camino predefinido. Al medir la diferencia en la velocidad angular, el robot puede determinar si está girando demasiado rápido o demasiado lento, lo que le permite hacer ajustes precisos.\n\n**Ejemplo práctico**\n\nImagina que tienes un robot de carreras (por ejemplo, un robot lineal) con dos motores de potencia lineal que giran alrededor del eje vertical. Cada motor tiene su propio sensor de odometría diferencial, que mide la velocidad angular y la velocidad lineal.\n\nSupongamos que el robot está en una pista recta y quieres que siga un camino curvo. Al medir la velocidad angular y la velocidad lineal con los sensores de odometría diferencial, puedes calcular la diferencia entre las dos velocidades y ajustar la potencia de cada motor para que el robot g",
+    "reply_len_chars": 1572,
+    "prompt_eval_count": 170,
+    "eval_count": 400,
+    "total_tokens": 570,
+    "wall_time_s": 9.934,
+    "tokens_per_second": 42.79,
+    "label": "Copiloto de robotica movil"
+  }
+]
