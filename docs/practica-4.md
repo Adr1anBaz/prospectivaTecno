@@ -154,22 +154,36 @@ Prueba dirigida (sección 13 de las instrucciones): el mismo prompt se envió a 
 | Criterio | Asistente genérico | Copiloto de robótica |
 |----------|--------------------|----------------------|
 | Claridad | Alta en la redacción | Alta |
-| Uso de ejemplos | Sí, pero fuera de dominio (derivada `f(x)=3x²+2x−5`) | Sí, robot de dos motores con medición por ruedas |
+| Uso de ejemplos | Sí, pero fuera de dominio (ejemplo estadístico de estrés y sueño) | Sí, robot de dos motores con medición por ruedas |
 | Nivel adecuado | No: confunde el concepto | Sí |
-| Advertencias técnicas | No | Menciona sensores, ángulos de giro y motores |
-| Formato | Correcto (encabezados y fórmula) | Correcto (secciones y ecuaciones) |
+| Advertencias técnicas | No | Menciona sensores, velocidad angular y motores |
+| Formato | Correcto (encabezados y tablas) | Correcto (secciones y ejemplo) |
 | Utilidad | Nula: la respuesta es incorrecta | Alta: respuesta en el dominio |
 
-Hallazgo principal: el perfil genérico **alucinó el concepto completo**. Interpretó "odometría diferencial" como una derivada matemática (`f'(x) = ∂f/∂x`), ajena a la robótica móvil. El perfil de robótica lo explicó correctamente como la técnica de estimación de posición y velocidad a partir del movimiento de las ruedas/motores. En este caso la especialización no solo cambia el estilo: corrige un error conceptual grave.
+Hallazgo principal: el perfil genérico **no reconoce que la odometría diferencial pertenece a la robótica móvil** y alucina el concepto. Además, su error no es determinista: al repetir la prueba (temperatura 0.7) inventó dominios distintos en cada corrida —en una la describió como una técnica estadística de comparación de medidas en medicina y ciencias sociales, y en otra como una derivada matemática (`f'(x) = ∂f/∂x`)—. El perfil de robótica, en cambio, la explicó de forma consistente y correcta como la técnica de estimación de movimiento a partir de las ruedas/motores del robot. La especialización no solo cambia el estilo: corrige un error conceptual grave.
+
+Métricas de la corrida mostrada en las capturas:
 
 | Métrica | Genérico | Robótica |
 |---------|:--------:|:--------:|
 | Tokens de entrada | 87 | 170 |
 | Tokens de salida | 400 | 400 |
-| Latencia (s) | 12.65 | 9.893 |
-| Tokens/s | 42.88 | 42.90 |
+| Latencia (s) | 10.912 | 9.934 |
+| Tokens/s | 42.84 | 42.79 |
 
 El `system_prompt` de robótica casi duplica los tokens de entrada (87 → 170), consistente con el costo del perfil observado en el resto de la batería.
+
+Evidencia de ejecución. Respuesta del perfil genérico: interpreta la odometría como una técnica estadística, fuera del dominio de la robótica.
+
+![Respuesta del perfil genérico en la prueba guiada](imgs/pr4/comp1.png)
+
+Respuesta del perfil de robótica: interpretación correcta en el marco de la cinemática de robots.
+
+![Respuesta del perfil de robótica en la prueba guiada](imgs/pr4/comp2.png)
+
+Resumen comparativo de métricas impreso por el script en la terminal.
+
+![Resumen comparativo de métricas de la prueba guiada](imgs/pr4/comparacion_modelos.png)
 
 ## Gráficas
 
@@ -227,7 +241,7 @@ Selector de perfil desplegado con los cinco perfiles disponibles.
 
 ## Conclusiones
 
-La especialización mediante `system_prompt` adapta el comportamiento del modelo local a un dominio sin reentrenarlo y con costo de inferencia equivalente: las gráficas de latencia y tokens/s por perfil son prácticamente planas, mientras que el único costo medible es el aumento de tokens de entrada del perfil (85 a 167). El efecto en la calidad es claro en estructura y adherencia al rol (docente, programación) y llega a corregir errores conceptuales graves: en la prueba guiada, el perfil genérico confundió la odometría diferencial con una derivada matemática, mientras que el de robótica respondió correctamente. Sin embargo, el efecto es moderado cuando el modelo no respeta reglas condicionales (robótica) e insuficiente frente a la fabricación de datos verificables (citas en P12). Un copiloto confiable requiere combinar instrucciones de sistema claras con validación en el backend, límites de seguridad, evaluación humana, métricas de desempeño y, para conocimiento factual, recuperación aumentada (RAG).
+La especialización mediante `system_prompt` adapta el comportamiento del modelo local a un dominio sin reentrenarlo y con costo de inferencia equivalente: las gráficas de latencia y tokens/s por perfil son prácticamente planas, mientras que el único costo medible es el aumento de tokens de entrada del perfil (85 a 167). El efecto en la calidad es claro en estructura y adherencia al rol (docente, programación) y llega a corregir errores conceptuales graves: en la prueba guiada, el perfil genérico confundió la odometría diferencial con conceptos ajenos (una técnica estadística o una derivada matemática según la corrida), mientras que el de robótica respondió correctamente y de forma consistente. Sin embargo, el efecto es moderado cuando el modelo no respeta reglas condicionales (robótica) e insuficiente frente a la fabricación de datos verificables (citas en P12). Un copiloto confiable requiere combinar instrucciones de sistema claras con validación en el backend, límites de seguridad, evaluación humana, métricas de desempeño y, para conocimiento factual, recuperación aumentada (RAG).
 
 ## Reproducir la batería
 
