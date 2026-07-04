@@ -110,10 +110,10 @@ Responde en máximo 250 palabras.
 | Parámetros | 3B aprox. | No divulgado | 70B |
 | Contexto máximo | 128K (se usó `num_ctx`=4096) | ~1,048,576 tokens | 128K |
 | Tokens entrada (prom.) | 213.0 | 151.0 | 223.0 |
-| Tokens salida (prom.) | 300.0 | 300.0 | 299.3 |
-| Tokens totales (prom.) | 513.0 | 451.0 | 522.3 |
-| Tiempo total (prom.) | 8.993 s | 2.097 s | 1.570 s |
-| Tokens/s (prom.) | 35.97 | 146.28 | 199.27 |
+| Tokens salida (prom.) | 300.0 | 300.0 | 299.0 |
+| Tokens totales (prom.) | 513.0 | 451.0 | 522.0 |
+| Tiempo total (prom.) | 7.624 s | 1.743 s | 1.517 s |
+| Tokens/s (prom.) | 41.47 | 172.48 | 205.52 |
 | ¿Requiere internet? | No | Sí | Sí |
 | ¿Requiere API key? | No | Sí | Sí |
 | ¿Tiene costo? | Hardware local | Tier gratuito limitado / pago | Free plan limitado / pago |
@@ -126,11 +126,31 @@ Promedios de tres repeticiones por proveedor, con el mismo prompt y parámetros.
 
 | Proveedor | Modelo | Tokens entrada | Tokens salida | Tokens totales | Tiempo total (s) | Tokens/s |
 |-----------|--------|---------------:|--------------:|---------------:|-----------------:|---------:|
-| Ollama local | `llama3.2:3b` | 213.0 | 300.0 | 513.0 | 8.993 | 35.97 |
-| Gemini (OpenRouter) | `google/gemini-2.5-flash-lite` | 151.0 | 300.0 | 451.0 | 2.097 | 146.28 |
-| Groq API | `llama-3.3-70b-versatile` | 223.0 | 299.3 | 522.3 | 1.570 | 199.27 |
+| Ollama local | `llama3.2:3b` | 213.0 | 300.0 | 513.0 | 7.624 | 41.47 |
+| Gemini (OpenRouter) | `google/gemini-2.5-flash-lite` | 151.0 | 300.0 | 451.0 | 1.743 | 172.48 |
+| Groq API | `llama-3.3-70b-versatile` | 223.0 | 299.0 | 522.0 | 1.517 | 205.52 |
 
-En las tres pruebas la generación alcanzó el límite `max_tokens`=300, por lo que la salida quedó truncada respecto al límite de 250 palabras solicitado. Los tiempos de Ollama incluyen la ejecución sobre CPU/GPU local; los de los proveedores remotos incluyen la latencia de red.
+En las tres pruebas la generación alcanzó (o casi) el límite `max_tokens`=300, por lo que la salida quedó truncada respecto al límite de 250 palabras solicitado. Los tiempos de Ollama incluyen la ejecución sobre CPU/GPU local; los de los proveedores remotos incluyen la latencia de red. Datos crudos en [`assets/practica-5/metrics_summary_20260704_142916.json`](assets/practica-5/metrics_summary_20260704_142916.json).
+
+## Gráficas
+
+Generadas automáticamente por `test_hybrid_battery.py` (con `matplotlib`) a partir de los datos de la batería; se guardan en `docs/imgs/pr5/`.
+
+Tiempo de respuesta por proveedor. El modelo local (7.6 s) es entre 4 y 5 veces más lento que los remotos (1.5–1.7 s).
+
+![Tiempo de respuesta por proveedor](imgs/pr5/chart_wall_time.png)
+
+Velocidad de generación por proveedor. Groq lidera (~206 tok/s), seguido de Gemini vía OpenRouter (~172 tok/s); Ollama local queda muy por debajo (~41 tok/s).
+
+![Velocidad de generación por proveedor](imgs/pr5/chart_tokens_per_second.png)
+
+Tokens de entrada vs. salida por proveedor. La salida es prácticamente igual (tope `max_tokens=300`); la entrada varía por la longitud del `system_prompt` que arma cada proveedor.
+
+![Tokens de entrada vs salida por proveedor](imgs/pr5/chart_prompt_vs_completion.png)
+
+Comparativa general: latencia (barras) vs velocidad (línea). Resume la ventaja de los proveedores remotos en ambas dimensiones frente al modelo local.
+
+![Comparativa de latencia vs velocidad](imgs/pr5/chart_latency_vs_speed.png)
 
 ## Evaluación cualitativa de respuestas
 
@@ -143,22 +163,22 @@ Escala: 1 = deficiente, 2 = básico, 3 = aceptable, 4 = bueno, 5 = excelente. En
 | Uso correcto de ecuaciones | 2 | 5 | 5 |
 | Calidad del ejemplo | 2 | 3 | 5 |
 | Nivel adecuado para ingeniería | 3 | 4 | 5 |
-| Identificación de limitaciones | 1 | 1 | 4 |
+| Identificación de limitaciones | 2 | 1 | 4 |
 | Ausencia de alucinaciones o errores | 2 | 5 | 5 |
 | Utilidad final | 2 | 4 | 5 |
 
 Observaciones por proveedor:
 
-- **Ollama local (`llama3.2:3b`)**: explicación conceptual aceptable, pero las ecuaciones contienen errores (por ejemplo, la orientación expresada con `arctan((ω1 - ω2)/L)`, que no corresponde a la cinemática diferencial). La respuesta se truncó dentro del ejemplo numérico y no llegó a exponer la limitación práctica (punto 4).
-- **Gemini vía OpenRouter (`google/gemini-2.5-flash-lite`)**: respuesta bien estructurada, con notación matemática correcta (`Δx = (d1+d2)/2`, `Δψ = (d1-d2)/W`) y una precisión adicional sobre robots diferenciales puros. También se truncó al inicio del ejemplo y no alcanzó la limitación práctica.
-- **Groq (`llama-3.3-70b-versatile`)**: fue la respuesta más completa. Presentó ecuaciones correctas, un ejemplo numérico totalmente resuelto (desplazamiento de 11 cm y giro de 0.1 rad) y sí incluyó la limitación práctica (acumulación de error por deslizamiento y precisión de sensores).
+- **Ollama local (`llama3.2:3b`)**: explicación conceptual aceptable, pero las ecuaciones contienen errores (por ejemplo `s = ½·(dθ + dL)`, que mezcla ángulo y longitud). En esta corrida alcanzó a enunciar la limitación práctica (asume superficie plana y uniforme), aunque la respuesta se truncó a mitad de la frase por el tope de 300 tokens.
+- **Gemini vía OpenRouter (`google/gemini-2.5-flash-lite`)**: respuesta bien estructurada, con notación matemática correcta (`Δd = (d_L+d_R)/2`) y explicación clara de la base entre ruedas. Se truncó al llegar al cambio de orientación, sin alcanzar el ejemplo numérico ni la limitación práctica.
+- **Groq (`llama-3.3-70b-versatile`)**: fue la respuesta más completa. Presentó ecuaciones correctas (`Δs = (Δs_izq + Δs_der)/2`, `Δθ = (Δs_der − Δs_izq)/b`), un ejemplo numérico resuelto (base 20 cm, ruedas 10 y 15 cm → 12.5 cm de desplazamiento y 0.025 rad de giro) e incluyó la limitación práctica (acumulación de error por precisión de sensores y fricción).
 
 ## Preguntas de análisis
 
-1. **¿Qué modelo respondió más rápido?** Groq (`llama-3.3-70b-versatile`), con 1.570 s de promedio, por delante de Gemini vía OpenRouter (2.097 s) y muy por delante de Ollama local (8.993 s).
+1. **¿Qué modelo respondió más rápido?** Groq (`llama-3.3-70b-versatile`), con 1.517 s de promedio, por delante de Gemini vía OpenRouter (1.743 s) y muy por delante de Ollama local (7.624 s).
 2. **¿Qué modelo generó la mejor explicación técnica?** Groq, por ser correcta y completa. Gemini también fue correcta pero se truncó antes de la limitación práctica.
 3. **¿El modelo más grande fue siempre mejor?** El modelo más grande (70B, Groq) obtuvo la mejor calidad y también la mayor velocidad gracias al hardware de inferencia de Groq, pero el tamaño por sí solo no lo explica: Gemini, de tamaño no divulgado, alcanzó calidad comparable, mientras que el modelo local pequeño (3B) fue el de menor calidad y velocidad.
-4. **¿Qué diferencia hubo entre ejecutar localmente y usar una API?** El modelo local funcionó sin internet ni llaves y con máxima privacidad, pero fue entre 4 y 6 veces más lento y con menor calidad. Las APIs remotas fueron más rápidas y precisas, a costa de requerir internet, API key y envío de datos a terceros.
+4. **¿Qué diferencia hubo entre ejecutar localmente y usar una API?** El modelo local funcionó sin internet ni llaves y con máxima privacidad, pero fue entre 4 y 5 veces más lento y con menor calidad. Las APIs remotas fueron más rápidas y precisas, a costa de requerir internet, API key y envío de datos a terceros.
 5. **¿Qué riesgos aparecen al enviar datos a un proveedor externo?** Exposición de información potencialmente sensible, dependencia de las políticas de retención y privacidad del proveedor, y pérdida de control sobre dónde y cómo se procesan los datos.
 6. **¿Qué pasaría si la API cambia de precio o deja de estar disponible?** El servicio dependiente quedaría interrumpido o encarecido. Mitiga este riesgo mantener el proveedor abstraído tras la capa intermedia (como en este backend) y conservar el modelo local como alternativa de respaldo.
 7. **¿En qué casos conviene usar Ollama local?** Cuando la privacidad es prioritaria, cuando no hay conexión estable, cuando se requiere costo marginal nulo por consulta o para prototipado y desarrollo sin depender de terceros.
@@ -176,9 +196,18 @@ Interfaz del chatbot híbrido ejecutando el mismo mensaje sobre distintos provee
 
 ## Reflexión comparativa
 
-La práctica muestra que un mismo prompt, con parámetros idénticos, produce resultados muy distintos según el proveedor. El modelo local de 3B es viable para tareas sencillas y ofrece privacidad y costo marginal nulo, pero su calidad técnica y su velocidad son limitadas: cometió errores en las ecuaciones y no completó la respuesta dentro del presupuesto de tokens. Los modelos remotos fueron entre cuatro y seis veces más rápidos y técnicamente más sólidos; el modelo de 70B en Groq fue el más completo y, a la vez, el más veloz, gracias a su hardware de inferencia.
+La práctica muestra que un mismo prompt, con parámetros idénticos, produce resultados muy distintos según el proveedor. El modelo local de 3B es viable para tareas sencillas y ofrece privacidad y costo marginal nulo, pero su calidad técnica y su velocidad son limitadas: cometió errores en las ecuaciones y no completó la respuesta dentro del presupuesto de tokens. Los modelos remotos fueron entre cuatro y cinco veces más rápidos y técnicamente más sólidos; el modelo de 70B en Groq fue el más completo y, a la vez, el más veloz, gracias a su hardware de inferencia.
 
 La conclusión no es que un proveedor sea siempre superior, sino que la elección depende del compromiso entre calidad, latencia, costo, privacidad y disponibilidad. El valor del diseño adoptado está en la capa intermedia: al normalizar peticiones y métricas y abstraer al proveedor detrás de un único endpoint, el sistema permite cambiar de modelo local a remoto (o entre remotos) sin modificar el frontend, y conservar el modelo local como respaldo ante cambios de precio o indisponibilidad de las APIs.
+
+## Conclusiones
+
+1. **Los proveedores remotos superan ampliamente al local en velocidad.** Groq (205.5 tok/s) y Gemini vía OpenRouter (172.5 tok/s) generan entre 4 y 5 veces más rápido que Ollama local (41.5 tok/s), y responden en ~1.5–1.7 s frente a ~7.6 s del modelo local.
+2. **El tamaño del modelo no explica por sí solo la calidad.** El modelo de 70B (Groq) dio la mejor respuesta, pero Gemini —de tamaño no divulgado— alcanzó calidad comparable; el local de 3B fue el de menor calidad técnica (errores en las ecuaciones).
+3. **El modelo local sigue siendo valioso donde importan privacidad, costo y disponibilidad.** No requiere internet, API key ni envío de datos a terceros, y su costo marginal por consulta es nulo; es adecuado para prototipado y para tareas donde la latencia no es crítica.
+4. **La calidad técnica del local es limitada.** `llama3.2:3b` produjo ecuaciones incorrectas y respuestas truncadas dentro del presupuesto de tokens; para contenido técnico verificable conviene un modelo mayor o recuperación aumentada (RAG).
+5. **La abstracción del backend es la clave de ingeniería.** Normalizar métricas y esconder cada proveedor tras un único endpoint permite comparar de forma justa, cambiar de proveedor sin tocar el frontend y usar el modelo local como respaldo ante cambios de precio o caídas de las APIs.
+6. **La medición reproducible sostiene las conclusiones.** La batería (3 proveedores × 3 repeticiones = 9 corridas, 9/9 exitosas) y las gráficas automáticas permiten comparar latencia, velocidad y uso de tokens con datos reales, no estimados.
 
 ## Cómo reproducir
 
@@ -194,8 +223,9 @@ uvicorn main:app --port 8000
 cd practicas/practica-5/frontend
 python3 -m http.server 5500
 
-# Batería de pruebas (otra terminal, con el backend arriba)
+# Batería de pruebas + gráficas (otra terminal, con el backend y Ollama arriba)
+pip install matplotlib
 python practicas/practica-5/test_hybrid_battery.py
 ```
 
-Los resultados crudos y el resumen se guardan en `docs/assets/practica-5/` (`metrics_raw_*.json` y `metrics_summary_*.json`).
+Los resultados crudos y el resumen se guardan en `docs/assets/practica-5/` (`metrics_raw_*.json` y `metrics_summary_*.json`) y las 4 gráficas en `docs/imgs/pr5/chart_*.png`. **El backend y Ollama deben estar corriendo antes de lanzar la batería**; de lo contrario las corridas del proveedor local fallarán con `503 Service Unavailable`.
