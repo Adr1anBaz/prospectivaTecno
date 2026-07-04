@@ -25,14 +25,17 @@ colocando el `system_prompt` del perfil como `messages[0]`.
 ```
 practica-4/
 ├── backend/
-│   ├── main.py          # API FastAPI: /, /health, /profiles, /chat, /conversations
-│   ├── database.py      # SQLite (tablas conversations y messages)
-│   ├── chatbot.db       # Base de datos (se genera al ejecutar)
-│   └── requirements.txt # fastapi, uvicorn, requests, pydantic, SQLAlchemy
-└── frontend/
-    ├── index.html       # Interfaz (perfil + system prompt + parámetros)
-    ├── styles.css       # Estilos
-    └── app.js           # fetch a /chat y /profiles + conversation_id
+│   ├── main.py                    # API FastAPI: /, /health, /profiles, /chat, /conversations
+│   ├── database.py                # SQLite (tablas conversations y messages)
+│   ├── chatbot.db                 # Base de datos (se genera al ejecutar)
+│   └── requirements.txt           # fastapi, uvicorn, requests, pydantic, SQLAlchemy
+├── frontend/
+│   ├── index.html                 # Interfaz (perfil + system prompt + parámetros)
+│   ├── styles.css                 # Estilos
+│   └── app.js                     # fetch a /chat y /profiles + conversation_id
+├── test_prompting_battery.py      # Batería: 12 prompts × (genérico + especializado)
+├── test_guided_comparison.py      # Prueba guiada odometría (genérico vs robótica)
+└── graficar.py                    # Genera las gráficas del reporte (matplotlib)
 ```
 
 ## Perfiles de copiloto
@@ -145,3 +148,23 @@ Abrir http://localhost:5500 en el navegador.
 | `GET`    | `/conversations`            | Listar conversaciones                  |
 | `GET`    | `/conversations/{id}`       | Ver historial de una conversación      |
 | `DELETE` | `/conversations/{id}`       | Borrar una conversación                |
+
+## Evaluación y evidencia
+
+Con el backend en ejecución (`uvicorn main:app --port 8000`) y desde la raíz del repositorio:
+
+```bash
+# Batería de prompts (12 prompts × genérico/especializado = 24 corridas)
+python practicas/practica-4/test_prompting_battery.py
+
+# Prueba guiada: mismo prompt en genérico vs robótica (sección 13)
+python practicas/practica-4/test_guided_comparison.py
+
+# Gráficas del reporte a partir de los datos generados
+pip install matplotlib
+python practicas/practica-4/graficar.py
+```
+
+Los datos (`metrics_raw_*.json`, `metrics_summary_*.json`, `guided_comparison_*.json`)
+y las gráficas (`*.png`) se guardan en `docs/assets/practica-4/`. El análisis
+completo, tablas y conclusiones están en [`docs/practica-4.md`](../../docs/practica-4.md).

@@ -1,0 +1,32 @@
+[
+  {
+    "profile": "generico",
+    "profile_label": "Asistente genérico",
+    "system_prompt_used": "Eres un asistente académico claro, preciso y útil para estudiantes universitarios. Responde de forma ordenada, honesta y con lenguaje comprensible.",
+    "prompt": "Explicame que es la odometria diferencial y dame un ejemplo para estudiantes de primer semestre.",
+    "model": "llama3.2:3b",
+    "reply": "¡Claro! La odometria diferencial es una herramienta fundamental en matemáticas, especialmente en álgebra lineal y ecuaciones diferenciales.\n\n**¿Qué es la odometria diferencial?**\n\nLa odometria diferencial (también conocida como derivada) es un concepto matemático que mide el cambio de una función con respecto a una variable independiente. En otras palabras, se trata de encontrar la velocidad a la que cambia un valor en respuesta a un pequeño cambio en la variable independiente.\n\n**Fórmula**\n\nLa odometria diferencial (f'(x)) se define como:\n\nf'(x) = ∂f/∂x\n\nDonde f(x) es una función y x es la variable independiente.\n\n**Ejemplo para estudiantes de primer semestre:**\n\nSupongamos que tenemos la función:\n\nf(x) = 3x^2 + 2x - 5\n\nQueremos encontrar la odometria diferencial de esta función con respecto a x. Para hacerlo, usamos la fórmula anterior:\n\nf'(x) = ∂f/∂x\n= ∂(3x^2 + 2x - 5)/∂x\n= 6x + 2\n\nEntonces, la odometria diferencial de la función f(x) es 6x + 2.\n\n**Interpretación**\n\nEn este ejemplo, la odometria diferencial nos dice cuál es el cambio de la función f(x) cuando x cambia en un valor pequeño. Por ejemplo, si x = 1, entonces f'(1) = 6(1) + 2 = 8, lo que significa que la función f(x) aumenta en 8 unidades cuando x aumenta en 1 unidad.\n\nEspero que este ejemplo te haya ayudado a entender mejor la",
+    "reply_len_chars": 1312,
+    "prompt_eval_count": 87,
+    "eval_count": 400,
+    "total_tokens": 487,
+    "wall_time_s": 12.65,
+    "tokens_per_second": 42.88,
+    "label": "Asistente generico"
+  },
+  {
+    "profile": "robotica",
+    "profile_label": "Copiloto de robótica móvil",
+    "system_prompt_used": "Eres un copiloto de robótica móvil educativa. Ayudas a estudiantes universitarios a comprender sensores, actuadores, cinemática, control, comunicación y programación de robots. Respondes con lenguaje técnico claro, ejemplos prácticos y advertencias de seguridad. Cuando la pregunta involucre conexiones eléctricas, motores, baterías o drivers, debes pedir datos faltantes como voltaje, corriente, modelo de componente y diagrama de conexión antes de dar instrucciones específicas.",
+    "prompt": "Explicame que es la odometria diferencial y dame un ejemplo para estudiantes de primer semestre.",
+    "model": "llama3.2:3b",
+    "reply": "La odometria diferencial es una técnica utilizada en control automático y navegación de robots para calcular la velocidad y dirección del robot en función de las medidas obtenidas por los sensores.\n\n**¿Qué es la odometria?**\n\nLa odometria se refiere a la estimación de la distancia recorrida o el número de pasos recorridos por un robot. En robots autónomos, la odometria se utiliza para determinar la posición y orientación del robot en el espacio.\n\n**¿Qué es la odometria diferencial?**\n\nLa odometria diferencial es una técnica que combina la odometria con la medición de los ángulos de giro (angles) o velocidades de los motores para calcular la velocidad y dirección del robot. La idea es que, si sabemos cuántos pasos ha recorrido el robot y en qué dirección está girando, podemos calcular su velocidad y dirección.\n\n**Ejemplo práctico: Odometria diferencial con un robot lineal**\n\nSupongamos que tenemos un robot lineal con sensores de odometria que miden la distancia recorrida (L1 y L2) y sensores de ángulo (θ1 y θ2) que miden los ángulos de giro de los motores. El robot tiene dos motores que giran en sentido contrario (motor izquierdo y motor derecho).\n\n**Ecuaciones:**\n\n* Velocidad x = (L2 - L1) / Δt\n* Dirección θ = (θ1 + θ2) / 2\n\ndonde:\nx es la velocidad del robot\nθ es el ángulo de dirección del robot\nΔt es el tiempo entre las mediciones\nL1 y L2 son las medidas de odometria\nθ1 y θ2 son los áng",
+    "reply_len_chars": 1411,
+    "prompt_eval_count": 170,
+    "eval_count": 400,
+    "total_tokens": 570,
+    "wall_time_s": 9.893,
+    "tokens_per_second": 42.9,
+    "label": "Copiloto de robotica movil"
+  }
+]

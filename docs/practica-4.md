@@ -147,6 +147,58 @@ Nota: "n/a" indica que el perfil genérico no define un rol especializado. "Parc
 - `robotica` adopta el tono técnico y las advertencias de seguridad, pero no cumplió la regla de solicitar datos faltantes (P4) y arrastró imprecisiones de siglas (P5, P6).
 - En P12 la especialización no evitó la alucinación: ambos perfiles fabricaron citas, incluido `investigacion`, cuyo `system_prompt` lo prohíbe expresamente.
 
+## Prueba guiada: genérico vs. especializado
+
+Prueba dirigida (sección 13 de las instrucciones): el mismo prompt se envió a dos perfiles con parámetros idénticos (`temperature=0.7`, `top_p=0.9`, `num_predict=400`). Prompt: *"Explícame qué es la odometría diferencial y dame un ejemplo para estudiantes de primer semestre."* Los datos provienen del script `practicas/practica-4/test_guided_comparison.py` y las respuestas y métricas se guardan en `docs/assets/practica-4/guided_comparison_*.json`.
+
+| Criterio | Asistente genérico | Copiloto de robótica |
+|----------|--------------------|----------------------|
+| Claridad | Alta en la redacción | Alta |
+| Uso de ejemplos | Sí, pero fuera de dominio (derivada `f(x)=3x²+2x−5`) | Sí, robot de dos motores con medición por ruedas |
+| Nivel adecuado | No: confunde el concepto | Sí |
+| Advertencias técnicas | No | Menciona sensores, ángulos de giro y motores |
+| Formato | Correcto (encabezados y fórmula) | Correcto (secciones y ecuaciones) |
+| Utilidad | Nula: la respuesta es incorrecta | Alta: respuesta en el dominio |
+
+Hallazgo principal: el perfil genérico **alucinó el concepto completo**. Interpretó "odometría diferencial" como una derivada matemática (`f'(x) = ∂f/∂x`), ajena a la robótica móvil. El perfil de robótica lo explicó correctamente como la técnica de estimación de posición y velocidad a partir del movimiento de las ruedas/motores. En este caso la especialización no solo cambia el estilo: corrige un error conceptual grave.
+
+| Métrica | Genérico | Robótica |
+|---------|:--------:|:--------:|
+| Tokens de entrada | 87 | 170 |
+| Tokens de salida | 400 | 400 |
+| Latencia (s) | 12.65 | 9.893 |
+| Tokens/s | 42.88 | 42.90 |
+
+El `system_prompt` de robótica casi duplica los tokens de entrada (87 → 170), consistente con el costo del perfil observado en el resto de la batería.
+
+## Gráficas
+
+Todas las gráficas se generan con `practicas/practica-4/graficar.py` a partir de los datos reales de la batería (`docs/assets/practica-4/metrics_raw_*.json`).
+
+Costo del `system_prompt` (tokens de entrada). El perfil especializado añade instrucciones de sistema, lo que incrementa los tokens de entrada frente al genérico (85 hasta 167 en robótica).
+
+![Tokens de entrada promedio por perfil](assets/practica-4/tokens_entrada_por_perfil.png)
+
+Latencia por perfil. La latencia promedio es prácticamente igual entre perfiles (5.2–5.6 s): el perfil determina el contenido, no el costo de inferencia.
+
+![Latencia promedio por perfil](assets/practica-4/latencia_por_perfil.png)
+
+Rendimiento (tokens/s). El throughput se mantiene estable (~36 tokens/s) independientemente del perfil.
+
+![Tokens por segundo por perfil](assets/practica-4/tokens_por_segundo_por_perfil.png)
+
+Latencia por prompt: genérico vs. especializado. Comparación directa de los 12 prompts de dominio; las diferencias son mínimas y no sistemáticas.
+
+![Latencia por prompt genérico vs especializado](assets/practica-4/latencia_generico_vs_especializado.png)
+
+Tokens de salida por corrida. 23 de 24 corridas alcanzaron el tope `num_predict=180`; la única excepción fue una corrida de `investigacion` (149 tokens).
+
+![Tokens de salida por corrida](assets/practica-4/tokens_salida_por_corrida.png)
+
+Evaluación cualitativa de alucinaciones. Conteo por perfil según la lectura de las respuestas reales (tabla de pruebas). Los perfiles `docente` y `programacion` no alucinaron; el genérico concentra alucinaciones leves y `robotica` e `investigacion` los casos marcados.
+
+![Alucinaciones por perfil](assets/practica-4/evaluacion_alucinaciones.png)
+
 ## Capturas
 
 Interfaz con el panel de configuración (modelo, perfil de copiloto, botón "Cargar plantilla", `system_prompt` editable y parámetros) y la conversación con el perfil docente.
@@ -175,7 +227,7 @@ Selector de perfil desplegado con los cinco perfiles disponibles.
 
 ## Conclusiones
 
-La especialización mediante `system_prompt` adapta el comportamiento del modelo local a un dominio sin reentrenarlo y con costo de inferencia equivalente. Su efecto es claro en estructura y adherencia al rol (docente, programación), moderado cuando el modelo no respeta reglas condicionales (robótica) e insuficiente frente a la fabricación de datos verificables (citas). Un copiloto confiable requiere combinar instrucciones de sistema claras con validación en el backend, límites de seguridad, evaluación humana, métricas de desempeño y, para conocimiento factual, recuperación aumentada (RAG).
+La especialización mediante `system_prompt` adapta el comportamiento del modelo local a un dominio sin reentrenarlo y con costo de inferencia equivalente: las gráficas de latencia y tokens/s por perfil son prácticamente planas, mientras que el único costo medible es el aumento de tokens de entrada del perfil (85 a 167). El efecto en la calidad es claro en estructura y adherencia al rol (docente, programación) y llega a corregir errores conceptuales graves: en la prueba guiada, el perfil genérico confundió la odometría diferencial con una derivada matemática, mientras que el de robótica respondió correctamente. Sin embargo, el efecto es moderado cuando el modelo no respeta reglas condicionales (robótica) e insuficiente frente a la fabricación de datos verificables (citas en P12). Un copiloto confiable requiere combinar instrucciones de sistema claras con validación en el backend, límites de seguridad, evaluación humana, métricas de desempeño y, para conocimiento factual, recuperación aumentada (RAG).
 
 ## Reproducir la batería
 
@@ -189,8 +241,15 @@ source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 
-# Batería (terminal 2)
+# Batería de prompts (terminal 2)
 python practicas/practica-4/test_prompting_battery.py
+
+# Prueba guiada genérico vs. especializado (sección 13)
+python practicas/practica-4/test_guided_comparison.py
+
+# Gráficas a partir de los datos generados
+pip install matplotlib
+python practicas/practica-4/graficar.py
 ```
 
-Los archivos `metrics_raw_<timestamp>.json` y `metrics_summary_<timestamp>.json` se generan en `docs/assets/practica-4/`.
+`test_prompting_battery.py` genera `metrics_raw_<timestamp>.json` y `metrics_summary_<timestamp>.json`; `test_guided_comparison.py` genera `guided_comparison_<timestamp>.json`; y `graficar.py` produce los archivos `.png`. Todos se guardan en `docs/assets/practica-4/`.
